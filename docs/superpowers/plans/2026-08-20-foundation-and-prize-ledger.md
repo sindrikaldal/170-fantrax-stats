@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Node.js 20.9+ required (verified local: v20.19.5). Next.js 16 will not run below this.
+- Node.js 20.11+ required (verified local: v20.19.5). Next.js 16 needs 20.9+, and `vitest.config.mts` uses `import.meta.dirname`, which needs 20.11+.
 - **No authentication anywhere.** The league is public-readable. No cookies, no API keys, no `.env` secrets. If a task seems to need auth, the task is wrong.
 - **No network calls in tests.** All tests read committed fixtures from `test/fixtures/`.
 - Every stat function is pure: `SeasonData` in, plain data out. No `fetch`, no `Date.now()` inside stat functions — pass `now` as a parameter so tests are deterministic.
