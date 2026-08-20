@@ -16,7 +16,9 @@ A finished 35-gameweek season with known outcomes. The primary correctness fixtu
 
 Known-good values derived from these, asserted in tests:
 
-- Prize ledger totals exactly 52,500 ISK over 35 gameweeks
+- Prize ledger totals exactly 52,500 ISK over 35 gameweeks. Note the gameweek prize rule
+  is new for 2026 and did not exist in 2025 — this is a hypothetical calculation used as a
+  correctness fixture, not money owed
 - GW16 is a tie for top score (Proof the Curse and Haaland Sakalegur, both 114.25),
   splitting 750/750
 - Highest scorer of the season (Füllkrug Express, 7211 FPts) finished 3rd

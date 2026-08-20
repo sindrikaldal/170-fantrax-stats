@@ -115,8 +115,14 @@ Out of Scope list below is where it was drawn.
 
 ### 1. Prize ledger
 
-League rule: the **highest-scoring team of each gameweek earns 1500 ISK**, accumulating
-across the season and paid out at season end alongside other prizes.
+League rule, **new for the 2026 season**: the **highest-scoring team of each gameweek
+earns 1500 ISK**, accumulating across the season and paid out at season end alongside the
+other prizes.
+
+The rule did **not** exist in 2025 and does not apply retroactively. No money was or will
+be paid for 2025 gameweek wins. The 2025 figures below are hypothetical — a
+"what it would have paid" retrospective — and every 2025 ledger view in the UI must be
+labelled as such, unambiguously, so nobody reads it as an outstanding debt.
 
 Rules as confirmed by the commissioner:
 
@@ -125,13 +131,17 @@ Rules as confirmed by the commissioner:
   Ties are rare but real — exactly one occurred in 2025's 35 gameweeks.
 - **Basis:** the maximum real team score in the gameweek. The `*League Average*` pseudo-
   team is never eligible.
+- **Seasons:** 2026 onward. 2025 is computed for display only, never as owed money.
 
 Displays:
 
 - Running ISK total per manager, ranked — the primary league-facing view
 - Per-gameweek winner history with the winning score
 - Current gameweek's live leader while the gameweek is open
-- 2025 retrospective ledger (what the rule would have paid, ties split):
+- **2025 hypothetical ledger** — what the rule *would* have paid had it existed, ties
+  split. Clearly marked as hypothetical in the UI. Retained for two reasons: it is a fun
+  retrospective, and it is the ledger's regression fixture, since the inputs and expected
+  outputs are both known and fixed:
 
 | Manager | GW wins | ISK |
 |---|---|---|
@@ -149,8 +159,7 @@ Displays:
 
   Every team won at least one gameweek. The single 2025 tie was GW16, where Proof the
   Curse and Haaland Sakalegur both scored 114.25 and split the prize 750/750 — which is
-  why two managers show five and three wins but non-round ISK totals. These figures are
-  the regression fixture for the ledger.
+  why two managers show five and three wins but non-round ISK totals.
 
 Money is displayed, so correctness here outranks every other feature. The ledger gets
 the most thorough test coverage, including explicit tie cases.
