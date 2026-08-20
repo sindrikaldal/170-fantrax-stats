@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import type { SeasonView } from '../lib/season-view'
 import type { SeasonData, TeamId } from '@/lib/domain/types'
 import { weeklyAwards } from '@/lib/stats/records'
-import { teamName } from '../lib/format'
+import { formatScore, teamName } from '../lib/format'
 import { EmptyState } from './EmptyState'
 import { CountUp } from './CountUp'
 
@@ -48,7 +48,7 @@ function AwardCard({
       </h3>
       <div className="mt-2 flex items-baseline gap-2">
         <span className={`font-display text-4xl font-extrabold tabular-nums ${accentColor}`}>
-          <CountUp value={score} />
+          <CountUp value={score} format="score" />
         </span>
       </div>
       <div className="mt-2 flex items-center gap-2 text-sm text-foreground">{children}</div>
@@ -67,7 +67,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
   const { season, settled } = view
 
   if (settled.length < NEEDS_SETTLED) {
-    return <EmptyState needed={NEEDS_SETTLED} have={settled.length} what="This week's awards" />
+    return <EmptyState needed={NEEDS_SETTLED} have={settled.length} what="Awards need a finished gameweek" />
   }
 
   const awards = weeklyAwards(season, now)
@@ -100,7 +100,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
             title="The Massacre"
             accent="gold"
             score={week.biggestBlowout.margin}
-            body={`${teamName(season, week.biggestBlowout.winnerId)} put ${week.biggestBlowout.margin.toFixed(1)} on ${teamName(season, week.biggestBlowout.loserId)}`}
+            body={`${teamName(season, week.biggestBlowout.winnerId)} put ${formatScore(week.biggestBlowout.margin)} on ${teamName(season, week.biggestBlowout.loserId)}`}
           >
             <Crest season={season} teamId={week.biggestBlowout.winnerId} />
             {teamName(season, week.biggestBlowout.winnerId)}
@@ -113,7 +113,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
             title="Robbed"
             accent="cold"
             score={week.unluckiestLoss.score}
-            body={`Scored ${week.unluckiestLoss.score.toFixed(1)}. Still lost. Brutal.`}
+            body={`Scored ${formatScore(week.unluckiestLoss.score)}. Still lost. Brutal.`}
           >
             <Crest season={season} teamId={week.unluckiestLoss.teamId} />
             {teamName(season, week.unluckiestLoss.teamId)}
@@ -126,7 +126,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
             title="Daylight Robbery"
             accent="cold"
             score={week.luckiestWin.score}
-            body={`Won with ${week.luckiestWin.score.toFixed(1)}. Shameless.`}
+            body={`Won with ${formatScore(week.luckiestWin.score)}. Shameless.`}
           >
             <Crest season={season} teamId={week.luckiestWin.teamId} />
             {teamName(season, week.luckiestWin.teamId)}

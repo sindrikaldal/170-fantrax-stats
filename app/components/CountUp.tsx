@@ -1,31 +1,26 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { formatScore } from '../lib/format'
 
 const DURATION_MS = 900
 
 /**
  * `format` is a keyword, not a function: this component is rendered from
- * server components (LedgerTable, AwardsStrip), and functions cannot cross
- * the server/client boundary as props.
+ * server components (AwardsStrip), and functions cannot cross the
+ * server/client boundary as props.
+ *
+ * Money is deliberately NOT one of these — `LedgerTable` renders ISK
+ * figures as static text, never through `CountUp`. A screenshot taken
+ * mid-animation (this page exists to be screenshotted into a group chat)
+ * would show the wrong amount, which the money-legibility constraint rules
+ * out as a correctness bug, not a style trade-off. Animation stays only for
+ * figures where a transient wrong value is harmless (award scores, etc).
  */
-type CountUpFormat = 'isk' | 'plain'
-
-/**
- * Deliberately not `Intl.NumberFormat('is-IS')` here (that's `lib/format.ts`'s
- * `isk`, used everywhere this value is server-rendered only). This component
- * is a Client Component: Next.js renders it once on the server and again on
- * the client during hydration, and those two passes can land on different
- * ICU data for the same locale (observed: "52.500" server, "52,500"
- * client) — a hydration-mismatch bug, not a formatting preference. A plain
- * grouping regex has no locale dependency, so both passes always agree.
- */
-function formatIsk(n: number): string {
-  return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-}
+type CountUpFormat = 'score' | 'plain'
 
 function render(n: number, format: CountUpFormat): string {
-  return format === 'isk' ? formatIsk(n) : String(n)
+  return format === 'score' ? formatScore(n) : String(Math.round(n))
 }
 
 /**
@@ -55,7 +50,6 @@ export function CountUp({
   useEffect(() => {
     const node = ref.current
     if (!node) return
-    if (typeof window === 'undefined') return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     let rafId: number | null = null

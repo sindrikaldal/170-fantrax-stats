@@ -1,13 +1,24 @@
 import type { SeasonView } from '../lib/season-view'
 import { combinedRecords, rankTable } from '@/lib/stats/tables'
 import { streaks, type StreakInfo } from '@/lib/stats/records'
+import { formatScore } from '../lib/format'
 import { EmptyState } from './EmptyState'
 
 const NEEDS_SETTLED = 1
 
+/** "5-game winning streak" / "3-game losing run" / "2-game drawing run". */
+function streakLabel(type: 'W' | 'D' | 'L', length: number): string {
+  const noun = type === 'W' ? 'winning streak' : type === 'L' ? 'losing run' : 'drawing run'
+  return `${length}-game ${noun}`
+}
+
 function FormBadge({ info }: { info: StreakInfo | undefined }) {
   if (!info || !info.current) {
-    return <span className="text-muted">&mdash;</span>
+    return (
+      <span className="text-muted" aria-label="No form data yet">
+        &mdash;
+      </span>
+    )
   }
   const { type, length } = info.current
   const arrow = type === 'W' ? '▲' : type === 'L' ? '▼' : '—'
@@ -16,9 +27,15 @@ function FormBadge({ info }: { info: StreakInfo | undefined }) {
     ? `Last ${info.lastFive.length}: ${info.lastFive.join(' ')}`
     : undefined
   return (
-    <span className={`inline-flex items-center gap-0.5 font-display font-bold ${color}`} title={title}>
+    <span
+      className={`inline-flex items-center gap-0.5 font-display font-bold ${color}`}
+      aria-label={streakLabel(type, length)}
+      title={title}
+    >
       <span aria-hidden>{arrow}</span>
-      <span className="tabular-nums">{length}</span>
+      <span className="tabular-nums" aria-hidden>
+        {length}
+      </span>
     </span>
   )
 }
@@ -32,7 +49,13 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
   const { season, settled } = view
 
   if (settled.length < NEEDS_SETTLED) {
-    return <EmptyState needed={NEEDS_SETTLED} have={settled.length} what="Official table" />
+    return (
+      <EmptyState
+        needed={NEEDS_SETTLED}
+        have={settled.length}
+        what="The table needs a finished gameweek"
+      />
+    )
   }
 
   const ranked = rankTable(combinedRecords(season, now))
@@ -104,7 +127,7 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
                   <span className="text-loss">{r.losses}</span>
                 </td>
                 <td className="py-2 pr-2 text-right font-medium tabular-nums">
-                  {r.pointsFor.toFixed(1)}
+                  {formatScore(r.pointsFor)}
                 </td>
                 <td className="py-2 pr-3 text-right">
                   <FormBadge info={streakByTeam.get(r.teamId)} />

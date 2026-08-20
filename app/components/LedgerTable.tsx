@@ -1,7 +1,6 @@
 import type { Ledger } from '@/lib/stats/ledger'
 import type { SeasonData } from '@/lib/domain/types'
-import { teamName } from '../lib/format'
-import { CountUp } from './CountUp'
+import { isk, teamName } from '../lib/format'
 
 const RANK_COLOR = ['text-gold', 'text-foreground', 'text-foreground'] as const
 
@@ -53,8 +52,15 @@ export function LedgerTable({
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
             Paid out so far
           </p>
+          {/*
+            Money renders statically — never through CountUp. This page
+            gets screenshotted into a group chat; a mid-animation frame
+            showing the wrong ISK total is exactly the misread the
+            money-legibility constraint forbids, so the correct total must
+            be on screen from the very first paint, not after ~1s of count-up.
+          */}
           <p className="font-display text-4xl font-extrabold tabular-nums text-gold sm:text-5xl">
-            <CountUp value={ledger.totalPaid} format="isk" /> ISK
+            {isk.format(ledger.totalPaid)} ISK
           </p>
         </div>
         <div className="text-sm text-muted">
@@ -119,7 +125,7 @@ export function LedgerTable({
                 </td>
                 <td className="py-2 pr-2 text-right tabular-nums">{e.gameweekWins}</td>
                 <td className="py-2 pr-3 text-right font-display font-bold tabular-nums text-gold">
-                  <CountUp value={e.isk} format="isk" />
+                  {isk.format(e.isk)}
                 </td>
               </tr>
             ))}

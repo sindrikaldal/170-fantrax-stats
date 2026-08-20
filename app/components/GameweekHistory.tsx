@@ -1,6 +1,6 @@
 import type { Ledger } from '@/lib/stats/ledger'
 import type { SeasonData } from '@/lib/domain/types'
-import { isk, teamName } from '../lib/format'
+import { formatScore, isk, teamName } from '../lib/format'
 
 export function GameweekHistory({
   season,
@@ -87,7 +87,7 @@ export function GameweekHistory({
                     )}
                   </span>
                 </td>
-                <td className="py-2 pr-2 text-right tabular-nums">{g.topScore}</td>
+                <td className="py-2 pr-2 text-right tabular-nums">{formatScore(g.topScore)}</td>
                 <td className="py-2 pr-4 text-right font-medium tabular-nums text-gold">
                   {isk.format(g.iskPerWinner)}
                   {g.winners.length > 1 && ' ea'}
