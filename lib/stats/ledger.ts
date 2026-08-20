@@ -44,9 +44,25 @@ export function computeLedger(
 
   for (const period of periods) {
     const scores = scoresForPeriod(season, period)
-    if (scores.size === 0) continue
+
+    // `isPeriodComplete` only compares dates; it has no idea whether scores
+    // actually exist. Fantrax reports an unplayed gameweek's score as the
+    // string "0" rather than leaving it blank, so `parseScore` happily turns
+    // it into 0 rather than null — the missing-score omission in
+    // `scoresForPeriod` never fires. Without this guard a date whose gameweek
+    // hasn't been played yet would crown every team a "winner" on a 0-0-0...
+    // tie and split real ISK across the whole league. Require a score from
+    // every team before trusting the period at all.
+    if (scores.size !== season.teams.length) continue
 
     const topScore = Math.max(...scores.values())
+
+    // A real gameweek in this scoring system cannot plausibly leave every
+    // team at exactly 0 — that pattern only occurs when Fantrax has posted
+    // placeholder "0" scores for a gameweek that hasn't been played yet.
+    // Refuse to pay out on it even though every team reported a score.
+    if (topScore <= 0) continue
+
     const winners = [...scores.entries()]
       .filter(([, v]) => v === topScore)
       .map(([id]) => id)

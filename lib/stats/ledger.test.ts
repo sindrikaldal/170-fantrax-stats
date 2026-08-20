@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { LeagueInfoSchema, ScheduleResponseSchema } from '@/lib/fantrax/schemas'
 import { buildSeasonData } from '@/lib/adapt/season'
 import { computeLedger, PRIZE_PER_GAMEWEEK } from '@/lib/stats/ledger'
-import type { SeasonData } from '@/lib/domain/types'
+import type { Fixture, SeasonData } from '@/lib/domain/types'
 
 const load = (y: number, f: string) => JSON.parse(readFileSync(`test/fixtures/${y}/${f}`, 'utf8'))
 
@@ -104,5 +104,70 @@ describe('computeLedger, incomplete and empty seasons', () => {
   it('honours a custom prize amount', () => {
     const ledger = computeLedger(season2025, AFTER_SEASON, 100)
     expect(ledger.totalPaid).toBeCloseTo(3500, 6)
+  })
+})
+
+// Fantrax reports an unplayed gameweek's score as the literal string "0"
+// rather than leaving it blank, so `parseScore` turns it into 0, not null.
+// That means `scoresForPeriod` does NOT omit those teams, and a date-only
+// completeness check (`isPeriodComplete`) has already decided the period is
+// "done" once its end date has passed — even though nobody has played it.
+// These synthetic seasons exercise `computeLedger`'s guards against that
+// directly, without touching the irreplaceable fixtures under test/fixtures.
+function buildSyntheticSeason(period1Fixtures: Fixture[]): SeasonData {
+  return {
+    seasonYear: 2099,
+    leagueId: 'synthetic',
+    leagueName: 'Synthetic League',
+    regularSeasonPeriods: 1,
+    totalPeriods: 1,
+    teams: [
+      { teamId: 'A', name: 'Team A', shortName: null, logoUrl: null },
+      { teamId: 'B', name: 'Team B', shortName: null, logoUrl: null },
+      { teamId: 'C', name: 'Team C', shortName: null, logoUrl: null },
+      { teamId: 'D', name: 'Team D', shortName: null, logoUrl: null },
+    ],
+    periods: [{ number: 1, startDate: '2025-01-01T00:00:00.000Z', endDate: '2025-01-08T00:00:00.000Z' }],
+    fixtures: period1Fixtures,
+    averageFixtures: [],
+  }
+}
+
+const AFTER_SYNTHETIC_PERIOD = new Date('2025-02-01')
+
+describe('computeLedger, unplayed gameweeks reported as all-zero or partial scores', () => {
+  it('does not pay a gameweek where every team is reported at 0', () => {
+    const season = buildSyntheticSeason([
+      { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 0, awayScore: 0 },
+      { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 0, awayScore: 0 },
+    ])
+    const ledger = computeLedger(season, AFTER_SYNTHETIC_PERIOD)
+    expect(ledger.gameweeksCounted).toBe(0)
+    expect(ledger.gameweeks).toEqual([])
+    expect(ledger.totalPaid).toBe(0)
+    expect(ledger.entries).toEqual([])
+  })
+
+  it('does not pay a gameweek where only some teams have reported scores', () => {
+    const season = buildSyntheticSeason([
+      { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 10, awayScore: 5 },
+      { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: null, awayScore: null },
+    ])
+    const ledger = computeLedger(season, AFTER_SYNTHETIC_PERIOD)
+    expect(ledger.gameweeksCounted).toBe(0)
+    expect(ledger.gameweeks).toEqual([])
+    expect(ledger.totalPaid).toBe(0)
+  })
+
+  it('still pays a gameweek with full, non-zero scores (guard is not over-aggressive)', () => {
+    const season = buildSyntheticSeason([
+      { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 10, awayScore: 5 },
+      { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 8, awayScore: 3 },
+    ])
+    const ledger = computeLedger(season, AFTER_SYNTHETIC_PERIOD)
+    expect(ledger.gameweeksCounted).toBe(1)
+    expect(ledger.totalPaid).toBeCloseTo(PRIZE_PER_GAMEWEEK, 6)
+    expect(ledger.gameweeks[0].winners).toEqual(['A'])
+    expect(ledger.gameweeks[0].topScore).toBe(10)
   })
 })
