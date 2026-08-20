@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { LeagueInfoSchema, ScheduleResponseSchema } from '@/lib/fantrax/schemas'
 import { buildSeasonData } from '@/lib/adapt/season'
-import { allPlayRecords, luckIndex } from '@/lib/stats/luck'
+import { allPlayRecords, luckIndex, scheduleSwap } from '@/lib/stats/luck'
 import type { SeasonData } from '@/lib/domain/types'
 
 const load = (y: number, f: string) => JSON.parse(readFileSync(`test/fixtures/${y}/${f}`, 'utf8'))
@@ -63,5 +63,39 @@ describe('luckIndex, 2025 season', () => {
 
   it('is empty before the season starts', () => {
     expect(luckIndex(season2025, new Date('2025-08-01'))).toEqual([])
+  })
+})
+
+describe('scheduleSwap, 2025 season (5 playoff spots)', () => {
+  const swap = scheduleSwap(season2025, AFTER_SEASON)
+  const entry = (name: string) => swap.find((e) => nameOf(season2025, e.teamId) === name)!
+
+  it('tries the 9 other schedules for each team', () => {
+    expect(swap).toHaveLength(10)
+    for (const e of swap) expect(e.schedulesTried).toBe(9)
+  })
+
+  it('les Homms missed the playoffs but makes it under all 9 other schedules', () => {
+    expect(entry('les Homms').playoffCount).toBe(9)
+  })
+
+  it('Füllkrug and Diallo also make it under all 9', () => {
+    expect(entry('The Füllkrug Express').playoffCount).toBe(9)
+    expect(entry('Year of the Diallo').playoffCount).toBe(9)
+  })
+
+  it('Proof the Curse finished 2nd in the real table but survives only 5 of 9 swaps', () => {
+    expect(entry('Proof the Curse lives once more').playoffCount).toBe(5)
+  })
+
+  it('the bottom teams make it under almost no schedule', () => {
+    expect(entry('FC Slaughterhouse!').playoffCount).toBe(1)
+    expect(entry('Palm Air').playoffCount).toBe(0)
+    expect(entry('Haaland, Sakalegur markaskorari').playoffCount).toBe(0)
+    expect(entry('Earth, Wind & Maguire').playoffCount).toBe(0)
+  })
+
+  it('is empty before the season starts', () => {
+    expect(scheduleSwap(season2025, new Date('2025-08-01'))).toEqual([])
   })
 })

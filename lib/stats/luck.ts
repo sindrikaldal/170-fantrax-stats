@@ -1,6 +1,6 @@
 import type { SeasonData, TeamId } from '@/lib/domain/types'
 import { auditRegularPeriods, scoresForPeriod } from '@/lib/domain/season'
-import { realRecords, winPoints } from './tables'
+import { rankTable, realRecords, type TeamRecord, winPoints } from './tables'
 
 export interface AllPlayRecord {
   teamId: TeamId
@@ -73,4 +73,72 @@ export function luckIndex(season: SeasonData, now: Date): LuckEntry[] {
     return { teamId, actualWinPoints: actual, expectedWinPoints: exp, delta: actual - exp }
   })
   return entries.sort((a, b) => b.delta - a.delta || a.teamId.localeCompare(b.teamId))
+}
+
+export interface ScheduleSwapEntry {
+  teamId: TeamId
+  /** Other teams' schedules under which this team would make the playoffs. */
+  playoffCount: number
+  schedulesTried: number
+}
+
+/**
+ * "You would make playoffs under 11 of 13 schedules." For each other team
+ * U, replay this team's weekly scores against U's real fixture list (when
+ * U's opponent that week is this team, face U's score instead), substitute
+ * the swapped record for this team's row in the real-only table, and count
+ * a playoff finish (top season.playoffTeams by win points, points-for
+ * tiebreak).
+ */
+export function scheduleSwap(season: SeasonData, now: Date): ScheduleSwapEntry[] {
+  const { settled } = auditRegularPeriods(season, now)
+  if (settled.length === 0) return []
+
+  const scoresByPeriod = new Map(settled.map((p) => [p, scoresForPeriod(season, p)]))
+  const opponentOf = new Map<string, TeamId>()
+  for (const f of season.fixtures) {
+    if (!scoresByPeriod.has(f.period)) continue
+    opponentOf.set(`${f.period}:${f.homeTeamId}`, f.awayTeamId)
+    opponentOf.set(`${f.period}:${f.awayTeamId}`, f.homeTeamId)
+  }
+
+  const real = realRecords(season, now)
+  const teamIds = season.teams.map((t) => t.teamId)
+
+  const entries = teamIds.map((teamId) => {
+    let playoffCount = 0
+    for (const otherId of teamIds) {
+      if (otherId === teamId) continue
+      const swapped: TeamRecord = {
+        teamId,
+        wins: 0,
+        draws: 0,
+        losses: 0,
+        pointsFor: real.get(teamId)?.pointsFor ?? 0,
+        pointsAgainst: 0,
+        games: 0,
+      }
+      for (const [period, scores] of scoresByPeriod) {
+        const myScore = scores.get(teamId)
+        if (myScore === undefined) continue
+        const opponent = opponentOf.get(`${period}:${otherId}`)
+        if (opponent === undefined) continue
+        const oppScore = opponent === teamId ? scores.get(otherId) : scores.get(opponent)
+        if (oppScore === undefined) continue
+        swapped.games += 1
+        if (myScore > oppScore) swapped.wins += 1
+        else if (myScore < oppScore) swapped.losses += 1
+        else swapped.draws += 1
+      }
+      const rows = new Map(real)
+      rows.set(teamId, swapped)
+      const rank = rankTable(rows).findIndex((r) => r.teamId === teamId) + 1
+      if (rank <= season.playoffTeams) playoffCount += 1
+    }
+    return { teamId, playoffCount, schedulesTried: teamIds.length - 1 }
+  })
+
+  return entries.sort(
+    (a, b) => b.playoffCount - a.playoffCount || a.teamId.localeCompare(b.teamId),
+  )
 }
