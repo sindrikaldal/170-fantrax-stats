@@ -114,3 +114,121 @@ export function formTable(season: SeasonData, now: Date, window = 6): FormTable 
   }
   return { window, periods, rows: rankTable(records) }
 }
+
+export interface ScoreDistribution {
+  teamId: TeamId
+  scores: { period: number; score: number }[]
+  mean: number
+  /** Population standard deviation. High = boom-or-bust, low = metronome. */
+  stdDev: number
+}
+
+export function scoreDistributions(season: SeasonData, now: Date): ScoreDistribution[] {
+  const { settled } = auditRegularPeriods(season, now)
+  const byTeam = new Map<TeamId, { period: number; score: number }[]>(
+    season.teams.map((t) => [t.teamId, []]),
+  )
+  for (const period of settled) {
+    for (const [teamId, score] of scoresForPeriod(season, period)) {
+      byTeam.get(teamId)?.push({ period, score })
+    }
+  }
+  return [...byTeam.entries()]
+    .map(([teamId, scores]) => {
+      const n = scores.length
+      const mean = n ? scores.reduce((s, x) => s + x.score, 0) / n : 0
+      const stdDev = n
+        ? Math.sqrt(scores.reduce((s, x) => s + (x.score - mean) ** 2, 0) / n)
+        : 0
+      return { teamId, scores, mean, stdDev }
+    })
+    .sort((a, b) => b.stdDev - a.stdDev || a.teamId.localeCompare(b.teamId))
+}
+
+export interface Collapse {
+  teamId: TeamId
+  fromPeriod: number
+  toPeriod: number
+  fromScore: number
+  toScore: number
+  drop: number
+}
+
+/** Each team's worst week-on-week fall, biggest first. */
+export function biggestCollapses(season: SeasonData, now: Date): Collapse[] {
+  const { settled } = auditRegularPeriods(season, now)
+  const scoresByPeriod = new Map(settled.map((p) => [p, scoresForPeriod(season, p)]))
+  const out: Collapse[] = []
+  for (const team of season.teams) {
+    let worst: Collapse | null = null
+    for (const p of settled) {
+      if (!scoresByPeriod.has(p + 1)) continue
+      const from = scoresByPeriod.get(p)?.get(team.teamId)
+      const to = scoresByPeriod.get(p + 1)?.get(team.teamId)
+      if (from === undefined || to === undefined) continue
+      const drop = from - to
+      if (drop > 0 && (worst === null || drop > worst.drop)) {
+        worst = { teamId: team.teamId, fromPeriod: p, toPeriod: p + 1, fromScore: from, toScore: to, drop }
+      }
+    }
+    if (worst) out.push(worst)
+  }
+  return out.sort((a, b) => b.drop - a.drop || a.teamId.localeCompare(b.teamId))
+}
+
+export interface WeeklyAwards {
+  period: number
+  /** Ties share the honour, exactly like the prize ledger. */
+  topScore: { teamIds: TeamId[]; score: number }
+  biggestBlowout: {
+    period: number
+    winnerId: TeamId
+    loserId: TeamId
+    winnerScore: number
+    loserScore: number
+    margin: number
+  } | null
+  /** Highest score that still lost. */
+  unluckiestLoss: { teamId: TeamId; score: number } | null
+  /** Lowest score that still won. */
+  luckiestWin: { teamId: TeamId; score: number } | null
+}
+
+/** Auto-generated gameweek honours. Work from gameweek one, no history needed. */
+export function weeklyAwards(season: SeasonData, now: Date): WeeklyAwards[] {
+  const { settled } = auditRegularPeriods(season, now)
+  return settled.map((period) => {
+    const scores = scoresForPeriod(season, period)
+    const top = Math.max(...scores.values())
+    const topIds = [...scores.entries()].filter(([, v]) => v === top).map(([id]) => id)
+
+    let blowout: WeeklyAwards['biggestBlowout'] = null
+    let unluckiest: WeeklyAwards['unluckiestLoss'] = null
+    let luckiest: WeeklyAwards['luckiestWin'] = null
+    for (const f of season.fixtures) {
+      if (f.period !== period || f.homeScore === null || f.awayScore === null) continue
+      if (f.homeScore === f.awayScore) continue
+      const [winnerId, winnerScore, loserId, loserScore] =
+        f.homeScore > f.awayScore
+          ? [f.homeTeamId, f.homeScore, f.awayTeamId, f.awayScore]
+          : [f.awayTeamId, f.awayScore, f.homeTeamId, f.homeScore]
+      const margin = winnerScore - loserScore
+      if (blowout === null || margin > blowout.margin) {
+        blowout = { period, winnerId, loserId, winnerScore, loserScore, margin }
+      }
+      if (unluckiest === null || loserScore > unluckiest.score) {
+        unluckiest = { teamId: loserId, score: loserScore }
+      }
+      if (luckiest === null || winnerScore < luckiest.score) {
+        luckiest = { teamId: winnerId, score: winnerScore }
+      }
+    }
+    return {
+      period,
+      topScore: { teamIds: topIds, score: top },
+      biggestBlowout: blowout,
+      unluckiestLoss: unluckiest,
+      luckiestWin: luckiest,
+    }
+  })
+}

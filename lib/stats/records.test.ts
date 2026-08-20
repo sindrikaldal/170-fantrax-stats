@@ -2,8 +2,9 @@ import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { LeagueInfoSchema, ScheduleResponseSchema } from '@/lib/fantrax/schemas'
 import { buildSeasonData } from '@/lib/adapt/season'
-import { scoreExtremes, streaks, formTable } from '@/lib/stats/records'
+import { scoreExtremes, streaks, formTable, scoreDistributions, biggestCollapses, weeklyAwards } from '@/lib/stats/records'
 import type { SeasonData } from '@/lib/domain/types'
+import { syntheticSeason, SYNTHETIC_SEASON_OVER } from '@/test/helpers/synthetic'
 
 const load = (y: number, f: string) => JSON.parse(readFileSync(`test/fixtures/${y}/${f}`, 'utf8'))
 
@@ -99,5 +100,94 @@ describe('formTable, 2025 season', () => {
     const early = formTable(season2025, new Date('2025-08-30'))
     expect(early.periods).toEqual([1, 2])
     expect(early.window).toBe(6)
+  })
+})
+
+describe('scoreDistributions, 2025 season', () => {
+  const dists = scoreDistributions(season2025, AFTER_SEASON)
+  const of = (name: string) => dists.find((d) => nameOf(season2025, d.teamId) === name)!
+
+  it('The Füllkrug Express is the boom-or-bust king: sd 30.65 on mean 103.01', () => {
+    expect(nameOf(season2025, dists[0].teamId)).toBe('The Füllkrug Express')
+    expect(dists[0].stdDev).toBeCloseTo(30.65, 1)
+    expect(dists[0].mean).toBeCloseTo(103.01, 1)
+    expect(dists[0].scores).toHaveLength(35)
+  })
+
+  it('Proof the Curse is the metronome: sd 23.08', () => {
+    expect(of('Proof the Curse lives once more').stdDev).toBeCloseTo(23.08, 1)
+  })
+
+  it('scores carry their gameweek for charting', () => {
+    const fk = of('The Füllkrug Express')
+    expect(fk.scores[0].period).toBe(1)
+    expect(fk.scores.map((s) => s.period)).toEqual([...Array(35)].map((_, i) => i + 1))
+  })
+})
+
+describe('biggestCollapses, 2025 season', () => {
+  it('FC Slaughterhouse! fell off a cliff: 156.5 to 41.75 between GW33 and 34', () => {
+    const collapses = biggestCollapses(season2025, AFTER_SEASON)
+    const worst = collapses[0]
+    expect(nameOf(season2025, worst.teamId)).toBe('FC Slaughterhouse!')
+    expect(worst.fromPeriod).toBe(33)
+    expect(worst.toPeriod).toBe(34)
+    expect(worst.fromScore).toBeCloseTo(156.5, 6)
+    expect(worst.toScore).toBeCloseTo(41.75, 6)
+    expect(worst.drop).toBeCloseTo(114.75, 6)
+  })
+})
+
+describe('weeklyAwards, 2025 season', () => {
+  const awards = weeklyAwards(season2025, AFTER_SEASON)
+
+  it('hands out awards for all 35 gameweeks', () => {
+    expect(awards).toHaveLength(35)
+    expect(awards.map((a) => a.period)).toEqual([...Array(35)].map((_, i) => i + 1))
+  })
+
+  it('gameweek 1: Haaland tops on 143', () => {
+    const gw1 = awards[0]
+    expect(gw1.topScore.score).toBeCloseTo(143, 6)
+    expect(gw1.topScore.teamIds.map((id) => nameOf(season2025, id))).toEqual([
+      'Haaland, Sakalegur markaskorari',
+    ])
+  })
+
+  it('gameweek 1: les Homms blew out Palm Air by 41.75', () => {
+    const b = awards[0].biggestBlowout!
+    expect(nameOf(season2025, b.winnerId)).toBe('les Homms')
+    expect(nameOf(season2025, b.loserId)).toBe('Palm Air')
+    expect(b.winnerScore).toBeCloseTo(97.5, 6)
+    expect(b.loserScore).toBeCloseTo(55.75, 6)
+    expect(b.margin).toBeCloseTo(41.75, 6)
+  })
+
+  it('gameweek 1: Füllkrug scored 123.25 and still lost; EWM won with 82.5', () => {
+    expect(nameOf(season2025, awards[0].unluckiestLoss!.teamId)).toBe('The Füllkrug Express')
+    expect(awards[0].unluckiestLoss!.score).toBeCloseTo(123.25, 6)
+    expect(nameOf(season2025, awards[0].luckiestWin!.teamId)).toBe('Earth, Wind & Maguire')
+    expect(awards[0].luckiestWin!.score).toBeCloseTo(82.5, 6)
+  })
+
+  it('gameweek 16: the tied top score is shared', () => {
+    const gw16 = awards[15]
+    expect(gw16.topScore.teamIds).toHaveLength(2)
+    expect(gw16.topScore.score).toBeCloseTo(114.25, 6)
+  })
+
+  it('an all-drawn gameweek has a top score but no decisive awards', () => {
+    const season = syntheticSeason({
+      fixtures: [
+        { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 50, awayScore: 50 },
+        { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 60, awayScore: 60 },
+      ],
+    })
+    const a = weeklyAwards(season, SYNTHETIC_SEASON_OVER)
+    expect(a).toHaveLength(1)
+    expect(a[0].topScore.teamIds.sort()).toEqual(['C', 'D'])
+    expect(a[0].biggestBlowout).toBeNull()
+    expect(a[0].unluckiestLoss).toBeNull()
+    expect(a[0].luckiestWin).toBeNull()
   })
 })
