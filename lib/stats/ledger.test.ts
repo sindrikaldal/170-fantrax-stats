@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs'
 import { LeagueInfoSchema, ScheduleResponseSchema } from '@/lib/fantrax/schemas'
 import { buildSeasonData } from '@/lib/adapt/season'
 import { computeLedger, PRIZE_PER_GAMEWEEK } from '@/lib/stats/ledger'
-import type { Fixture, SeasonData } from '@/lib/domain/types'
+import type { SeasonData } from '@/lib/domain/types'
+import { syntheticSeason, SYNTHETIC_SEASON_OVER } from '@/test/helpers/synthetic'
 
 const load = (y: number, f: string) => JSON.parse(readFileSync(`test/fixtures/${y}/${f}`, 'utf8'))
 
@@ -114,34 +115,16 @@ describe('computeLedger, incomplete and empty seasons', () => {
 // "done" once its end date has passed — even though nobody has played it.
 // These synthetic seasons exercise `computeLedger`'s guards against that
 // directly, without touching the irreplaceable fixtures under test/fixtures.
-function buildSyntheticSeason(period1Fixtures: Fixture[]): SeasonData {
-  return {
-    seasonYear: 2099,
-    leagueId: 'synthetic',
-    leagueName: 'Synthetic League',
-    regularSeasonPeriods: 1,
-    totalPeriods: 1,
-    teams: [
-      { teamId: 'A', name: 'Team A', shortName: null, logoUrl: null },
-      { teamId: 'B', name: 'Team B', shortName: null, logoUrl: null },
-      { teamId: 'C', name: 'Team C', shortName: null, logoUrl: null },
-      { teamId: 'D', name: 'Team D', shortName: null, logoUrl: null },
-    ],
-    periods: [{ number: 1, startDate: '2025-01-01T00:00:00.000Z', endDate: '2025-01-08T00:00:00.000Z' }],
-    fixtures: period1Fixtures,
-    averageFixtures: [],
-  }
-}
-
-const AFTER_SYNTHETIC_PERIOD = new Date('2025-02-01')
 
 describe('computeLedger, unplayed gameweeks reported as all-zero or partial scores', () => {
   it('does not pay a gameweek where every team is reported at 0', () => {
-    const season = buildSyntheticSeason([
-      { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 0, awayScore: 0 },
-      { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 0, awayScore: 0 },
-    ])
-    const ledger = computeLedger(season, AFTER_SYNTHETIC_PERIOD)
+    const season = syntheticSeason({
+      fixtures: [
+        { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 0, awayScore: 0 },
+        { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 0, awayScore: 0 },
+      ],
+    })
+    const ledger = computeLedger(season, SYNTHETIC_SEASON_OVER)
     expect(ledger.gameweeksCounted).toBe(0)
     expect(ledger.gameweeks).toEqual([])
     expect(ledger.totalPaid).toBe(0)
@@ -149,22 +132,26 @@ describe('computeLedger, unplayed gameweeks reported as all-zero or partial scor
   })
 
   it('does not pay a gameweek where only some teams have reported scores', () => {
-    const season = buildSyntheticSeason([
-      { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 10, awayScore: 5 },
-      { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: null, awayScore: null },
-    ])
-    const ledger = computeLedger(season, AFTER_SYNTHETIC_PERIOD)
+    const season = syntheticSeason({
+      fixtures: [
+        { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 10, awayScore: 5 },
+        { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: null, awayScore: null },
+      ],
+    })
+    const ledger = computeLedger(season, SYNTHETIC_SEASON_OVER)
     expect(ledger.gameweeksCounted).toBe(0)
     expect(ledger.gameweeks).toEqual([])
     expect(ledger.totalPaid).toBe(0)
   })
 
   it('still pays a gameweek with full, non-zero scores (guard is not over-aggressive)', () => {
-    const season = buildSyntheticSeason([
-      { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 10, awayScore: 5 },
-      { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 8, awayScore: 3 },
-    ])
-    const ledger = computeLedger(season, AFTER_SYNTHETIC_PERIOD)
+    const season = syntheticSeason({
+      fixtures: [
+        { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 10, awayScore: 5 },
+        { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 8, awayScore: 3 },
+      ],
+    })
+    const ledger = computeLedger(season, SYNTHETIC_SEASON_OVER)
     expect(ledger.gameweeksCounted).toBe(1)
     expect(ledger.totalPaid).toBeCloseTo(PRIZE_PER_GAMEWEEK, 6)
     expect(ledger.gameweeks[0].winners).toEqual(['A'])
@@ -173,11 +160,13 @@ describe('computeLedger, unplayed gameweeks reported as all-zero or partial scor
   })
 
   it('counts an all-zero completed period as withheld, not simply absent', () => {
-    const season = buildSyntheticSeason([
-      { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 0, awayScore: 0 },
-      { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 0, awayScore: 0 },
-    ])
-    const ledger = computeLedger(season, AFTER_SYNTHETIC_PERIOD)
+    const season = syntheticSeason({
+      fixtures: [
+        { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 0, awayScore: 0 },
+        { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 0, awayScore: 0 },
+      ],
+    })
+    const ledger = computeLedger(season, SYNTHETIC_SEASON_OVER)
     expect(ledger.gameweeksCounted).toBe(0)
     expect(ledger.periodsWithheld).toBe(1)
   })
@@ -192,12 +181,7 @@ describe('computeLedger, team-count vs period-fixture-count cache skew', () => {
     // period's own fixtures, not from `season.teams.length`, or every
     // period — including ones with real, complete scores — would wrongly
     // fail the guard until the caches resync.
-    const season: SeasonData = {
-      seasonYear: 2099,
-      leagueId: 'synthetic',
-      leagueName: 'Synthetic League',
-      regularSeasonPeriods: 1,
-      totalPeriods: 1,
+    const season = syntheticSeason({
       teams: [
         { teamId: 'A', name: 'Team A', shortName: null, logoUrl: null },
         { teamId: 'B', name: 'Team B', shortName: null, logoUrl: null },
@@ -205,19 +189,35 @@ describe('computeLedger, team-count vs period-fixture-count cache skew', () => {
         { teamId: 'D', name: 'Team D', shortName: null, logoUrl: null },
         { teamId: 'E', name: 'Team E (just joined)', shortName: null, logoUrl: null },
       ],
-      periods: [
-        { number: 1, startDate: '2025-01-01T00:00:00.000Z', endDate: '2025-01-08T00:00:00.000Z' },
-      ],
       fixtures: [
         { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 10, awayScore: 5 },
         { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 8, awayScore: 3 },
       ],
-      averageFixtures: [],
-    }
-    const ledger = computeLedger(season, AFTER_SYNTHETIC_PERIOD)
+    })
+    const ledger = computeLedger(season, SYNTHETIC_SEASON_OVER)
     expect(ledger.gameweeksCounted).toBe(1)
     expect(ledger.periodsWithheld).toBe(0)
     expect(ledger.totalPaid).toBeCloseTo(PRIZE_PER_GAMEWEEK, 6)
     expect(ledger.gameweeks[0].winners).toEqual(['A'])
+  })
+})
+
+describe('computeLedger, truncated fixture rows', () => {
+  it('withholds a period whose fixture rows were truncated during parsing', () => {
+    // Period 2 lost its C–D row during parsing; the surviving A–B row has
+    // complete, non-zero scores. Without the max-fixtures guard the ledger
+    // would pay period 2's prize to A among the survivors.
+    const season = syntheticSeason({
+      fixtures: [
+        { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 10, awayScore: 5 },
+        { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 8, awayScore: 3 },
+        { period: 2, homeTeamId: 'A', awayTeamId: 'B', homeScore: 12, awayScore: 7 },
+      ],
+    })
+    const ledger = computeLedger(season, SYNTHETIC_SEASON_OVER)
+    expect(ledger.gameweeksCounted).toBe(1)
+    expect(ledger.gameweeks.map((g) => g.period)).toEqual([1])
+    expect(ledger.periodsWithheld).toBe(1)
+    expect(ledger.totalPaid).toBeCloseTo(PRIZE_PER_GAMEWEEK, 6)
   })
 })
