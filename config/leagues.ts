@@ -15,3 +15,9 @@ export const SEASON_YEARS: number[] = Object.keys(LEAGUES)
   .sort((a, b) => b - a)
 
 export const CURRENT_SEASON = SEASON_YEARS[0]
+
+/**
+ * The 1500 ISK gameweek prize is new for the 2026 season. Earlier seasons
+ * are computed for display only and must be labelled hypothetical.
+ */
+export const PRIZE_RULE_FROM_SEASON = 2026
