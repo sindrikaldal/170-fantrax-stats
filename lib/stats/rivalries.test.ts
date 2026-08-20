@@ -149,4 +149,26 @@ describe('revengeFixtures', () => {
   it('a fixture in an already-ended period is not upcoming', () => {
     expect(revengeFixtures([past, current], resolution, SYNTHETIC_SEASON_OVER)).toEqual([])
   })
+
+  it('no revenge when the last meeting was a draw', () => {
+    const drawn = syntheticSeason({
+      seasonYear: 2098,
+      teams: teams2098,
+      periods: [
+        { number: 1, startDate: '2098-01-01T00:00:00.000Z', endDate: '2098-01-08T00:00:00.000Z' },
+      ],
+      fixtures: [
+        { period: 1, homeTeamId: 'OLD-A', awayTeamId: 'OLD-B', homeScore: 75, awayScore: 75 },
+      ],
+    })
+    const currentWithDraw = syntheticSeason({
+      seasonYear: 2099,
+      teams: teams2099,
+      fixtures: [
+        { period: 1, homeTeamId: 'NEW-A', awayTeamId: 'NEW-B', homeScore: null, awayScore: null },
+      ],
+    })
+    const r = resolveManagers([drawn, currentWithDraw], {})
+    expect(revengeFixtures([drawn, currentWithDraw], r, NOW)).toEqual([])
+  })
 })
