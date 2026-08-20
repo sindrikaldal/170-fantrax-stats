@@ -1,5 +1,5 @@
 import type { ManagerId, SeasonData } from '@/lib/domain/types'
-import { auditRegularPeriods } from '@/lib/domain/season'
+import { auditRegularPeriods, isPeriodComplete } from '@/lib/domain/season'
 import type { ManagerResolution } from './managers'
 
 export interface Meeting {
@@ -125,4 +125,63 @@ export function nemesisAndBunny(matrix: HeadToHead[], minMeetings = 2): NemesisB
       bunny: sorted.length > 0 ? sorted[sorted.length - 1] : null,
     }
   })
+}
+
+export interface RevengeFixture {
+  seasonYear: number
+  period: number
+  /** The manager owed revenge — they lost the last meeting. */
+  managerId: ManagerId
+  opponentId: ManagerId
+  /** That loss, from managerId's point of view. */
+  lastMeeting: Meeting
+}
+
+/** Upcoming fixtures where one side lost the previous meeting. */
+export function revengeFixtures(
+  seasons: SeasonData[],
+  resolution: ManagerResolution,
+  now: Date,
+): RevengeFixture[] {
+  if (seasons.length === 0) return []
+  const current = seasons.reduce((a, b) => (b.seasonYear > a.seasonYear ? b : a))
+
+  const managerOfTeam = new Map<string, ManagerId>()
+  for (const m of resolution.managers) {
+    for (const t of m.teams) managerOfTeam.set(`${t.seasonYear}:${t.teamId}`, m.managerId)
+  }
+
+  const matrix = headToHeadMatrix(seasons, resolution, now)
+  const lastMeeting = new Map<string, Meeting>()
+  for (const h of matrix) {
+    // meetings are chronological; the last one is the most recent
+    lastMeeting.set(`${h.managerId}|${h.opponentId}`, h.meetings[h.meetings.length - 1])
+  }
+
+  const out: RevengeFixture[] = []
+  for (const f of current.fixtures) {
+    if (f.period > current.regularSeasonPeriods) continue
+    if (isPeriodComplete(current, f.period, now)) continue
+    const home = managerOfTeam.get(`${current.seasonYear}:${f.homeTeamId}`)
+    const away = managerOfTeam.get(`${current.seasonYear}:${f.awayTeamId}`)
+    if (!home || !away) continue
+    for (const [mine, theirs] of [
+      [home, away],
+      [away, home],
+    ] as const) {
+      const last = lastMeeting.get(`${mine}|${theirs}`)
+      if (last && last.margin < 0) {
+        out.push({
+          seasonYear: current.seasonYear,
+          period: f.period,
+          managerId: mine,
+          opponentId: theirs,
+          lastMeeting: last,
+        })
+      }
+    }
+  }
+  return out.sort(
+    (a, b) => a.period - b.period || a.managerId.localeCompare(b.managerId),
+  )
 }

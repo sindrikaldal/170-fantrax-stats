@@ -3,8 +3,10 @@ import { readFileSync } from 'node:fs'
 import { LeagueInfoSchema, ScheduleResponseSchema } from '@/lib/fantrax/schemas'
 import { buildSeasonData } from '@/lib/adapt/season'
 import type { SeasonData } from '@/lib/domain/types'
-import { headToHeadMatrix, nemesisAndBunny } from '@/lib/stats/rivalries'
+import { headToHeadMatrix, nemesisAndBunny, revengeFixtures } from '@/lib/stats/rivalries'
 import { resolveManagers } from '@/lib/stats/managers'
+import { syntheticSeason, SYNTHETIC_SEASON_OVER } from '@/test/helpers/synthetic'
+import type { Team } from '@/lib/domain/types'
 
 const load = (y: number, f: string) => JSON.parse(readFileSync(`test/fixtures/${y}/${f}`, 'utf8'))
 
@@ -81,5 +83,70 @@ describe('nemesisAndBunny, 2025 season', () => {
       expect(v.nemesis).toBeNull()
       expect(v.bunny).toBeNull()
     }
+  })
+})
+
+describe('revengeFixtures', () => {
+  // Same two managers in both seasons, different teamIds — the realistic shape.
+  const teams2098: Team[] = [
+    { teamId: 'OLD-A', name: 'Alpha FC', shortName: null, logoUrl: null },
+    { teamId: 'OLD-B', name: 'Bravo United', shortName: null, logoUrl: null },
+  ]
+  const teams2099: Team[] = [
+    { teamId: 'NEW-A', name: 'Alpha FC', shortName: null, logoUrl: null },
+    { teamId: 'NEW-B', name: 'Bravo United', shortName: null, logoUrl: null },
+  ]
+  // 2098 is fully settled: Alpha beat Bravo in GW1, Bravo won the rematch in GW2.
+  const past = syntheticSeason({
+    seasonYear: 2098,
+    teams: teams2098,
+    periods: [
+      { number: 1, startDate: '2098-01-01T00:00:00.000Z', endDate: '2098-01-08T00:00:00.000Z' },
+      { number: 2, startDate: '2098-01-08T00:00:00.000Z', endDate: '2098-01-15T00:00:00.000Z' },
+    ],
+    fixtures: [
+      { period: 1, homeTeamId: 'OLD-A', awayTeamId: 'OLD-B', homeScore: 100, awayScore: 50 },
+      { period: 2, homeTeamId: 'OLD-B', awayTeamId: 'OLD-A', homeScore: 90, awayScore: 60 },
+    ],
+  })
+  // 2099's meeting has not been played; its period ends in the future.
+  const current = syntheticSeason({
+    seasonYear: 2099,
+    teams: teams2099,
+    fixtures: [
+      { period: 1, homeTeamId: 'NEW-A', awayTeamId: 'NEW-B', homeScore: null, awayScore: null },
+    ],
+  })
+  const resolution = resolveManagers([past, current], {})
+  const NOW = new Date('2098-06-01') // 2098 settled, 2099 periods still open
+
+  it('the manager who lost the last meeting is owed revenge', () => {
+    const revenge = revengeFixtures([past, current], resolution, NOW)
+    expect(revenge).toHaveLength(1)
+    expect(revenge[0].managerId).toBe('alpha-fc') // lost the GW2 rematch 60-90
+    expect(revenge[0].opponentId).toBe('bravo-united')
+    expect(revenge[0].seasonYear).toBe(2099)
+    expect(revenge[0].period).toBe(1)
+    expect(revenge[0].lastMeeting.margin).toBeCloseTo(-30, 6)
+    expect(revenge[0].lastMeeting.seasonYear).toBe(2098)
+  })
+
+  it('no revenge when the pair has never met', () => {
+    const strangers = syntheticSeason({
+      seasonYear: 2099,
+      teams: [
+        { teamId: 'NEW-A', name: 'Alpha FC', shortName: null, logoUrl: null },
+        { teamId: 'NEW-C', name: 'Charlie Town', shortName: null, logoUrl: null },
+      ],
+      fixtures: [
+        { period: 1, homeTeamId: 'NEW-A', awayTeamId: 'NEW-C', homeScore: null, awayScore: null },
+      ],
+    })
+    const r = resolveManagers([past, strangers], {})
+    expect(revengeFixtures([past, strangers], r, NOW)).toEqual([])
+  })
+
+  it('a fixture in an already-ended period is not upcoming', () => {
+    expect(revengeFixtures([past, current], resolution, SYNTHETIC_SEASON_OVER)).toEqual([])
   })
 })
