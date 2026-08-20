@@ -42,6 +42,8 @@ export interface SeasonData {
   /** Last gameweek of the regular season, 35 in both known seasons. */
   regularSeasonPeriods: number
   totalPeriods: number
+  /** Teams that make the playoffs: 5 of 10 in 2025, 7 of 14 in 2026. */
+  playoffTeams: number
   teams: Team[]
   periods: Period[]
   /** Real matchups only. Never contains *League Average* rows. */

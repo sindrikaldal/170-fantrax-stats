@@ -3,6 +3,10 @@ import { readFileSync } from 'node:fs'
 import { LeagueInfoSchema } from '@/lib/fantrax/schemas'
 import { adaptLeagueInfo } from '@/lib/adapt/leagueInfo'
 
+const raw2025 = LeagueInfoSchema.parse(
+  JSON.parse(readFileSync('test/fixtures/2025/getLeagueInfo.json', 'utf8')),
+)
+
 const raw2026 = LeagueInfoSchema.parse(
   JSON.parse(readFileSync('test/fixtures/2026/getLeagueInfo.json', 'utf8')),
 )
@@ -39,5 +43,13 @@ describe('adaptLeagueInfo', () => {
     expect(r.periods[0].number).toBe(1)
     expect(r.periods[37].number).toBe(38)
     expect(r.periods[0].startDate).toContain('2026-08-21')
+  })
+
+  it('adapts the playoff team count (2025: 5 of 10)', () => {
+    expect(adaptLeagueInfo(raw2025).playoffTeams).toBe(5)
+  })
+
+  it('adapts the playoff team count (2026: 7 of 14)', () => {
+    expect(adaptLeagueInfo(raw2026).playoffTeams).toBe(7)
   })
 })

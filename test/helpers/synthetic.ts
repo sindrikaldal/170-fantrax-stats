@@ -14,6 +14,7 @@ export interface SyntheticSeasonOptions {
   fixtures?: Fixture[]
   averageFixtures?: AverageFixture[]
   regularSeasonPeriods?: number
+  playoffTeams?: number
 }
 
 /** All synthetic periods are complete by this date. */
@@ -43,6 +44,7 @@ export function syntheticSeason(opts: SyntheticSeasonOptions = {}): SeasonData {
     leagueName: 'Synthetic League',
     regularSeasonPeriods,
     totalPeriods: periods.length,
+    playoffTeams: opts.playoffTeams ?? 2,
     teams: opts.teams ?? DEFAULT_TEAMS,
     periods,
     fixtures,
