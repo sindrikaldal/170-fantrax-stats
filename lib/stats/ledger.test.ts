@@ -169,5 +169,55 @@ describe('computeLedger, unplayed gameweeks reported as all-zero or partial scor
     expect(ledger.totalPaid).toBeCloseTo(PRIZE_PER_GAMEWEEK, 6)
     expect(ledger.gameweeks[0].winners).toEqual(['A'])
     expect(ledger.gameweeks[0].topScore).toBe(10)
+    expect(ledger.periodsWithheld).toBe(0)
+  })
+
+  it('counts an all-zero completed period as withheld, not simply absent', () => {
+    const season = buildSyntheticSeason([
+      { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 0, awayScore: 0 },
+      { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 0, awayScore: 0 },
+    ])
+    const ledger = computeLedger(season, AFTER_SYNTHETIC_PERIOD)
+    expect(ledger.gameweeksCounted).toBe(0)
+    expect(ledger.periodsWithheld).toBe(1)
+  })
+})
+
+describe('computeLedger, team-count vs period-fixture-count cache skew', () => {
+  it('still pays a period when season.teams has more entries than that period accounts for', () => {
+    // Simulates a 15th manager joining mid-season: `fetchLeagueInfo` caches
+    // for 24h and `fetchSchedule` for 30min, so a newly-added team can show
+    // up in `season.teams` well before it has ever appeared in a fixture.
+    // The completeness guard must derive its expected score count from this
+    // period's own fixtures, not from `season.teams.length`, or every
+    // period — including ones with real, complete scores — would wrongly
+    // fail the guard until the caches resync.
+    const season: SeasonData = {
+      seasonYear: 2099,
+      leagueId: 'synthetic',
+      leagueName: 'Synthetic League',
+      regularSeasonPeriods: 1,
+      totalPeriods: 1,
+      teams: [
+        { teamId: 'A', name: 'Team A', shortName: null, logoUrl: null },
+        { teamId: 'B', name: 'Team B', shortName: null, logoUrl: null },
+        { teamId: 'C', name: 'Team C', shortName: null, logoUrl: null },
+        { teamId: 'D', name: 'Team D', shortName: null, logoUrl: null },
+        { teamId: 'E', name: 'Team E (just joined)', shortName: null, logoUrl: null },
+      ],
+      periods: [
+        { number: 1, startDate: '2025-01-01T00:00:00.000Z', endDate: '2025-01-08T00:00:00.000Z' },
+      ],
+      fixtures: [
+        { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 10, awayScore: 5 },
+        { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 8, awayScore: 3 },
+      ],
+      averageFixtures: [],
+    }
+    const ledger = computeLedger(season, AFTER_SYNTHETIC_PERIOD)
+    expect(ledger.gameweeksCounted).toBe(1)
+    expect(ledger.periodsWithheld).toBe(0)
+    expect(ledger.totalPaid).toBeCloseTo(PRIZE_PER_GAMEWEEK, 6)
+    expect(ledger.gameweeks[0].winners).toEqual(['A'])
   })
 })

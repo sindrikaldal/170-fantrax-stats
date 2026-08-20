@@ -13,7 +13,7 @@ const FXPA = 'https://www.fantrax.com/fxpa/req'
 /** Revalidation window for live season data, in seconds. */
 const LIVE_TTL = 1800
 
-class FantraxError extends Error {
+export class FantraxError extends Error {
   constructor(endpoint: string, cause: string) {
     super(`Fantrax request failed (${endpoint}): ${cause}`)
     this.name = 'FantraxError'

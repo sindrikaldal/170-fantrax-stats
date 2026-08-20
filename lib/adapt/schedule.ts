@@ -20,8 +20,10 @@ export function parseScore(content: string): number | null {
   return Number.isFinite(n) ? n : null
 }
 
+// Anchored so a caption like "Round 1" (playoffs) is never mistaken for
+// gameweek 1 — only an exact "Gameweek <N>" caption parses.
 function parsePeriod(caption: string): number | null {
-  const m = caption.match(/(\d+)/)
+  const m = caption.trim().match(/^Gameweek\s+(\d+)$/i)
   return m ? Number(m[1]) : null
 }
 
@@ -29,10 +31,19 @@ export function adaptSchedule(raw: RawScheduleResponse): AdaptedSchedule {
   const data = raw.responses[0].data
   const fixtures: Fixture[] = []
   const averageFixtures: AverageFixture[] = []
+  // A period whose table we've already processed is never processed again.
+  // Without this, a second table captioned e.g. "Gameweek 1" (a duplicate,
+  // or a mis-captioned playoff round) would append more rows for period 1,
+  // and since scoresForPeriod writes into a Map keyed by teamId, those rows
+  // would silently overwrite the first table's scores for any team involved
+  // — changing an already-paid gameweek's winner retroactively.
+  const seenPeriods = new Set<number>()
 
   for (const table of data.tableList) {
     const period = parsePeriod(table.caption)
     if (period === null) continue
+    if (seenPeriods.has(period)) continue
+    seenPeriods.add(period)
 
     for (const row of table.rows) {
       const [awayCell, awayScoreCell, homeCell, homeScoreCell] = row.cells

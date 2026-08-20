@@ -78,3 +78,64 @@ describe('adaptSchedule', () => {
     expect(anyMeta.some((m) => m.logoUrl?.startsWith('https://'))).toBe(true)
   })
 })
+
+// Synthetic table lists exercising parsePeriod's anchoring and the
+// duplicate-period guard, without touching the irreplaceable fixtures.
+function makeRow(awayId: string, awayScore: string, homeId: string, homeScore: string) {
+  return {
+    cells: [
+      { content: 'away', teamId: awayId },
+      { content: awayScore },
+      { content: 'home', teamId: homeId },
+      { content: homeScore },
+    ],
+  }
+}
+
+function makeRaw(tableList: { caption: string; rows: ReturnType<typeof makeRow>[] }[]) {
+  return ScheduleResponseSchema.parse({
+    responses: [
+      {
+        data: {
+          tableList,
+          fantasyTeamInfo: {},
+        },
+      },
+    ],
+  })
+}
+
+describe('parsePeriod anchoring, via adaptSchedule', () => {
+  it('ignores a "Round 1" caption rather than treating it as gameweek 1', () => {
+    const raw = makeRaw([
+      { caption: 'Round 1', rows: [makeRow('A', '10', 'B', '5')] },
+    ])
+    const result = adaptSchedule(raw)
+    expect(result.fixtures).toHaveLength(0)
+  })
+
+  it('does not let a duplicate "Gameweek 1" table overwrite the first one', () => {
+    const raw = makeRaw([
+      { caption: 'Gameweek 1', rows: [makeRow('A', '10', 'B', '5')] },
+      { caption: 'Gameweek 1', rows: [makeRow('A', '99', 'B', '99')] },
+    ])
+    const result = adaptSchedule(raw)
+    expect(result.fixtures).toHaveLength(1)
+    expect(result.fixtures[0]).toMatchObject({
+      period: 1,
+      awayTeamId: 'A',
+      awayScore: 10,
+      homeTeamId: 'B',
+      homeScore: 5,
+    })
+  })
+
+  it('still parses a normal "Gameweek 12" caption', () => {
+    const raw = makeRaw([
+      { caption: 'Gameweek 12', rows: [makeRow('A', '10', 'B', '5')] },
+    ])
+    const result = adaptSchedule(raw)
+    expect(result.fixtures).toHaveLength(1)
+    expect(result.fixtures[0].period).toBe(12)
+  })
+})

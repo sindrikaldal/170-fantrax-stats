@@ -1,7 +1,6 @@
 import type { Ledger } from '@/lib/stats/ledger'
 import type { SeasonData } from '@/lib/domain/types'
-
-const isk = new Intl.NumberFormat('is-IS', { maximumFractionDigits: 0 })
+import { isk, teamName } from '../lib/format'
 
 export function LedgerTable({
   season,
@@ -12,16 +11,22 @@ export function LedgerTable({
   ledger: Ledger
   hypothetical: boolean
 }) {
-  const teamName = (id: string) =>
-    season.teams.find((t) => t.teamId === id)?.name ?? id
   const teamLogo = (id: string) =>
     season.teams.find((t) => t.teamId === id)?.logoUrl ?? null
 
   if (ledger.gameweeksCounted === 0) {
     return (
-      <p className="rounded-lg border border-neutral-800 bg-neutral-900 p-6 text-neutral-400">
-        No gameweeks have finished yet. The ledger fills in from gameweek 1.
-      </p>
+      <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-6 text-neutral-400">
+        <p>No gameweeks have finished yet. The ledger fills in from gameweek 1.</p>
+        {ledger.periodsWithheld > 0 && (
+          <p className="mt-2 text-sm text-amber-300">
+            {ledger.periodsWithheld} gameweek{ledger.periodsWithheld === 1 ? '' : 's'}{' '}
+            {ledger.periodsWithheld === 1 ? 'has' : 'have'} ended but{' '}
+            {ledger.periodsWithheld === 1 ? 'is' : 'are'} still awaiting final scores from
+            Fantrax, so {ledger.periodsWithheld === 1 ? 'it is' : 'they are'} not counted yet.
+          </p>
+        )}
+      </div>
     )
   }
 
@@ -39,13 +44,20 @@ export function LedgerTable({
         <caption className="pb-3 text-left text-neutral-400">
           {ledger.gameweeksCounted} of {season.regularSeasonPeriods} gameweeks counted
           &middot; {isk.format(ledger.totalPaid)} ISK total
+          {ledger.periodsWithheld > 0 && (
+            <span className="block text-amber-300">
+              {ledger.periodsWithheld} more gameweek{ledger.periodsWithheld === 1 ? '' : 's'}{' '}
+              {ledger.periodsWithheld === 1 ? 'is' : 'are'} complete but still awaiting final
+              scores from Fantrax.
+            </span>
+          )}
         </caption>
         <thead>
           <tr className="border-b border-neutral-700 text-left text-neutral-400">
-            <th className="py-2 pr-2 font-medium">#</th>
-            <th className="py-2 pr-2 font-medium">Team</th>
-            <th className="py-2 pr-2 text-right font-medium">GW wins</th>
-            <th className="py-2 text-right font-medium">ISK</th>
+            <th scope="col" className="py-2 pr-2 font-medium">#</th>
+            <th scope="col" className="py-2 pr-2 font-medium">Team</th>
+            <th scope="col" className="py-2 pr-2 text-right font-medium">GW wins</th>
+            <th scope="col" className="py-2 text-right font-medium">ISK</th>
           </tr>
         </thead>
         <tbody>
@@ -62,7 +74,7 @@ export function LedgerTable({
                       className="h-5 w-5 rounded-sm object-cover"
                     />
                   )}
-                  {teamName(e.teamId)}
+                  {teamName(season, e.teamId)}
                 </span>
               </td>
               <td className="py-2 pr-2 text-right tabular-nums">{e.gameweekWins}</td>
