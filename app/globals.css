@@ -1,27 +1,59 @@
 @import "tailwindcss";
 
 /*
- * This app ships one dark design — every component hardcodes dark-palette
- * classes (bg-neutral-900, text-amber-200, etc.) with no light variants.
- * Committing --background/--foreground to dark unconditionally (rather than
- * gating on prefers-color-scheme) keeps the hypothetical-money warning
- * banner legible on light-mode devices instead of washing it out to
- * near-invisible contrast against a white background.
+ * 170 Broskis commits to one dark broadcast theme, unconditionally — no
+ * prefers-color-scheme branching anywhere in this file. `color-scheme: dark`
+ * plus painting `background`/`color` directly on `body` is the guard: a
+ * previous version relied on ambient light-mode contrast and made the
+ * hypothetical-money disclaimer on the 2025 ledger effectively invisible.
+ * Committing to dark removes that failure mode instead of testing around it.
  */
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  color-scheme: dark;
+
+  /* Broadcast surfaces, darkest to lightest. */
+  --background: #0a0b0d;
+  --surface: #14171c;
+  --surface-raised: #1b1f26;
+  --line: #262b33;
+
+  /* Text. */
+  --foreground: #f4f5f7;
+  --muted: #8b93a1;
+
+  /* One hot accent for money/winners, one cold accent for luck/analysis.
+   * Win/loss also carry a sign or shape alongside colour, never colour alone. */
+  --gold: #facc15;
+  --gold-dim: #8a6d0f;
+  --cold: #38bdf8;
+  --win: #34d399;
+  --loss: #f87171;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-line: var(--line);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-gold: var(--gold);
+  --color-gold-dim: var(--gold-dim);
+  --color-cold: var(--cold);
+  --color-win: var(--win);
+  --color-loss: var(--loss);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-barlow-condensed);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-display {
+  font-stretch: condensed;
 }
