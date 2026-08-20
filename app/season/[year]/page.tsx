@@ -6,6 +6,11 @@ import { LedgerTable } from '@/app/components/LedgerTable'
 import { GameweekHistory } from '@/app/components/GameweekHistory'
 import { SectionHeader } from '@/app/components/SectionHeader'
 import { EmptyState } from '@/app/components/EmptyState'
+import { AlternateTables } from '@/app/components/luck/AlternateTables'
+import { LuckIndex } from '@/app/components/luck/LuckIndex'
+import { ScheduleSwap } from '@/app/components/luck/ScheduleSwap'
+import { CloseGames } from '@/app/components/luck/CloseGames'
+import { ThresholdTrend } from '@/app/components/luck/ThresholdTrend'
 
 export default async function SeasonPage({
   params,
@@ -47,9 +52,13 @@ export default async function SeasonPage({
           EmptyState is presentational only — whether to show it is on us,
           so a season with enough settled gameweeks gets an honest "not
           built yet" placeholder instead of a nonsensical "needs 0 more". */}
-      <section id="luck" className="mt-12">
-        <SectionHeader title="Luck" subtitle="Who's earning it, who's owed it." />
-        <SectionPlaceholder needed={6} have={settledCount} what="Luck needs a sample." />
+      <section id="luck" className="mt-12 space-y-8">
+        <SectionHeader title="Luck vs. Skill" subtitle="Who earned it, who fluked it." />
+        <AlternateTables view={view} now={now} />
+        <LuckIndex view={view} now={now} />
+        <ScheduleSwap view={view} now={now} />
+        <CloseGames view={view} now={now} />
+        <ThresholdTrend view={view} now={now} />
       </section>
 
       <section id="rivalries" className="mt-12">
