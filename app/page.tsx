@@ -1,8 +1,11 @@
+import Link from 'next/link'
 import { CURRENT_SEASON } from '@/config/leagues'
 import { computeLedger } from '@/lib/stats/ledger'
 import { loadSeasonView } from './lib/season-view'
 import { LedgerTable } from './components/LedgerTable'
 import { GameweekHistory } from './components/GameweekHistory'
+import { AwardsStrip } from './components/AwardsStrip'
+import { LeagueTable } from './components/LeagueTable'
 import { SectionHeader } from './components/SectionHeader'
 
 export default async function Page() {
@@ -39,7 +42,7 @@ export default async function Page() {
         <p className="mt-4 text-xs text-muted">As of {asOf}</p>
       </header>
 
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:py-12">
+      <div className="mx-auto max-w-4xl space-y-12 px-4 py-8 sm:py-12">
         <section>
           <SectionHeader
             title={`${CURRENT_SEASON} Ledger`}
@@ -61,6 +64,35 @@ export default async function Page() {
             </>
           )}
         </section>
+
+        {view && !loadError && (
+          <>
+            <section>
+              <SectionHeader
+                title="This Week's Awards"
+                subtitle="Honours nobody asked for."
+              />
+              <AwardsStrip view={view} now={now} />
+            </section>
+
+            <section>
+              <SectionHeader
+                title="The Table"
+                subtitle="Official standings — real opponent plus League Average."
+              />
+              <LeagueTable view={view} now={now} />
+            </section>
+
+            <div className="text-center">
+              <Link
+                href={`/season/${CURRENT_SEASON}`}
+                className="inline-block font-display text-sm font-bold uppercase tracking-wide text-cold hover:text-foreground"
+              >
+                The deep cuts &rarr;
+              </Link>
+            </div>
+          </>
+        )}
       </div>
     </main>
   )
