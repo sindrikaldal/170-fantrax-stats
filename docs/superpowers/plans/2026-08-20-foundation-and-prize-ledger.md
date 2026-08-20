@@ -1107,7 +1107,7 @@ export function completedRegularPeriods(season: SeasonData, now: Date): number[]
 - [ ] **Step 8: Run the test to verify it passes**
 
 Run: `npm test lib/domain/season.test.ts`
-Expected: PASS, 9 tests.
+Expected: PASS, 10 tests.
 
 - [ ] **Step 9: Commit**
 
