@@ -142,3 +142,109 @@ export function scheduleSwap(season: SeasonData, now: Date): ScheduleSwapEntry[]
     (a, b) => b.playoffCount - a.playoffCount || a.teamId.localeCompare(b.teamId),
   )
 }
+
+export interface PointsAgainstEntry {
+  teamId: TeamId
+  pointsAgainst: number
+  /** Losses where the opponent posted the gameweek's top score. */
+  lossesToTopScore: number
+}
+
+/** Hardest slate faced, plus how often the schedule served up the buzzsaw. */
+export function pointsAgainstTable(season: SeasonData, now: Date): PointsAgainstEntry[] {
+  const { settled } = auditRegularPeriods(season, now)
+  const settledSet = new Set(settled)
+  const real = realRecords(season, now)
+  const losses = new Map<TeamId, number>()
+
+  for (const period of settled) {
+    const scores = scoresForPeriod(season, period)
+    if (scores.size === 0) continue
+    const top = Math.max(...scores.values())
+    for (const f of season.fixtures) {
+      if (f.period !== period || f.homeScore === null || f.awayScore === null) continue
+      const [loser, loserScore, winnerScore] =
+        f.homeScore < f.awayScore
+          ? [f.homeTeamId, f.homeScore, f.awayScore]
+          : [f.awayTeamId, f.awayScore, f.homeScore]
+      if (winnerScore > loserScore && winnerScore === top) {
+        losses.set(loser, (losses.get(loser) ?? 0) + 1)
+      }
+    }
+  }
+
+  return [...real.values()]
+    .map((r) => ({
+      teamId: r.teamId,
+      pointsAgainst: r.pointsAgainst,
+      lossesToTopScore: losses.get(r.teamId) ?? 0,
+    }))
+    .sort((a, b) => b.pointsAgainst - a.pointsAgainst || a.teamId.localeCompare(b.teamId))
+}
+
+export interface CloseGameReport {
+  /** |margin| at the given percentile of this season's own distribution. */
+  threshold: number
+  marginsSampled: number
+  records: Map<TeamId, TeamRecord>
+}
+
+/** Record in nail-biters. The threshold comes from the league's own margins. */
+export function closeGameRecords(
+  season: SeasonData,
+  now: Date,
+  percentile = 0.25,
+): CloseGameReport {
+  const settled = new Set(auditRegularPeriods(season, now).settled)
+  const played = season.fixtures.filter(
+    (f) => settled.has(f.period) && f.homeScore !== null && f.awayScore !== null,
+  )
+  const margins = played
+    .map((f) => Math.abs((f.homeScore as number) - (f.awayScore as number)))
+    .sort((a, b) => a - b)
+
+  const records = new Map<TeamId, TeamRecord>(
+    season.teams.map((t) => [
+      t.teamId,
+      { teamId: t.teamId, wins: 0, draws: 0, losses: 0, pointsFor: 0, pointsAgainst: 0, games: 0 },
+    ]),
+  )
+  if (margins.length === 0) return { threshold: 0, marginsSampled: 0, records }
+
+  const threshold = margins[Math.floor(percentile * (margins.length - 1))]
+  for (const f of played) {
+    const home = f.homeScore as number
+    const away = f.awayScore as number
+    if (Math.abs(home - away) > threshold) continue
+    for (const [id, mine, theirs] of [
+      [f.homeTeamId, home, away],
+      [f.awayTeamId, away, home],
+    ] as const) {
+      const r = records.get(id)
+      if (!r) continue
+      r.games += 1
+      r.pointsFor += mine
+      r.pointsAgainst += theirs
+      if (mine > theirs) r.wins += 1
+      else if (mine < theirs) r.losses += 1
+      else r.draws += 1
+    }
+  }
+  return { threshold, marginsSampled: margins.length, records }
+}
+
+export interface ThresholdPoint {
+  period: number
+  /** The league mean that gameweek — score above it and you beat the average. */
+  threshold: number
+}
+
+/** The moving bar: what it took to beat the league mean, week by week. */
+export function averageThresholds(season: SeasonData, now: Date): ThresholdPoint[] {
+  const { settled } = auditRegularPeriods(season, now)
+  return settled.map((period) => {
+    const scores = [...scoresForPeriod(season, period).values()]
+    const threshold = scores.reduce((s, x) => s + x, 0) / scores.length
+    return { period, threshold }
+  })
+}

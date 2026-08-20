@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { LeagueInfoSchema, ScheduleResponseSchema } from '@/lib/fantrax/schemas'
 import { buildSeasonData } from '@/lib/adapt/season'
-import { allPlayRecords, luckIndex, scheduleSwap } from '@/lib/stats/luck'
+import { allPlayRecords, luckIndex, scheduleSwap, pointsAgainstTable, closeGameRecords, averageThresholds } from '@/lib/stats/luck'
 import type { SeasonData } from '@/lib/domain/types'
 
 const load = (y: number, f: string) => JSON.parse(readFileSync(`test/fixtures/${y}/${f}`, 'utf8'))
@@ -97,5 +97,63 @@ describe('scheduleSwap, 2025 season (5 playoff spots)', () => {
 
   it('is empty before the season starts', () => {
     expect(scheduleSwap(season2025, new Date('2025-08-01'))).toEqual([])
+  })
+})
+
+describe('pointsAgainstTable, 2025 season', () => {
+  const pa = pointsAgainstTable(season2025, AFTER_SEASON)
+
+  it('Year of the Diallo faced the hardest slate: 3601.25 against, 7 losses to the top score', () => {
+    expect(nameOf(season2025, pa[0].teamId)).toBe('Year of the Diallo')
+    expect(pa[0].pointsAgainst).toBeCloseTo(3601.25, 6)
+    expect(pa[0].lossesToTopScore).toBe(7)
+  })
+
+  it('The Füllkrug Express lost to the gameweek top score only twice', () => {
+    const e = pa.find((x) => nameOf(season2025, x.teamId) === 'The Füllkrug Express')!
+    expect(e.pointsAgainst).toBeCloseTo(3092.5, 6)
+    expect(e.lossesToTopScore).toBe(2)
+  })
+})
+
+describe('closeGameRecords, 2025 season', () => {
+  const close = closeGameRecords(season2025, AFTER_SEASON)
+
+  it('derives the threshold from the 25th percentile of the margin distribution', () => {
+    expect(close.threshold).toBeCloseTo(10.5, 6)
+    expect(close.marginsSampled).toBe(175) // 35 gameweeks x 5 real fixtures
+  })
+
+  it('Einn ís Kaldal won every one of its nine close games', () => {
+    const r = close.records.get(idOf(season2025, 'Einn ís Kaldal'))!
+    expect([r.wins, r.draws, r.losses]).toEqual([9, 0, 0])
+  })
+
+  it('FC Slaughterhouse! lost 11 of its 12 close games', () => {
+    const r = close.records.get(idOf(season2025, 'FC Slaughterhouse!'))!
+    expect([r.wins, r.draws, r.losses]).toEqual([1, 0, 11])
+  })
+
+  it("Leibbi davíðs' lone draw counts as a close game", () => {
+    const r = close.records.get(idOf(season2025, 'Leibbi davíðs'))!
+    expect([r.wins, r.draws, r.losses]).toEqual([6, 1, 6])
+  })
+})
+
+describe('averageThresholds, 2025 season', () => {
+  const thresholds = averageThresholds(season2025, AFTER_SEASON)
+
+  it('produces one threshold per settled gameweek', () => {
+    expect(thresholds).toHaveLength(35)
+    expect(thresholds[0].period).toBe(1)
+    expect(thresholds[34].period).toBe(35)
+  })
+
+  it('gameweek 1 needed 101.15 (the fixture-documented league average)', () => {
+    expect(thresholds[0].threshold).toBeCloseTo(101.15, 6)
+  })
+
+  it('gameweek 35 needed 95.775', () => {
+    expect(thresholds[34].threshold).toBeCloseTo(95.775, 6)
   })
 })
