@@ -13,6 +13,11 @@ const links = [
 export function SiteNav() {
   const pathname = usePathname()
 
+  // The login page is the one route reachable without the password, and every
+  // link here goes somewhere that needs it — showing the nav there would just
+  // offer a row of redirects back to the form.
+  if (pathname === '/login') return null
+
   return (
     <nav className="sticky top-0 z-20 border-b border-line bg-paper/90 backdrop-blur">
       <div className="container-page flex gap-1 overflow-x-auto">

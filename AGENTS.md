@@ -26,11 +26,13 @@ Operational dependency: this rests on "Allow public to view league" being
 enabled in Fantrax. If it is ever switched off, the app stops working.
 
 The one bounded exception, and it is unrelated to fetching data: the site
-itself is gated behind a single shared password (`SITE_PASSWORD`, HTTP Basic,
-enforced in `proxy.ts`) purely to deter casual discovery, since the ledger
-names real people and real money. It authenticates *visitors to this site*,
-never requests *to Fantrax*. See
-`docs/superpowers/specs/2026-08-21-site-password-gate-design.md`.
+itself is gated behind a single shared password (`SITE_PASSWORD`) purely to
+deter casual discovery, since the ledger names real people and real money. It
+authenticates *visitors to this site*, never requests *to Fantrax*. `proxy.ts`
+redirects anyone without a valid cookie to `/login`; the cookie is an HMAC
+keyed by the password itself, so there is no second secret and changing the
+password logs everybody out. See
+`docs/superpowers/specs/2026-08-21-login-page-gate-design.md`.
 
 **2. The normalization boundary.** Raw Fantrax JSON is validated in
 `lib/fantrax/` and adapted in `lib/adapt/` into one internal `SeasonData`

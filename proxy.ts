@@ -1,23 +1,37 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { resolveGate, checkCredentials } from '@/lib/auth/basic'
+import { GATE_COOKIE, resolveGate, tokenMatches } from '@/lib/auth/gate'
 
-const REALM = '170 Broskis'
+const LOGIN_PATH = '/login'
 
 const PLAIN_TEXT = { 'content-type': 'text/plain; charset=utf-8' }
 
 /**
- * Gates the entire site behind one shared password (HTTP Basic).
+ * Paths reachable without the password.
  *
- * There is deliberately no `config.matcher`, so every request is covered —
- * including `_next/static`, `_next/image`, and `public/`. Excluding assets
- * would buy nothing under Basic auth, since the browser resends credentials
- * on every request once it has them, and a matcher regex is one more place
- * to be subtly wrong.
+ * `/login` obviously. `/_next/static` because the login page inherits the
+ * root layout, so without its stylesheet and fonts it renders unstyled — the
+ * accepted cost of a real login page over an HTTP Basic prompt. These are
+ * build artefacts with no league data in them; everything that reads Fantrax
+ * lives behind a gated route.
+ *
+ * `/_next/image` is deliberately absent: only crests on gated pages use it.
+ */
+function isPublic(pathname: string): boolean {
+  return pathname === LOGIN_PATH || pathname.startsWith('/_next/static/')
+}
+
+/**
+ * Gates the site behind one shared password held in a cookie.
+ *
+ * There is deliberately no `config.matcher`. The allowlist above is an
+ * explicit function rather than a regex in exported config because it needs a
+ * comment explaining each entry, and because a matcher regex that is subtly
+ * wrong fails open.
  *
  * Next.js 16 renamed middleware to Proxy; this file must stay named
- * `proxy.ts` at the project root. Proxy runs on the Node.js runtime, which
- * is what makes `node:crypto` available to the decision core.
+ * `proxy.ts` at the project root. Proxy runs on the Node.js runtime, which is
+ * what makes `node:crypto` available to the decision core.
  */
 export function proxy(request: NextRequest) {
   const gate = resolveGate({
@@ -27,6 +41,8 @@ export function proxy(request: NextRequest) {
 
   if (gate.mode === 'open') return NextResponse.next()
 
+  // Checked before the allowlist: a misconfigured deployment must not serve
+  // even the login page, or it would collect passwords it cannot verify.
   if (gate.mode === 'closed') {
     return new NextResponse(
       'SITE_PASSWORD is not set. Refusing to serve this site unprotected.\n',
@@ -34,20 +50,18 @@ export function proxy(request: NextRequest) {
     )
   }
 
-  const authorized = checkCredentials({
-    authorizationHeader: request.headers.get('authorization'),
+  const { pathname, search } = request.nextUrl
+
+  if (isPublic(pathname)) return NextResponse.next()
+
+  const authorized = tokenMatches({
+    cookieValue: request.cookies.get(GATE_COOKIE)?.value,
     password: gate.password,
   })
 
   if (authorized) return NextResponse.next()
 
-  return new NextResponse('Authentication required.\n', {
-    status: 401,
-    headers: {
-      // charset="UTF-8" (RFC 7617) tells the browser to encode the password
-      // it collects as UTF-8, matching how the decision core decodes it.
-      'www-authenticate': `Basic realm="${REALM}", charset="UTF-8"`,
-      ...PLAIN_TEXT,
-    },
-  })
+  const login = new URL(LOGIN_PATH, request.url)
+  login.searchParams.set('next', `${pathname}${search}`)
+  return NextResponse.redirect(login)
 }
