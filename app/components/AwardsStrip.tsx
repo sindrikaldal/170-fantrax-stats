@@ -27,7 +27,7 @@ function AwardCard({
   return (
     <div className="relative overflow-hidden rounded-lg border border-line bg-surface p-5">
       <div className={`absolute inset-x-0 top-0 h-0.5 ${accentRule}`} aria-hidden />
-      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
         {eyebrow}
       </p>
       <h3 className={`mt-1.5 font-display text-xl font-semibold tracking-tight ${accentColor}`}>

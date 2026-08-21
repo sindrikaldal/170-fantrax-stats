@@ -23,7 +23,7 @@ function VerdictRow({
   return (
     <div className="flex items-start gap-3 py-3">
       <div className="min-w-0 flex-1">
-        <p className={`text-[11px] font-semibold uppercase tracking-[0.2em] ${accent}`}>
+        <p className={`text-xs font-semibold uppercase tracking-[0.2em] ${accent}`}>
           {nemesis ? 'Nemesis' : 'Bunny'}
         </p>
         <p className="mt-1 flex min-w-0 items-center gap-2 font-medium text-ink">

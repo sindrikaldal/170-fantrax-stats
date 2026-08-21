@@ -103,11 +103,17 @@ export default async function Page() {
             </section>
 
             <div>
+              {/*
+                The hit area is the link; the underline is an inner span.
+                Padding the link itself to reach the 44px touch minimum
+                would drag the border two-and-a-half lines below the text
+                and read as a section rule rather than an underline.
+              */}
               <Link
                 href={`/season/${CURRENT_SEASON}`}
-                className="inline-block border-b-2 border-money pb-0.5 font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-money"
+                className="inline-flex min-h-11 items-center font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-money"
               >
-                The deep cuts &rarr;
+                <span className="border-b-2 border-money pb-0.5">The deep cuts &rarr;</span>
               </Link>
             </div>
           </>

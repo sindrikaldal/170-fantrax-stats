@@ -36,7 +36,7 @@ export function ScheduleSwap({ view, now = new Date() }: { view: SeasonView; now
         return (
           <div key={entry.teamId} className="relative overflow-hidden rounded-lg border border-line bg-surface p-4">
             <div aria-hidden className="absolute inset-x-0 top-0 h-0.5 bg-analysis" />
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
               In another universe&hellip;
             </p>
             <div className="mt-1 flex items-center gap-2">

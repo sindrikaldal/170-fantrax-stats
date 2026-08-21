@@ -113,7 +113,7 @@ export function BoomOrBust({ view, now = new Date() }: { view: SeasonView; now?:
                 replacing the mean line, so no row loses information to it. */}
             <div className="md:text-right">
               {metronome && (
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-analysis">
+                <p className="text-xs font-semibold uppercase tracking-wider text-analysis">
                   The Metronome
                 </p>
               )}

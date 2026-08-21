@@ -36,8 +36,20 @@ export default async function SeasonPage({
   if (!Number.isInteger(year) || !SEASON_YEARS.includes(year)) notFound()
 
   const now = new Date()
-  const view = await loadSeasonView(year, now)
-  const ledger = computeLedger(view.season, now)
+
+  // A season that fails to load must degrade, not 500. The front page
+  // already treats a failed load this way; without the same guard here the
+  // season page threw straight through to Next's error boundary, losing
+  // the masthead, the nav and the cross-season rivalries that do not
+  // depend on this season at all.
+  let view: Awaited<ReturnType<typeof loadSeasonView>> | null = null
+  try {
+    view = await loadSeasonView(year, now)
+  } catch (err) {
+    console.error(`Failed to load season ${year}:`, err)
+  }
+  const ledger = view ? computeLedger(view.season, now) : null
+  const loaded = view && ledger ? { view, ledger } : null
 
   // Rivalries are cross-season: a nemesis earned in 2025 is still a nemesis
   // on the 2026 page, so this section reads every season we can load rather
@@ -50,7 +62,10 @@ export default async function SeasonPage({
   const matrix = headToHeadMatrix(seasons, resolution, now)
   const verdicts = nemesisAndBunny(matrix)
   const revenge = revengeFixtures(seasons, resolution, now)
-  const rivalryYears = allViews.map((v) => v.year).join(' + ')
+  // "2025 + 2026 combined" is only true when more than one season loaded;
+  // if one failed, saying "2025 combined" is both wrong and confusing.
+  const years = allViews.map((v) => v.year)
+  const rivalryScope = years.length > 1 ? `${years.join(' + ')} combined` : String(years[0] ?? year)
 
   return (
     <main className="container-page py-10 sm:py-14">
@@ -63,39 +78,51 @@ export default async function SeasonPage({
         </h1>
       </header>
 
-      <section>
-        <SectionHeader title="Ledger" subtitle="Gameweek prize winners." />
-        <LedgerTable season={view.season} ledger={ledger} hypothetical={view.hypothetical} />
-        <GameweekHistory season={view.season} ledger={ledger} hypothetical={view.hypothetical} />
-      </section>
+      {!loaded ? (
+        <p className="rounded-lg border border-down/40 bg-surface p-4 text-sm text-down">
+          {year} data is temporarily unavailable. The rivalry history below spans every
+          season that did load.
+        </p>
+      ) : (
+        <>
+          <section>
+            <SectionHeader title="Ledger" subtitle="Gameweek prize winners." />
+            <LedgerTable
+              season={loaded.view.season}
+              ledger={loaded.ledger}
+              hypothetical={loaded.view.hypothetical}
+            />
+            <GameweekHistory
+              season={loaded.view.season}
+              ledger={loaded.ledger}
+              hypothetical={loaded.view.hypothetical}
+            />
+          </section>
 
-      {/* Placeholder anchors for tasks 16-18: luck & schedule-luck stats,
-          h2h/nemesis/bunny/revenge, and blowout/collapse/boom-bust records.
-          EmptyState is presentational only — whether to show it is on us,
-          so a season with enough settled gameweeks gets an honest "not
-          built yet" placeholder instead of a nonsensical "needs 0 more". */}
-      {/*
-        Wide-screen pairing: close games and the threshold trend are both
-        supporting blocks and read fine at half width, so they share a row
-        from lg up rather than each running the full 1200px alone. The
-        alternate tables and the schedule-swap cards handle their own
-        internal columns.
-      */}
-      <section id="luck" className="mt-14 space-y-10">
-        <SectionHeader title="Luck vs. Skill" subtitle="Who earned it, who fluked it." />
-        <AlternateTables view={view} now={now} />
-        <LuckIndex view={view} now={now} />
-        <ScheduleSwap view={view} now={now} />
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-6">
-          <CloseGames view={view} now={now} />
-          <ThresholdTrend view={view} now={now} />
-        </div>
-      </section>
+          {/*
+            Wide-screen pairing: close games and the threshold trend are both
+            supporting blocks and read fine at half width, so they share a row
+            from lg up rather than each running the full 1200px alone. The
+            alternate tables and the schedule-swap cards handle their own
+            internal columns.
+          */}
+          <section id="luck" className="mt-14 space-y-10">
+            <SectionHeader title="Luck vs. Skill" subtitle="Who earned it, who fluked it." />
+            <AlternateTables view={loaded.view} now={now} />
+            <LuckIndex view={loaded.view} now={now} />
+            <ScheduleSwap view={loaded.view} now={now} />
+            <div className="grid gap-10 lg:grid-cols-2 lg:gap-6">
+              <CloseGames view={loaded.view} now={now} />
+              <ThresholdTrend view={loaded.view} now={now} />
+            </div>
+          </section>
+        </>
+      )}
 
       <section id="rivalries" className="mt-14 space-y-10">
         <SectionHeader
           title="Rivalries"
-          subtitle={`${rivalryYears} combined — some beatings are personal.`}
+          subtitle={`${rivalryScope} — some beatings are personal.`}
         />
         {matrix.length === 0 ? (
           <EmptyState
@@ -119,18 +146,20 @@ export default async function SeasonPage({
         already a three-column grid, and the strips only stay comparable on
         one long shared scale.
       */}
-      <section id="records" className="mt-14 space-y-10">
-        <SectionHeader
-          title="Records &amp; Power"
-          subtitle="The wall of fame and shame."
-        />
-        <RecordsWall view={view} now={now} />
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-6">
-          <FormTable view={view} now={now} />
-          <PowerRankings view={view} now={now} />
-        </div>
-        <BoomOrBust view={view} now={now} />
-      </section>
+      {loaded && (
+        <section id="records" className="mt-14 space-y-10">
+          <SectionHeader
+            title="Records &amp; Power"
+            subtitle="The wall of fame and shame."
+          />
+          <RecordsWall view={loaded.view} now={now} />
+          <div className="grid gap-10 lg:grid-cols-2 lg:gap-6">
+            <FormTable view={loaded.view} now={now} />
+            <PowerRankings view={loaded.view} now={now} />
+          </div>
+          <BoomOrBust view={loaded.view} now={now} />
+        </section>
+      )}
     </main>
   )
 }

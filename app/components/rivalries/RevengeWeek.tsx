@@ -70,7 +70,7 @@ export function RevengeWeek({
             className="relative overflow-hidden rounded-lg border border-line bg-surface p-5"
           >
             <div aria-hidden className="absolute inset-x-0 top-0 h-0.5 bg-analysis" />
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
               Revenge Week &middot; GW{f.period} &rsquo;{String(f.seasonYear).slice(2)}
             </p>
             <h4 className="mt-1.5 font-display text-xl font-semibold tracking-tight text-analysis">

@@ -7,8 +7,8 @@ import { EmptyState } from '../EmptyState'
 const NEEDS_SETTLED = 3
 
 const WIDTH = 640
-const HEIGHT = 160
-const PAD = { top: 20, right: 12, bottom: 22, left: 12 }
+const HEIGHT = 140
+const PAD = { top: 10, right: 6, bottom: 10, left: 6 }
 
 /**
  * The moving bar to clear, week by week — the league mean, plotted as a
@@ -67,13 +67,22 @@ export function ThresholdTrend({ view, now = new Date() }: { view: SeasonView; n
         <path d={path} fill="none" className="stroke-analysis" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
         <circle cx={first.x} cy={first.y} r={3.5} className="fill-analysis" />
         <circle cx={last.x} cy={last.y} r={3.5} className="fill-analysis" />
-        <text x={first.x} y={first.y - 8} textAnchor="start" className="fill-muted text-[10px]">
-          GW{first.period} &middot; {formatScore(first.threshold)}
-        </text>
-        <text x={last.x} y={last.y - 8} textAnchor="end" className="fill-ink text-[10px] font-semibold">
-          GW{last.period} &middot; {formatScore(last.threshold)}
-        </text>
       </svg>
+      {/*
+        The endpoint labels are HTML, not SVG <text>. Inside a 640-unit
+        viewBox scaled to the container, a 10px label renders at about
+        5px on a 343px phone — the viewBox scales type along with
+        everything else. Out here they are 12px at every width, and the
+        svg's aria-label still carries both figures for screen readers.
+      */}
+      <div className="mt-1 flex items-baseline justify-between gap-4 text-xs tabular-nums">
+        <span className="text-muted">
+          GW{first.period} &middot; {formatScore(first.threshold)}
+        </span>
+        <span className="font-semibold text-ink">
+          GW{last.period} &middot; {formatScore(last.threshold)}
+        </span>
+      </div>
       <p className="mt-1 text-xs text-muted">
         The league-mean score needed to beat average, gameweek by gameweek.
       </p>

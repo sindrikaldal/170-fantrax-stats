@@ -34,7 +34,7 @@ function RecordCard({
 
   return (
     <div className="rounded-lg border border-line bg-surface p-5">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
         {eyebrow}
       </p>
       <p className={`mt-2 font-display text-4xl font-semibold tabular-nums ${color}`}>

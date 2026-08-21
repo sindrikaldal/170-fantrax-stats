@@ -104,7 +104,7 @@ export function H2HMatrix({
                 >
                   <span className="flex flex-col items-center gap-1">
                     <CrestImage url={m?.logoUrl ?? null} name={m?.name ?? ''} />
-                    <span className="max-w-[3.5rem] truncate text-[10px] font-medium text-muted">
+                    <span className="max-w-[3.5rem] truncate text-xs font-medium text-muted">
                       {m.shortName}
                     </span>
                   </span>
@@ -182,7 +182,7 @@ export function H2HMatrix({
         </table>
       </div>
 
-      <p className="mt-2 text-xs text-muted">
+      <p className="prose-measure mt-2 text-xs text-muted">
         Aggregate margin across every meeting, from the row manager&rsquo;s point of view.
         Pick a cell for the scorelines.
       </p>
