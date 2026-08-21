@@ -22,6 +22,7 @@ export function buildSeasonData(
     leagueName: info.leagueName,
     regularSeasonPeriods: info.regularSeasonPeriods,
     totalPeriods: info.totalPeriods,
+    playoffTeams: info.playoffTeams,
     teams,
     periods: info.periods,
     fixtures: schedule.fixtures,

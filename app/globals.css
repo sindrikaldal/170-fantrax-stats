@@ -1,27 +1,98 @@
 @import "tailwindcss";
 
 /*
- * This app ships one dark design — every component hardcodes dark-palette
- * classes (bg-neutral-900, text-amber-200, etc.) with no light variants.
- * Committing --background/--foreground to dark unconditionally (rather than
- * gating on prefers-color-scheme) keeps the hypothetical-money warning
- * banner legible on light-mode devices instead of washing it out to
- * near-invisible contrast against a white background.
+ * 170 Broskis commits to one theme — light, unconditionally. There is no
+ * prefers-color-scheme branching anywhere in this file, and there must not
+ * be: `color-scheme: light` plus painting background/color directly on
+ * `body` is the guard. An earlier version relied on ambient contrast and
+ * made the hypothetical-money disclaimer on the 2025 ledger effectively
+ * invisible; committing to a single painted theme removes that failure mode
+ * instead of testing around it. The accepted cost is that a dark-mode phone
+ * gets a bright page.
+ *
+ * Every text token below is measured against the surface it sits on and the
+ * ratio is in the comment. 4.5:1 is the floor. Do not swap a colour without
+ * re-measuring — the money figures and the hypothetical disclaimer are the
+ * reason the floor exists.
  */
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  color-scheme: light;
+
+  /* Surfaces, lightest to most recessed. */
+  --paper: #fafaf8;
+  --surface: #ffffff;
+  --raised: #f3f2ee;
+  --line: #e5e4df;
+
+  /* Text. */
+  --ink: #1a1a18; /* 16.1:1 on paper, 17.4:1 on surface */
+  --muted: #6b6b63; /* 5.4:1 on paper, 5.6:1 on surface */
+
+  /* One accent for money/winners, one for luck/analysis. Up/down always
+   * carry a sign or arrow alongside the colour, never colour alone. */
+  --money: #b45309; /* 5.3:1 on paper */
+  --analysis: #0369a1; /* 5.7:1 on paper */
+  --up: #15803d; /* 4.9:1 on paper */
+  --down: #b91c1c; /* 6.2:1 on paper */
+
+  /* The hypothetical-money disclaimer. Its own surface so it cannot be
+   * mistaken for chrome, and the highest-contrast pairing on the page. */
+  --warn-bg: #fffbeb;
+  --warn-line: #d97706;
+  --warn-ink: #92400e; /* 7.0:1 on warn-bg */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-money: var(--money);
+  --color-analysis: var(--analysis);
+  --color-up: var(--up);
+  --color-down: var(--down);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-line: var(--warn-line);
+  --color-warn-ink: var(--warn-ink);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/*
+ * The one shared layout measure. Desktop is its own layout, not the phone
+ * layout stretched: content runs to 1200px. Prose that is meant to be read
+ * as sentences uses .prose-measure instead, because 1200px of running text
+ * is unreadable no matter how much room the screen has.
+ */
+.container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1200px;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-page {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-page {
+    padding-inline: 2.5rem;
+  }
+}
+
+.prose-measure {
+  max-width: 68ch;
 }

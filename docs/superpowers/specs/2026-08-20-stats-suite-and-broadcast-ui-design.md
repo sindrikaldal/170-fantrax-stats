@@ -1,8 +1,16 @@
-# Stats Suite and Broadcast UI
+# Stats Suite and Page Redesign
 
 **Date:** 2026-08-20
 **Status:** Approved, ready for planning
 **Builds on:** `2026-08-20-fantrax-league-stats-design.md` (foundation + prize ledger, shipped)
+
+**Amended 2026-08-21** (phase 4 only; phases 0-3 untouched). The original
+direction was a dark sports-broadcast treatment. On review it was rejected: too
+dark, too dense on desktop, and the broadcast styling was not wanted. The
+information design it specified — crests, large numerals, award cards, form
+arrows, score-bat framing — survives; the TV-graphics skin does not. Sections
+below carry the amended text. The filename keeps its original slug because git
+history and the companion plan reference it.
 
 ## What shipped already
 
@@ -91,7 +99,7 @@ times, so these records carry real signal rather than single-sample noise.
   Loss (highest score that still lost), Luckiest Win (lowest score that won).
   These work from gameweek one with no history requirement.
 
-### Phase 4 — Broadcast UI
+### Phase 4 — Page redesign
 
 **This phase works differently from every other phase and from the foundation
 plan.** The stat tasks carry verbatim code and known-correct expected values —
@@ -103,10 +111,19 @@ So: build phases 0-3 first, look at the real numbers, then design against them
 with visual iteration in a browser. Load the `frontend-design` skill for this
 phase.
 
-**Direction: sports broadcast.** Bold condensed typography, team crests and
-colours (Fantrax supplies logo URLs in `fantasyTeamInfo`), score-bat framing,
-animated number counts, form arrows. It should read like a TV graphics package
-or the FPL app.
+**Direction: editorial data magazine.** Light, open, confident with numbers.
+Team crests (Fantrax supplies logo URLs in `fantasyTeamInfo`), large tabular
+numerals, award cards, form arrows and score-bat framing for head-to-head
+figures — the information design that makes twenty stats readable at a glance.
+What it is *not*: a TV graphics package. No dark stadium palette, no heavy
+condensed capitals as the default voice, and no animated number count-ups
+(dropping those also removes a client component and its reduced-motion
+handling). Hierarchy comes from scale, weight and whitespace; character comes
+from one display face used sparingly — masthead, section heads, headline stat
+numerals — over Geist everywhere else.
+
+The page should feel like a well-set stats page in a good sports magazine. The
+fun lives in the copy, the crests and the numbers, not in the chrome.
 
 **Voice: English, full trash talk.** Lean into it — "Unluckiest Loss",
 "Bottled it", "Left 40 on the bench". This page exists to be dropped in a group
@@ -121,6 +138,19 @@ preferences, they are correctness requirements learned the hard way:
    invisible. Any design must be verified in *both* light and dark rendering,
    or must commit to one unconditionally and paint its own background. Playful
    never outranks a person misreading what they are owed.
+
+   **This design commits to light, unconditionally.** `color-scheme: light`,
+   the body paints its own background token, and no rule anywhere branches on
+   `prefers-color-scheme`. One palette, one set of contrast checks, and the
+   invisible-disclaimer failure mode cannot recur. The accepted cost: a reader
+   on a dark-mode phone opening the link from the group chat gets a bright
+   page.
+
+   The accents must be re-derived, not translated. The colours a dark
+   treatment would use (a bright gold, a bright sky blue) fail WCAG AA against
+   a light background; reusing them is the same bug in the other direction.
+   Every accent, every diverging colour scale, and all disclaimer text must be
+   checked against the painted light background.
 2. **Empty and partial states are first-class.** The 2026 season fills in over
    nine months. Most stats need 6-10 gameweeks before they say anything true.
    Each must show an honest "needs N more gameweeks" state rather than a
@@ -130,7 +160,12 @@ preferences, they are correctness requirements learned the hard way:
    ledger, table, this week's awards — with the deeper analysis a click away.
    This is the difference between a page the league opens weekly and one they
    admire once.
-4. **Phone first.** It will be opened from a group chat.
+4. **Phone first, but desktop is a layout of its own.** It will be opened
+   from a group chat, so 375 px is the primary target. Desktop is not that
+   layout stretched wide: content that is naturally parallel must sit
+   side by side, and the container must use meaningfully more than the ~768 px
+   the foundation shipped. Prose line length stays capped for readability even
+   when the container is wide.
 
 ## Architecture
 

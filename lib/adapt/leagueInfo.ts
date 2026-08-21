@@ -8,6 +8,7 @@ export interface AdaptedLeagueInfo {
   periods: Period[]
   regularSeasonPeriods: number
   totalPeriods: number
+  playoffTeams: number
 }
 
 export function adaptLeagueInfo(raw: RawLeagueInfo): AdaptedLeagueInfo {
@@ -31,5 +32,6 @@ export function adaptLeagueInfo(raw: RawLeagueInfo): AdaptedLeagueInfo {
     periods,
     regularSeasonPeriods: raw.playoffs.lastRegularSeasonPeriod,
     totalPeriods: periods.length,
+    playoffTeams: raw.playoffs.numPlayoffTeams,
   }
 }
