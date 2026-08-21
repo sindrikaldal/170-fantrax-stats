@@ -16,14 +16,21 @@ for known deferred issues.
 
 ## These four break the app if violated
 
-**1. No authentication, anywhere.** The Fantrax league is public-readable, so
-there are deliberately no cookies, API keys, or `.env` secrets. A private
-league plus a stored session cookie was considered and rejected: it introduces
-a rotating secret and a silent-staleness failure mode. If you find yourself
-adding a credential, the approach is wrong.
+**1. No Fantrax credentials, ever.** The Fantrax league is public-readable, so
+there are deliberately no Fantrax cookies, API keys, or tokens anywhere in
+this app. A private league plus a stored session cookie was considered and
+rejected: it introduces a rotating secret and a silent-staleness failure mode.
+If you find yourself adding a Fantrax credential, the approach is wrong.
 
 Operational dependency: this rests on "Allow public to view league" being
 enabled in Fantrax. If it is ever switched off, the app stops working.
+
+The one bounded exception, and it is unrelated to fetching data: the site
+itself is gated behind a single shared password (`SITE_PASSWORD`, HTTP Basic,
+enforced in `proxy.ts`) purely to deter casual discovery, since the ledger
+names real people and real money. It authenticates *visitors to this site*,
+never requests *to Fantrax*. See
+`docs/superpowers/specs/2026-08-21-site-password-gate-design.md`.
 
 **2. The normalization boundary.** Raw Fantrax JSON is validated in
 `lib/fantrax/` and adapted in `lib/adapt/` into one internal `SeasonData`

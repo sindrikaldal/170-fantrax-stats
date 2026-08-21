@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Nested git worktrees carry their own copies of the whole codebase,
+    // which drowns this repo's own lint output in another branch's noise.
+    ".claude/**",
   ]),
 ]);
 
