@@ -21,11 +21,11 @@ export function GameweekHistory({
 
   return (
     <details className="mt-6 rounded-lg border border-line bg-surface">
-      <summary className="cursor-pointer select-none px-4 py-3 font-display text-sm font-bold uppercase tracking-wide text-foreground">
+      <summary className="cursor-pointer select-none px-4 py-3 text-sm font-medium text-ink">
         Gameweek by gameweek{' '}
         <span className="text-muted">({ledger.gameweeks.length})</span>
         {hypothetical && (
-          <span className="ml-2 text-xs font-semibold uppercase tracking-wide text-amber-300">
+          <span className="ml-2 text-xs font-semibold uppercase tracking-wide text-warn-ink">
             &mdash; hypothetical, no money was paid
           </span>
         )}
@@ -62,7 +62,7 @@ export function GameweekHistory({
           <tbody>
             {rows.map((g) => (
               <tr key={g.period} className="border-b border-line/60 last:border-b-0">
-                <td className="py-2 pl-4 pr-2 font-display font-bold tabular-nums text-muted">
+                <td className="py-2 pl-4 pr-2 font-semibold tabular-nums text-muted">
                   {g.period}
                 </td>
                 <td className="min-w-0 py-2 pr-2">
@@ -81,14 +81,14 @@ export function GameweekHistory({
                       </span>
                     ))}
                     {g.winners.length > 1 && (
-                      <span className="rounded bg-surface-raised px-1.5 py-0.5 text-xs text-muted">
+                      <span className="rounded bg-raised px-1.5 py-0.5 text-xs text-muted ring-1 ring-line">
                         tie, split
                       </span>
                     )}
                   </span>
                 </td>
                 <td className="py-2 pr-2 text-right tabular-nums">{formatScore(g.topScore)}</td>
-                <td className="py-2 pr-4 text-right font-medium tabular-nums text-gold">
+                <td className="py-2 pr-4 text-right font-medium tabular-nums text-money">
                   {isk.format(g.iskPerWinner)}
                   {g.winners.length > 1 && ' ea'}
                 </td>

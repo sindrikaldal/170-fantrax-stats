@@ -1,8 +1,10 @@
-# Stats Suite and Broadcast UI Implementation Plan
+# Stats Suite and Page Redesign Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Harden the money-path completeness guard, build the four stat families (luck, rivalries, records, power) as pure modules over `SeasonData`, then redesign the page as a phone-first sports-broadcast UI.
+**Goal:** Harden the money-path completeness guard, build the four stat families (luck, rivalries, records, power) as pure modules over `SeasonData`, then redesign the page as a light, phone-first editorial stats page with a real desktop layout.
+
+**Amended 2026-08-21 — phase 4 only.** Tasks 0-13 are unchanged and may already be in progress; nothing below touches them. The original phase 4 specified a dark sports-broadcast treatment; that was reviewed and rejected on three counts (too dark, too dense on desktop, broadcast styling not wanted). The information design survives — crests, large numerals, award cards, form arrows, score-bat framing. The TV-graphics skin does not. Filenames keep their original slugs because git history and the companion spec reference them.
 
 **Architecture:** Unchanged from the foundation. Every stat is a pure function in `lib/stats/` taking `SeasonData` (+ `now`) and returning plain data — no I/O, no wall-clock reads. All stat modules gate on a new shared `auditRegularPeriods` helper so every number on the page has money-grade trust in which gameweeks are real. The UI phase (tasks 14–19) works differently: stats first, then design against real numbers with visual iteration in a browser.
 
@@ -39,7 +41,7 @@
 | `lib/stats/rivalries.ts` | Head-to-head matrix, nemesis/bunny, revenge fixtures. |
 | `lib/stats/records.ts` | Extremes, streaks, form table, distributions, collapses, weekly awards. |
 | `lib/stats/power.ts` | Power rankings with weekly movement. |
-| `app/` (phase 4) | Broadcast UI: front page `/`, deep dive `/season/[year]`, components under `app/components/`. |
+| `app/` (phase 4) | Page redesign: front page `/`, deep dive `/season/[year]`, components under `app/components/`. |
 
 Note for the executor: the spec's "capture a 2026 fixture as soon as gameweek 1 settles" cannot be done in this plan — gameweek 1 of 2026 has not been played as of 2026-08-20. It stays in `docs/superpowers/follow-ups.md`.
 
@@ -2636,7 +2638,7 @@ git commit -m "Add blended power rankings with weekly movement"
 
 ---
 
-## Phase 4 — Broadcast UI
+## Phase 4 — Page redesign
 
 **This phase works differently.** Tasks 1–13 were transcription plus verification; design cannot be specified that way. Each task below fixes the *requirements, structure, data contracts and verification steps* verbatim, and leaves visual judgement to the implementer, who must:
 
@@ -2646,12 +2648,35 @@ git commit -m "Add blended power rankings with weekly movement"
 
 **Locked design decisions (correctness requirements from the spec, not preferences):**
 
-1. **Commit to dark unconditionally.** The app paints its own dark background (`color-scheme: dark`, explicit background token on `body`) and never branches on `prefers-color-scheme`. This is the spec's sanctioned alternative to dual-mode verification, and it removes the class of bug that made the 2025 hypothetical disclaimer invisible in light mode. The hypothetical disclaimer and all ISK figures must pass WCAG AA contrast against their painted backgrounds (spot-check with browser devtools).
+1. **Commit to light unconditionally.** The app paints its own light background (`color-scheme: light`, explicit background token on `body`) and never branches on `prefers-color-scheme`. This is the spec's sanctioned alternative to dual-mode verification, and it removes the class of bug that made the 2025 hypothetical disclaimer invisible. One palette, one set of contrast checks. Accepted cost: a reader on a dark-mode phone gets a bright page.
+
+   **Accents are re-derived for a light background, not translated from a dark one.** A bright gold and a bright sky blue — the natural dark-treatment accents — both fail WCAG AA on light. Token set (contrast measured against the `#FAFAF8` paper unless noted):
+
+   | Token | Value | Role | Contrast |
+   |---|---|---|---|
+   | `--paper` | `#FAFAF8` | page background | — |
+   | `--surface` | `#FFFFFF` | cards, table stripes | — |
+   | `--line` | `#E5E4DF` | hairline borders | — |
+   | `--ink` | `#1A1A18` | body text | 16.1:1 |
+   | `--muted` | `#6B6B63` | captions, secondary | 5.4:1 |
+   | `--money` | `#B45309` | ISK, prize winners | 5.3:1 |
+   | `--analysis` | `#0369A1` | luck, expected, analytical | 5.7:1 |
+   | `--down` | `#B91C1C` | negative / falling | 6.2:1 |
+   | `--up` | `#15803D` | positive / rising | 4.9:1 |
+   | `--warn-bg` / `--warn-ink` | `#FFFBEB` / `#92400E` | hypothetical disclaimer | 7.0:1 (ink on warn-bg) |
+
+   These are starting values, not sacred — the implementer may tune during visual iteration, but **any replacement must be measured, and no text token may drop below 4.5:1 against the surface it sits on.** Red/green still only ever appear paired with a sign or arrow so nothing depends on colour alone. The hypothetical disclaimer and all ISK figures must pass WCAG AA against their painted backgrounds (spot-check with browser devtools and record the ratio).
 2. **Empty and partial states are first-class.** Every stat component receives enough data to know how many settled gameweeks exist and renders an honest "Needs N more gameweeks" state instead of a confident wrong number (thresholds below).
 3. **Twenty stats must not arrive as twenty tables.** Front page = ledger, table, this week's awards. Everything deeper lives one click away on the season page, and each stat family gets a distinct visual treatment (bars, matrix, chart, cards) rather than uniform tables.
-4. **Phone first.** 375 px is the primary layout; desktop is the adaptation.
+4. **Phone first, desktop second — but desktop is its own layout.** 375 px is the primary target. Desktop is not the phone layout stretched: the content container goes to ~1200 px (prose blocks stay capped near 70ch so line length remains readable), and content that is naturally parallel sits side by side rather than stacked. Minimum bar for "uses the screen": on the front page the ledger and league table share a row and the awards strip is 4-across; on the season page the two alternate-universe tables sit side by side and the luck index sits beside the all-play record. Everything collapses to the phone stack below `md`.
 
-**Direction: sports broadcast.** Bold condensed typography (`Barlow Condensed` 600/700/800 via `next/font/google` for display and numerals — body text stays Geist), team crests (`Team.logoUrl`, existing `<img>` pattern with the eslint-disable comment), score-bat framing for h2h numbers, form arrows (▲ ▼ —), animated number count-ups (client component, must respect `prefers-reduced-motion`). Accent palette: one hot accent (e.g. `#facc15` gold) for money/winners, one cold (e.g. `#38bdf8`) for luck/analysis, red/green only paired with a shape or sign so nothing depends on colour alone.
+**Direction: editorial data magazine.** Light, open, confident with numbers — a well-set stats page in a good sports magazine, not a TV graphics package.
+
+*Kept* (this is the information design, and it is what makes twenty stats scannable): team crests (`Team.logoUrl`, existing `<img>` pattern with the eslint-disable comment), large tabular numerals as the focal element of every card, award cards, form arrows (▲ ▼ —), score-bat framing for head-to-head numbers.
+
+*Dropped* (this was the skin): the dark stadium palette, heavy condensed capitals as the default voice, and animated number count-ups. Dropping count-ups also deletes a client component, an IntersectionObserver, and a `prefers-reduced-motion` code path — take the simplification.
+
+*Typography:* body and UI stay Geist; `Geist Mono` remains available for tabular figures. Add exactly one display face via `next/font/google`, used only for the masthead, section headings and headline stat numerals. `Barlow Condensed` is out. Pick during visual iteration from: `Fraunces` (variable serif, characterful), `Instrument Serif` (editorial, high contrast), `Bricolage Grotesque` (variable grotesque, playful), or `Archivo` (sturdy, neutral). One face, subset `latin`, and it must render Icelandic characters (á é í ó ú ý þ æ ö ð) correctly — check against real team names before committing to it. Everything else earns hierarchy from scale, weight, tracking and whitespace.
 
 **Voice: English, full trash talk.** The page is built to be dropped in a group chat. Locked copy (use exactly these award/stat titles; body copy in the same register):
 
@@ -2661,8 +2686,8 @@ git commit -m "Add blended power rankings with weekly movement"
 | Biggest blowout | "The Massacre" — "X put N on Y" |
 | Unluckiest loss | "Robbed" — "Scored N. Still lost. Brutal." |
 | Luckiest win | "Daylight Robbery" — "Won with N. Shameless." |
-| Luck index positive | "+N on what you deserve" |
-| Luck index negative | "N points the universe owes you" |
+| Luck index positive | "+N wins the schedule gifted" |
+| Luck index negative | "N wins the schedule stole" |
 | Biggest collapse | "Bottled It" |
 | Boom-or-bust | "Boom or Bust" / metronome end: "The Metronome" |
 | Nemesis | "Nemesis" — "Can't buy a win against them" |
@@ -2671,6 +2696,8 @@ git commit -m "Add blended power rankings with weekly movement"
 | Schedule swap | "In another universe…" — "Makes playoffs under N of M schedules" |
 | Empty state | "Needs N more gameweeks. Patience." |
 | 2025 hypothetical | "HYPOTHETICAL — the prize didn't exist in 2025. Nobody owes anybody anything." |
+
+**Unit discipline in copy (amended 2026-08-21).** `LuckEntry.delta` is measured in **win points** (1 per win, 0.5 per draw), not fantasy score points — Year of the Diallo's 2025 delta of −7.5 means seven and a half *wins*. The original copy ("N points the universe owes you") was both vague and wrong about the unit: "points" reads as score points, a completely different magnitude. Any copy for a derived stat must name the unit it is actually in. Render the luck index delta to one decimal place with the word "wins", and carry the mechanism on the sub-line — e.g. "7.5 wins the schedule stole · all-play 21–14: beat most of the league most weeks, drew the wrong opponents."
 
 **Minimum-data gates** (defaults; a task may tune a number during visual iteration but every gated component must show the honest empty state with the real remaining count):
 
@@ -2687,7 +2714,7 @@ git commit -m "Add blended power rankings with weekly movement"
 
 ---
 
-### Task 14: Broadcast theme, app shell and information architecture
+### Task 14: Light theme, app shell and information architecture
 
 **Files:**
 - Modify: `app/layout.tsx`, `app/globals.css`, `app/page.tsx`
@@ -2699,21 +2726,21 @@ git commit -m "Add blended power rankings with weekly movement"
 - Produces (later UI tasks build on these exact exports):
   - `app/lib/season-view.ts`: `interface SeasonView { year: number; season: SeasonData; settled: number[]; hypothetical: boolean }` and `loadSeasonView(year: number, now: Date): Promise<SeasonView>` (wraps `loadSeason` + `auditRegularPeriods` + `prizeRuleApplies` so page components never call the raw pieces)
   - `<EmptyState needed={n} have={m} what="Luck needs a sample" />` — renders the locked "Needs N more gameweeks. Patience." copy with `N = needed - have`; renders nothing (returns children) when `have >= needed` is the caller's job — EmptyState itself is purely presentational
-  - `<SectionHeader title subtitle />` — condensed-type section heading
+  - `<SectionHeader title subtitle />` — display-face section heading with a muted subtitle
   - `<SiteNav />` — links to `/` and each season's page
   - Route `/season/[year]` exists and 404s (`notFound()`) on years not in `SEASON_YEARS`
 
 Steps:
 
 - [ ] **Step 1:** Load the `frontend-design` skill. Read the current `app/` files.
-- [ ] **Step 2:** Add `Barlow_Condensed` (weights 600, 700, 800, variable `--font-display`) to `app/layout.tsx` alongside the existing Geist fonts. In `app/globals.css`, define the dark-committed token set (background, surface, line, text, muted, gold accent, cold accent) as CSS variables on `:root`, set `color-scheme: dark`, paint `body` with the background token, and wire `--font-display` into a `.font-display` utility (Tailwind v4 `@theme` block). Delete any `prefers-color-scheme` branching.
-- [ ] **Step 3:** Create `app/lib/season-view.ts`, `SiteNav`, `SectionHeader`, `EmptyState` per the interfaces above. Restructure `app/page.tsx` to render the shell: nav, a broadcast-style masthead for "170 Broskis", and — for now — the existing `LedgerTable`/`GameweekHistory` content for the current season only (2025 moves to its season page; keep the hypothetical banner logic intact wherever a 2025 ledger renders). Create `app/season/[year]/page.tsx` rendering the same ledger content for that year plus placeholder section anchors (`#luck`, `#rivalries`, `#records`) that tasks 16–18 fill.
-- [ ] **Step 4:** Verify in the browser at 375 px and desktop: dark background everywhere, fonts loading, nav works, `/season/2025` shows the full-data ledger with the hypothetical banner clearly legible, `/season/1999` 404s. Screenshot both routes.
+- [ ] **Step 2:** Add the chosen display face (variable `--font-display`) to `app/layout.tsx` alongside the existing Geist fonts — verify it renders Icelandic characters against a real team name before settling on it. In `app/globals.css`, define the light-committed token set from the locked-decision table (`--paper`, `--surface`, `--line`, `--ink`, `--muted`, `--money`, `--analysis`, `--up`, `--down`, `--warn-bg`, `--warn-ink`) as CSS variables on `:root`, set `color-scheme: light`, paint `body` with `--paper`, and wire the tokens plus `--font-display` into the Tailwind v4 `@theme` block. Delete the existing dark `--background`/`--foreground` pair and the comment above it, and any `prefers-color-scheme` branching. Define the layout container here too: a single `.container-page` (or Tailwind `@theme` width token) capping content at ~1200 px with responsive gutters, plus a `.prose-measure` cap near 70ch for paragraph text.
+- [ ] **Step 3:** Create `app/lib/season-view.ts`, `SiteNav`, `SectionHeader`, `EmptyState` per the interfaces above. Restructure `app/page.tsx` to render the shell: nav, an editorial masthead for "170 Broskis" in the display face, and — for now — the existing `LedgerTable`/`GameweekHistory` content for the current season only (2025 moves to its season page; keep the hypothetical banner logic intact wherever a 2025 ledger renders). Create `app/season/[year]/page.tsx` rendering the same ledger content for that year plus placeholder section anchors (`#luck`, `#rivalries`, `#records`) that tasks 16–18 fill.
+- [ ] **Step 4:** Verify in the browser at 375 px and at 1440 px: light background everywhere with no dark remnant and no `prefers-color-scheme` flip (test with the OS/devtools set to dark — the page must not change), fonts loading, Icelandic characters correct, nav works, the container actually reaches ~1200 px on desktop rather than staying at the old 768 px, `/season/2025` shows the full-data ledger with the hypothetical banner clearly legible, `/season/1999` 404s. Screenshot both routes at both widths.
 - [ ] **Step 5:** Run `npm test` (must stay green) and `npx next lint --no-cache` if configured (`npm run lint` otherwise). Commit:
 
 ```bash
 git add app/
-git commit -m "Broadcast theme foundation: dark-committed shell, nav, season routes"
+git commit -m "Light theme foundation: committed light shell, nav, season routes"
 ```
 
 ---
@@ -2722,27 +2749,28 @@ git commit -m "Broadcast theme foundation: dark-committed shell, nav, season rou
 
 **Files:**
 - Modify: `app/page.tsx`, `app/components/LedgerTable.tsx`, `app/components/GameweekHistory.tsx`
-- Create: `app/components/AwardsStrip.tsx`, `app/components/LeagueTable.tsx`, `app/components/CountUp.tsx`
+- Create: `app/components/AwardsStrip.tsx`, `app/components/LeagueTable.tsx`
 
 **Interfaces:**
 - Consumes: `SeasonView` (Task 14), `computeLedger`, `combinedRecords` + `rankTable` + `winPoints` (Task 4), `weeklyAwards` (Task 12), `streaks` (Task 11, for form arrows in the table).
 - Produces:
-  - `<CountUp value format? />` — client component animating a number from 0 on first view; renders the final value immediately under `prefers-reduced-motion` and before hydration (server-render the final value; animation is enhancement only)
   - `<LeagueTable view={SeasonView} />` — the combined (official) table with crests, W-D-L, points-for, and a form-arrow column from each team's current streak
-  - `<AwardsStrip view={SeasonView} />` — the most recent settled gameweek's four awards as broadcast cards using the locked copy, crest + big condensed number; renders the empty state when no gameweek is settled
+  - `<AwardsStrip view={SeasonView} />` — the most recent settled gameweek's four awards as cards using the locked copy, crest + large display numeral on `--surface` with a `--line` hairline; stacked on phone, 4-across from `md` up; renders the empty state when no gameweek is settled
 
-Front page composition (top to bottom): masthead with league name + "as of" line; the current season's prize ledger (restyled `LedgerTable`: gold accent on ISK, count-up on totals, crests); `AwardsStrip` for this week; `LeagueTable`; a link row into `/season/[year]` sections ("The deep cuts →"). The `GameweekHistory` list gets the broadcast restyle and moves behind a `<details>` fold. All money figures and the withheld-gameweeks warning must remain as legible as the Task 14 disclaimer standard.
+Front page composition, in one DOM order that holds at every width — **no CSS reordering between phone and desktop**, so the reading order a screen reader or keyboard user gets is the order everyone sees: masthead with league name + "as of" line; the prize ledger (restyled `LedgerTable`: `--money` accent on ISK, crests, no animation, with `GameweekHistory` behind its `<details>` fold); `LeagueTable`; `AwardsStrip` for this week; a link row into `/season/[year]` ("The deep cuts →").
+
+The desktop layout is that same order in a real grid rather than the stack widened: **ledger and `LeagueTable` share a row from `lg` up** (ledger left, table right — they are the two "what happened" views of one season and reading them together is the point), and the awards strip runs 4-across as its own full-width band beneath. The ledger leads at both widths because the money view is the reason the page exists; the awards are the timely extra, not the headline. All money figures and the withheld-gameweeks warning must remain as legible as the Task 14 disclaimer standard.
 
 Steps:
 
-- [ ] **Step 1:** Load the `frontend-design` skill. Build `CountUp` first (client component, IntersectionObserver + rAF, reduced-motion guard, server-rendered final value).
-- [ ] **Step 2:** Build `AwardsStrip` and `LeagueTable` against `SeasonView`; restyle `LedgerTable`/`GameweekHistory`. Compose the front page.
-- [ ] **Step 3:** Verify at 375 px: no horizontal scroll, table fits (crest + short name on phone via `Team.shortName ?? name`), awards cards swipe or stack cleanly. Verify the live empty state (2026 pre-season): ledger shows its existing "fills in from gameweek 1" state, awards strip shows the honest empty state. Verify `/season/2025` still renders. Screenshot phone + desktop.
+- [ ] **Step 1:** Load the `frontend-design` skill. Build `AwardsStrip` and `LeagueTable` against `SeasonView`.
+- [ ] **Step 2:** Restyle `LedgerTable`/`GameweekHistory` onto the light tokens. Compose the front page — phone stack first, then the desktop grid.
+- [ ] **Step 3:** Verify at 375 px: no horizontal scroll, table fits (crest + short name on phone via `Team.shortName ?? name`), awards cards stack cleanly. Then verify at 1440 px: ledger and league table genuinely side by side, awards 4-across, no ocean of empty gutter, no table row stretched to absurd column widths. Verify the live empty state (2026 pre-season): ledger shows its existing "fills in from gameweek 1" state, awards strip shows the honest empty state — check the empty state at both widths, since a 4-across grid of empty cards is its own design problem. Verify `/season/2025` still renders. Screenshot phone + desktop.
 - [ ] **Step 4:** `npm test` green. Commit:
 
 ```bash
 git add app/
-git commit -m "Broadcast front page: ledger, official table, weekly awards"
+git commit -m "Front page: ledger, official table, weekly awards"
 ```
 
 ---
@@ -2758,8 +2786,8 @@ git commit -m "Broadcast front page: ledger, official table, weekly awards"
 - Produces: the `#luck` section of the season page. No new lib code — **if a component needs a computation, it belongs in `lib/stats/`, not in a component**.
 
 Composition (each block gated per the minimum-data table, each with a one-line trash-talk verdict):
-- **AlternateTables**: real-only vs average-only tables side by side (stacked on phone), rows that change position get movement badges; verdict line names the biggest riser/faller between the two.
-- **LuckIndex**: horizontal diverging bar per team (positive gold "+N on what you deserve", negative cold "N points the universe owes you"), sorted luckiest first, all-play record as the sub-line.
+- **AlternateTables**: real-only vs average-only tables genuinely side by side from `md` up (stacked on phone), rows that change position get movement badges; verdict line names the biggest riser/faller between the two.
+- **LuckIndex**: horizontal diverging bar per team, zero-centred — positive bars in `--money` labelled "+N wins the schedule gifted", negative bars in `--analysis` labelled "N wins the schedule stole" (one decimal, unit named; see the unit-discipline note in the phase preamble). Sorted luckiest first, all-play record as the sub-line. On desktop it shares a row with the all-play record block rather than sitting alone in a 1200 px column.
 - **ScheduleSwap**: "In another universe…" cards — "Makes playoffs under N of M schedules"; include points-against + losses-to-top-score as the "hardest slate" sub-stat.
 - **CloseGames**: nail-biter records with the derived threshold surfaced in the caption ("games decided by ≤ N — the league's own bottom quartile").
 - **ThresholdTrend**: the average-threshold series as a simple inline SVG line/spark chart (no chart library — plot points, stroke the path, label first/last), plus "clears the bar most" from `averageRecords`.
@@ -2790,7 +2818,7 @@ git commit -m "Luck vs skill section: alternate tables, luck index, swaps, close
 - Produces: the `#rivalries` section. The section header states its cross-season nature ("2025 + 2026 combined — old wounds count").
 
 Composition:
-- **H2HMatrix**: manager × manager grid, cells colour-scaled by aggregate margin (gold → dark → cold), tap/click expands a cell into the meeting list (client component with `<details>` or state) — each meeting a score-bat row "GW12 '25 · 101.5 – 88.25". On phone, the matrix scrolls horizontally inside its own container with sticky first column — the one sanctioned horizontal scroller.
+- **H2HMatrix**: manager × manager grid, cells colour-scaled by aggregate margin on a light diverging scale (`--money` tint → `--paper` at neutral → `--analysis` tint; tints only, so cell text stays ≥ 4.5:1 at every step of the scale — verify the darkest cell, not just the midpoint), tap/click expands a cell into the meeting list (client component with `<details>` or state) — each meeting a score-bat row "GW12 '25 · 101.5 – 88.25". On phone, the matrix scrolls horizontally inside its own container with sticky first column — the one sanctioned horizontal scroller.
 - **NemesisBunny**: one card per returning manager: crest, "Nemesis: X (−N per meeting)", "Bunny: Y (+N per meeting)", using the locked copy; single-season managers listed under "New blood — no history yet".
 - **RevengeWeek**: upcoming revenge fixtures ("Revenge Week — You owe them one"), showing the last-meeting scoreline; honest empty state when none.
 - Unmatched/single-season managers must be visible (constraint from the spec: surfaced explicitly, never silently dropped).
@@ -2820,7 +2848,7 @@ git commit -m "Rivalries section: h2h matrix, nemesis and bunny, revenge week"
 - Produces: the `#records` section.
 
 Composition:
-- **RecordsWall**: superlative cards — season high/low, longest win/loss streaks (holder + count), "Bottled It" (biggest collapse, with the from→to scores), each a big condensed number with crest.
+- **RecordsWall**: superlative cards — season high/low, longest win/loss streaks (holder + count), "Bottled It" (biggest collapse, with the from→to scores), each a large display numeral with crest on a `--surface` card. Grid: one column on phone, two from `md`, three from `lg`.
 - **FormTable**: last-6 mini-league with the window's gameweeks in the caption; shrunken-window label when fewer than 6 exist.
 - **BoomOrBust**: per-team score strip chart (inline SVG dots per gameweek on a shared scale) with mean line and stdDev figure; sorted boom-or-bust first, "The Metronome" tag on the lowest-variance team.
 - **PowerRankings**: ranked list with blended score bar and movement arrows (▲ N / ▼ N / —) from `movement`.
@@ -2850,14 +2878,14 @@ This is the task where "a design that only looks good full of data is not finish
 - [ ] **Step 1: Phone pass.** 375 px viewport on `/`, `/season/2025`, `/season/2026`: no page-level horizontal scroll anywhere (the h2h matrix scrolls only inside its container); tap targets ≥ 44 px; text ≥ 12 px.
 - [ ] **Step 2: Money pass.** On every view where ISK renders: figures legible, the 2025 hypothetical banner unmissable (top of the ledger, not collapsed, contrast-checked with devtools against its painted background — record the ratio, must be ≥ 4.5:1). The withheld-gameweeks warning renders when `periodsWithheld > 0` (force it by viewing code paths with a synthetic date if needed — do not fake data into the page).
 - [ ] **Step 3: Empty/partial pass.** The live 2026 page is the real empty state: every gated component shows "Needs N more gameweeks. Patience." with a correct N, and nothing renders a confident number from too little data. Check the boundary: a component gated at 6 must gate at 5 settled gameweeks and render at 6 (temporarily pass an earlier `now` to `loadSeasonView` **in a scratch check, then revert** — `now` flows as a parameter precisely so this is possible).
-- [ ] **Step 4: Motion pass.** With `prefers-reduced-motion: reduce` emulated in devtools: no count-up animation, values render instantly.
+- [ ] **Step 4: Theme and desktop pass.** With the OS/devtools colour scheme set to **dark**, every route must render identically to light mode — no token flips, no `prefers-color-scheme` rule anywhere (`grep -rn "prefers-color-scheme" app/` must return nothing). Then at 1440 px on `/`, `/season/2025`, `/season/2026`: the container reaches ~1200 px, the paired layouts from tasks 15-18 are actually side by side, no paragraph runs past ~70ch, and no section is a lone narrow column in a wide empty page. Any remaining motion must respect `prefers-reduced-motion: reduce`.
 - [ ] **Step 5: Failure pass.** One season failing to load must not take down the page (existing `Promise.allSettled` pattern — verify the rejected branch renders the unavailable notice in the new design).
 - [ ] **Step 6:** `npm test` green, `npm run build` succeeds (production build catches server/client component mistakes). Screenshot the final front page and season page, phone + desktop.
 - [ ] **Step 7:** Append to `docs/superpowers/follow-ups.md`: the 2026 GW1 fixture capture reminder (still pending — capture the schedule response as soon as gameweek 1 settles, while a partially-settled gameweek can still be observed), plus anything deferred from this pass. Commit:
 
 ```bash
 git add -A
-git commit -m "Broadcast UI verification pass: phone, money, empty states, motion"
+git commit -m "UI verification pass: phone, desktop, money, empty states, theme"
 ```
 
 ---

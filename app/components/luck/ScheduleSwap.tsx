@@ -38,25 +38,22 @@ export function ScheduleSwap({ view, now = new Date() }: { view: SeasonView; now
   const hardestSlate = new Map(pointsAgainstTable(season, now).map((e) => [e.teamId, e]))
 
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {entries.map((entry) => {
         const slate = hardestSlate.get(entry.teamId)
         return (
           <div key={entry.teamId} className="relative overflow-hidden rounded-lg border border-line bg-surface p-4">
-            <div
-              aria-hidden
-              className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cold/70 to-cold/0"
-            />
+            <div aria-hidden className="absolute inset-x-0 top-0 h-0.5 bg-analysis" />
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">
               In another universe&hellip;
             </p>
             <div className="mt-1 flex items-center gap-2">
               <Crest season={season} teamId={entry.teamId} />
-              <span className="font-display text-lg font-bold uppercase tracking-wide text-foreground">
+              <span className="font-display text-lg font-semibold tracking-tight text-ink">
                 {teamName(season, entry.teamId)}
               </span>
             </div>
-            <p className="mt-2 font-display text-xl font-extrabold uppercase tracking-wide text-cold sm:text-2xl">
+            <p className="mt-3 font-display text-xl font-semibold tracking-tight text-analysis sm:text-2xl">
               Makes playoffs under {entry.playoffCount} of {entry.schedulesTried} schedules
             </p>
             {slate && (

@@ -4,7 +4,6 @@ import type { SeasonData, TeamId } from '@/lib/domain/types'
 import { weeklyAwards } from '@/lib/stats/records'
 import { formatScore, teamName } from '../lib/format'
 import { EmptyState } from './EmptyState'
-import { CountUp } from './CountUp'
 
 const NEEDS_SETTLED = 1
 
@@ -27,38 +26,39 @@ function AwardCard({
 }: {
   eyebrow: string
   title: string
-  accent: 'gold' | 'cold'
+  accent: 'money' | 'analysis'
   score: number
   body: ReactNode
   children: ReactNode
 }) {
-  const accentColor = accent === 'gold' ? 'text-gold' : 'text-cold'
-  const barGradient =
-    accent === 'gold'
-      ? 'from-gold/70 to-gold/0'
-      : 'from-cold/70 to-cold/0'
+  const accentColor = accent === 'money' ? 'text-money' : 'text-analysis'
+  const accentRule = accent === 'money' ? 'bg-money' : 'bg-analysis'
   return (
-    <div className="relative overflow-hidden rounded-lg border border-line bg-surface p-4">
-      <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${barGradient}`} aria-hidden />
+    <div className="relative overflow-hidden rounded-lg border border-line bg-surface p-5">
+      <div className={`absolute inset-x-0 top-0 h-0.5 ${accentRule}`} aria-hidden />
       <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">
         {eyebrow}
       </p>
-      <h3 className={`mt-1 font-display text-xl font-extrabold uppercase tracking-wide ${accentColor}`}>
+      <h3 className={`mt-1.5 font-display text-xl font-semibold tracking-tight ${accentColor}`}>
         {title}
       </h3>
-      <div className="mt-2 flex items-baseline gap-2">
-        <span className={`font-display text-4xl font-extrabold tabular-nums ${accentColor}`}>
-          <CountUp value={score} format="score" />
-        </span>
-      </div>
-      <div className="mt-2 flex items-center gap-2 text-sm text-foreground">{children}</div>
-      <p className="mt-1 text-sm text-muted">{body}</p>
+      {/*
+        Static, never animated. This page gets screenshotted into a group
+        chat; a mid-animation frame showing the wrong number is a misread,
+        not a flourish. The count-up component this used to call has been
+        deleted outright.
+      */}
+      <p className={`mt-2 font-display text-4xl font-semibold tabular-nums ${accentColor}`}>
+        {formatScore(score)}
+      </p>
+      <div className="mt-3 flex items-center gap-2 text-sm font-medium text-ink">{children}</div>
+      <p className="prose-measure mt-1 text-sm text-muted">{body}</p>
     </div>
   )
 }
 
 /**
- * The most recent settled gameweek's four broadcast awards. Locked copy —
+ * The most recent settled gameweek's four awards. Locked copy —
  * do not reword the titles. The three decisive awards can be individually
  * null in an all-drawn gameweek; each is skipped on its own rather than
  * hiding the whole strip.
@@ -78,11 +78,11 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
       <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-muted">
         Gameweek {week.period}
       </p>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <AwardCard
           eyebrow="This week"
           title="Top Score"
-          accent="gold"
+          accent="money"
           score={week.topScore.score}
           body="Highest points on the board, full stop."
         >
@@ -98,7 +98,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
           <AwardCard
             eyebrow="This week"
             title="The Massacre"
-            accent="gold"
+            accent="money"
             score={week.biggestBlowout.margin}
             body={`${teamName(season, week.biggestBlowout.winnerId)} put ${formatScore(week.biggestBlowout.margin)} on ${teamName(season, week.biggestBlowout.loserId)}`}
           >
@@ -111,7 +111,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
           <AwardCard
             eyebrow="This week"
             title="Robbed"
-            accent="cold"
+            accent="analysis"
             score={week.unluckiestLoss.score}
             body={`Scored ${formatScore(week.unluckiestLoss.score)}. Still lost. Brutal.`}
           >
@@ -124,7 +124,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
           <AwardCard
             eyebrow="This week"
             title="Daylight Robbery"
-            accent="cold"
+            accent="analysis"
             score={week.luckiestWin.score}
             body={`Won with ${formatScore(week.luckiestWin.score)}. Shameless.`}
           >

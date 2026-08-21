@@ -25,68 +25,87 @@ export default async function Page() {
   }
 
   const ledger = view ? computeLedger(view.season, now) : null
+  // Bundled so TypeScript narrows both together — a bare boolean flag
+  // doesn't carry the non-null through to the JSX below.
+  const loaded = view && ledger && !loadError ? { view, ledger } : null
 
   return (
     <main>
-      <header className="border-b border-line bg-gradient-to-b from-surface to-background px-4 py-10 text-center sm:py-14">
-        <p className="font-display text-xs font-bold uppercase tracking-[0.35em] text-cold">
-          Fantrax Premier League &middot; Draft League
-        </p>
-        <h1 className="mt-3 font-display text-5xl font-extrabold uppercase tracking-tight text-foreground sm:text-7xl">
-          170 <span className="text-gold">Broskis</span>
-        </h1>
-        <p className="mx-auto mt-3 max-w-md text-sm text-muted sm:text-base">
-          Gameweek prize ledger &mdash; 1.500 ISK to the highest-scoring team each
-          gameweek, ties split.
-        </p>
-        <p className="mt-4 text-xs text-muted">As of {asOf}</p>
+      <header className="border-b border-line bg-surface">
+        <div className="container-page py-10 sm:py-14">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-analysis">
+            Fantrax Premier League &middot; Draft League
+          </p>
+          <h1 className="mt-3 font-display text-5xl font-semibold tracking-tight text-ink sm:text-6xl">
+            170 <span className="text-money">Broskis</span>
+          </h1>
+          <p className="prose-measure mt-4 text-base text-muted">
+            Gameweek prize ledger &mdash; 1.500 ISK to the highest-scoring team each
+            gameweek, ties split.
+          </p>
+          <p className="mt-3 text-xs text-muted">As of {asOf}</p>
+        </div>
       </header>
 
-      <div className="mx-auto max-w-4xl space-y-12 px-4 py-8 sm:py-12">
-        <section>
-          <SectionHeader
-            title={`${CURRENT_SEASON} Ledger`}
-            subtitle="Every finished gameweek, updated live."
-          />
+      <div className="container-page space-y-14 py-10 sm:py-14">
+        {/*
+          Desktop is its own layout, not the phone stack widened. The ledger
+          and the table are the two "what happened" views of the same season
+          and are meant to be read together, so they share a row from lg up
+          and stack on phone. DOM order matches visual order at every width —
+          no CSS reordering — so the money view stays first for everyone.
+        */}
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-10">
+          <section>
+            <SectionHeader
+              title={`${CURRENT_SEASON} Ledger`}
+              subtitle="Every finished gameweek, updated live."
+            />
+            {!loaded ? (
+              <p className="rounded-lg border border-down/40 bg-surface p-4 text-sm text-down">
+                {CURRENT_SEASON} data is temporarily unavailable.
+              </p>
+            ) : (
+              <>
+                <LedgerTable
+                  season={loaded.view.season}
+                  ledger={loaded.ledger}
+                  hypothetical={loaded.view.hypothetical}
+                />
+                <GameweekHistory
+                  season={loaded.view.season}
+                  ledger={loaded.ledger}
+                  hypothetical={loaded.view.hypothetical}
+                />
+              </>
+            )}
+          </section>
 
-          {loadError || !view || !ledger ? (
-            <p className="rounded-lg border border-loss/40 bg-surface p-4 text-sm text-loss">
-              {CURRENT_SEASON} data is temporarily unavailable.
-            </p>
-          ) : (
-            <>
-              <LedgerTable season={view.season} ledger={ledger} hypothetical={view.hypothetical} />
-              <GameweekHistory
-                season={view.season}
-                ledger={ledger}
-                hypothetical={view.hypothetical}
+          {loaded && (
+            <section>
+              <SectionHeader
+                title="The Table"
+                subtitle="Official standings — real opponent plus League Average."
               />
-            </>
+              <LeagueTable view={loaded.view} now={now} />
+            </section>
           )}
-        </section>
+        </div>
 
-        {view && !loadError && (
+        {loaded && (
           <>
             <section>
               <SectionHeader
                 title="This Week's Awards"
                 subtitle="Honours nobody asked for."
               />
-              <AwardsStrip view={view} now={now} />
+              <AwardsStrip view={loaded.view} now={now} />
             </section>
 
-            <section>
-              <SectionHeader
-                title="The Table"
-                subtitle="Official standings — real opponent plus League Average."
-              />
-              <LeagueTable view={view} now={now} />
-            </section>
-
-            <div className="text-center">
+            <div>
               <Link
                 href={`/season/${CURRENT_SEASON}`}
-                className="inline-block font-display text-sm font-bold uppercase tracking-wide text-cold hover:text-foreground"
+                className="inline-block border-b-2 border-money pb-0.5 font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-money"
               >
                 The deep cuts &rarr;
               </Link>

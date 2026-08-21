@@ -66,7 +66,7 @@ export function CloseGames({ view, now = new Date() }: { view: SeasonView; now?:
         <tbody>
           {ranked.map((r, i) => (
             <tr key={r.teamId} className="border-b border-line/60 last:border-b-0">
-              <td className="py-2 pl-3 pr-1 font-display font-bold tabular-nums text-muted">
+              <td className="py-2 pl-3 pr-1 font-semibold tabular-nums text-muted">
                 {i + 1}
               </td>
               <td className="min-w-0 py-2 pr-2">
@@ -76,8 +76,8 @@ export function CloseGames({ view, now = new Date() }: { view: SeasonView; now?:
                 </span>
               </td>
               <td className="py-2 pr-2 text-right tabular-nums text-muted">
-                <span className="text-foreground">{r.wins}</span>-{r.draws}-
-                <span className="text-loss">{r.losses}</span>
+                <span className="text-ink">{r.wins}</span>-{r.draws}-
+                <span className="text-down">{r.losses}</span>
               </td>
               <td className="py-2 pr-3 text-right font-medium tabular-nums">
                 {formatScore(r.pointsFor)}
@@ -91,8 +91,8 @@ export function CloseGames({ view, now = new Date() }: { view: SeasonView; now?:
         quartile ({marginsSampled} margins sampled).
       </p>
       {best && best.losses === 0 && best.draws === 0 && (
-        <p className="border-t border-line px-3 py-2 text-sm text-foreground">
-          <span className="font-semibold text-gold">{teamName(season, best.teamId)}</span> is a
+        <p className="border-t border-line px-3 py-2 text-sm text-ink">
+          <span className="font-semibold text-money">{teamName(season, best.teamId)}</span> is a
           perfect {best.wins}-0-0 in the tightest games. Ice in their veins.
         </p>
       )}

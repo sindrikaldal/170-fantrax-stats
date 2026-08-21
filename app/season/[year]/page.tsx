@@ -31,12 +31,12 @@ export default async function SeasonPage({
   const settledCount = view.settled.length
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-8 sm:py-12">
-      <header className="mb-8 border-b border-line pb-4">
-        <p className="font-display text-xs font-bold uppercase tracking-[0.35em] text-cold">
+    <main className="container-page py-10 sm:py-14">
+      <header className="mb-10 border-b border-line pb-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-analysis">
           Season
         </p>
-        <h1 className="mt-1 font-display text-4xl font-extrabold uppercase tracking-tight text-foreground sm:text-5xl">
+        <h1 className="mt-1 font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
           {year}
         </h1>
       </header>
@@ -52,21 +52,30 @@ export default async function SeasonPage({
           EmptyState is presentational only — whether to show it is on us,
           so a season with enough settled gameweeks gets an honest "not
           built yet" placeholder instead of a nonsensical "needs 0 more". */}
-      <section id="luck" className="mt-12 space-y-8">
+      {/*
+        Wide-screen pairing: close games and the threshold trend are both
+        supporting blocks and read fine at half width, so they share a row
+        from lg up rather than each running the full 1200px alone. The
+        alternate tables and the schedule-swap cards handle their own
+        internal columns.
+      */}
+      <section id="luck" className="mt-14 space-y-10">
         <SectionHeader title="Luck vs. Skill" subtitle="Who earned it, who fluked it." />
         <AlternateTables view={view} now={now} />
         <LuckIndex view={view} now={now} />
         <ScheduleSwap view={view} now={now} />
-        <CloseGames view={view} now={now} />
-        <ThresholdTrend view={view} now={now} />
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-6">
+          <CloseGames view={view} now={now} />
+          <ThresholdTrend view={view} now={now} />
+        </div>
       </section>
 
-      <section id="rivalries" className="mt-12">
+      <section id="rivalries" className="mt-14">
         <SectionHeader title="Rivalries" subtitle="Nemesis, bunny, revenge fixtures." />
         <SectionPlaceholder needed={2} have={settledCount} what="Rivalries need history." />
       </section>
 
-      <section id="records" className="mt-12">
+      <section id="records" className="mt-14">
         <SectionHeader title="Records" subtitle="Blowouts, collapses, boom-or-bust." />
         <SectionPlaceholder needed={8} have={settledCount} what="Records need games played." />
       </section>
@@ -93,7 +102,7 @@ function SectionPlaceholder({
     return <EmptyState needed={needed} have={have} what={what} />
   }
   return (
-    <div className="rounded-lg border border-dashed border-line bg-surface/50 p-6 text-center text-sm text-muted">
+    <div className="rounded-lg border border-dashed border-line bg-surface p-6 text-center text-sm text-muted">
       Coming soon.
     </div>
   )

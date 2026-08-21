@@ -16,19 +16,11 @@ export function EmptyState({
   const remaining = Math.max(needed - have, 0)
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-line bg-surface px-6 py-8 text-center">
-      <div
-        aria-hidden
-        className="absolute inset-x-0 top-0 h-1 opacity-70"
-        style={{
-          backgroundImage:
-            'repeating-linear-gradient(45deg, var(--gold) 0, var(--gold) 10px, transparent 10px, transparent 20px)',
-        }}
-      />
+    <div className="rounded-lg border border-dashed border-line bg-surface px-6 py-8 text-center">
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">{what}</p>
-      <p className="mt-2 font-display text-xl font-extrabold uppercase tracking-wide text-foreground sm:text-2xl">
+      <p className="mt-2 font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">
         Needs {remaining} more gameweek{remaining === 1 ? '' : 's'}.{' '}
-        <span className="text-gold">Patience.</span>
+        <span className="text-money">Patience.</span>
       </p>
     </div>
   )

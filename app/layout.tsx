@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Barlow_Condensed } from "next/font/google";
+import { Geist, Geist_Mono, Fraunces } from "next/font/google";
 import { SiteNav } from "./components/SiteNav";
 import "./globals.css";
 
@@ -13,11 +13,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Bold condensed display face for the sports-broadcast direction: scores,
-// headings, and the masthead. Body copy stays on Geist.
-const barlowCondensed = Barlow_Condensed({
-  variable: "--font-barlow-condensed",
-  weight: ["600", "700", "800"],
+// One display face, used only for the masthead, section headings and
+// headline stat numerals — body copy and every table stay on Geist. Fraunces
+// is a variable serif with enough character to carry the page's voice
+// without the condensed-capitals shout of a broadcast graphics package.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
 });
 
@@ -30,9 +31,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${barlowCondensed.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+      <body className="min-h-full flex flex-col bg-paper text-ink">
         <SiteNav />
         <div className="flex-1">{children}</div>
       </body>

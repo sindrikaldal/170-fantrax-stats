@@ -64,13 +64,13 @@ export function ThresholdTrend({ view, now = new Date() }: { view: SeasonView; n
           className="stroke-line"
           strokeWidth={1}
         />
-        <path d={path} fill="none" className="stroke-cold" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
-        <circle cx={first.x} cy={first.y} r={3.5} className="fill-cold" />
-        <circle cx={last.x} cy={last.y} r={3.5} className="fill-cold" />
+        <path d={path} fill="none" className="stroke-analysis" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+        <circle cx={first.x} cy={first.y} r={3.5} className="fill-analysis" />
+        <circle cx={last.x} cy={last.y} r={3.5} className="fill-analysis" />
         <text x={first.x} y={first.y - 8} textAnchor="start" className="fill-muted text-[10px]">
           GW{first.period} &middot; {formatScore(first.threshold)}
         </text>
-        <text x={last.x} y={last.y - 8} textAnchor="end" className="fill-foreground text-[10px] font-semibold">
+        <text x={last.x} y={last.y - 8} textAnchor="end" className="fill-ink text-[10px] font-semibold">
           GW{last.period} &middot; {formatScore(last.threshold)}
         </text>
       </svg>
@@ -78,8 +78,8 @@ export function ThresholdTrend({ view, now = new Date() }: { view: SeasonView; n
         The league-mean score needed to beat average, gameweek by gameweek.
       </p>
       {clearsMost && (
-        <p className="mt-3 border-t border-line pt-3 text-sm text-foreground">
-          <span className="font-semibold text-gold">{teamName(season, clearsMost.teamId)}</span>{' '}
+        <p className="prose-measure mt-3 border-t border-line pt-3 text-sm text-ink">
+          <span className="font-semibold text-money">{teamName(season, clearsMost.teamId)}</span>{' '}
           clears the bar most &mdash; {clearsMost.wins}-{clearsMost.draws}-{clearsMost.losses}{' '}
           against the league average ({formatScore(winPoints(clearsMost))} pts).
         </p>

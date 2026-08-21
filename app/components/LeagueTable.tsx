@@ -22,13 +22,13 @@ function FormBadge({ info }: { info: StreakInfo | undefined }) {
   }
   const { type, length } = info.current
   const arrow = type === 'W' ? '▲' : type === 'L' ? '▼' : '—'
-  const color = type === 'W' ? 'text-win' : type === 'L' ? 'text-loss' : 'text-muted'
+  const color = type === 'W' ? 'text-up' : type === 'L' ? 'text-down' : 'text-muted'
   const title = info.lastFive.length
     ? `Last ${info.lastFive.length}: ${info.lastFive.join(' ')}`
     : undefined
   return (
     <span
-      className={`inline-flex items-center gap-0.5 font-display font-bold ${color}`}
+      className={`inline-flex items-center gap-0.5 font-semibold ${color}`}
       aria-label={streakLabel(type, length)}
       title={title}
     >
@@ -98,13 +98,13 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
           {ranked.map((r, i) => {
             const team = teamById.get(r.teamId)
             const rankColor =
-              i === 0 ? 'text-gold' : i === 1 ? 'text-foreground' : 'text-muted'
+              i === 0 ? 'text-money' : i === 1 ? 'text-ink' : 'text-muted'
             return (
               <tr key={r.teamId} className="border-b border-line/60 last:border-b-0">
-                <td className={`py-2 pl-3 pr-1 font-display font-bold tabular-nums ${rankColor}`}>
+                <td className={`py-2.5 pl-3 pr-1 font-semibold tabular-nums ${rankColor}`}>
                   {i + 1}
                 </td>
-                <td className="min-w-0 py-2 pr-2">
+                <td className="min-w-0 py-2.5 pr-2">
                   <span className="flex min-w-0 items-center gap-2">
                     {team?.logoUrl && (
                       /* eslint-disable-next-line @next/next/no-img-element */
@@ -123,8 +123,8 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
                   </span>
                 </td>
                 <td className="py-2 pr-2 text-right tabular-nums text-muted">
-                  <span className="text-foreground">{r.wins}</span>-{r.draws}-
-                  <span className="text-loss">{r.losses}</span>
+                  <span className="text-ink">{r.wins}</span>-{r.draws}-
+                  <span className="text-down">{r.losses}</span>
                 </td>
                 <td className="py-2 pr-2 text-right font-medium tabular-nums">
                   {formatScore(r.pointsFor)}

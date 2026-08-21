@@ -20,7 +20,7 @@ function MovementBadge({ delta }: { delta: number }) {
   const up = delta > 0
   return (
     <span
-      className={`inline-flex items-center gap-0.5 font-display font-bold ${up ? 'text-win' : 'text-loss'}`}
+      className={`inline-flex items-center gap-0.5 font-semibold ${up ? 'text-up' : 'text-down'}`}
       title={up ? `${delta} spot${delta === 1 ? '' : 's'} better vs. average` : `${-delta} spot${delta === -1 ? '' : 's'} worse vs. average`}
     >
       <span aria-hidden>{up ? '▲' : '▼'}</span>
@@ -58,7 +58,7 @@ function MiniTable({
         <tbody>
           {ranked.map((r, i) => (
             <tr key={r.teamId} className="border-b border-line/60 last:border-b-0">
-              <td className="py-1.5 pl-3 pr-1 font-display font-bold tabular-nums text-muted">
+              <td className="py-1.5 pl-3 pr-1 font-semibold tabular-nums text-muted">
                 {i + 1}
               </td>
               <td className="min-w-0 py-1.5 pr-1">
@@ -71,8 +71,8 @@ function MiniTable({
                 </span>
               </td>
               <td className="py-1.5 pr-1 text-right tabular-nums text-muted">
-                <span className="text-foreground">{r.wins}</span>-{r.draws}-
-                <span className="text-loss">{r.losses}</span>
+                <span className="text-ink">{r.wins}</span>-{r.draws}-
+                <span className="text-down">{r.losses}</span>
               </td>
               <td className="py-1.5 pr-3 text-right font-medium tabular-nums">
                 {formatScore(r.pointsFor)}
@@ -144,10 +144,10 @@ export function AlternateTables({ view, now = new Date() }: { view: SeasonView; 
           badges={deltas}
         />
       </div>
-      <p className="mt-3 text-sm text-muted">
+      <p className="prose-measure mt-3 text-sm text-muted">
         {riser && (
           <>
-            <span className="font-semibold text-win">{teamName(season, riser)}</span> jumps{' '}
+            <span className="font-semibold text-up">{teamName(season, riser)}</span> jumps{' '}
             {deltas.get(riser)} spot{deltas.get(riser) === 1 ? '' : 's'} once the schedule stops
             mattering
             {faller && '. '}
@@ -155,7 +155,7 @@ export function AlternateTables({ view, now = new Date() }: { view: SeasonView; 
         )}
         {faller && (
           <>
-            <span className="font-semibold text-loss">{teamName(season, faller)}</span> falls{' '}
+            <span className="font-semibold text-down">{teamName(season, faller)}</span> falls{' '}
             {Math.abs(deltas.get(faller) ?? 0)} — the schedule was doing the heavy lifting.
           </>
         )}
