@@ -1,11 +1,11 @@
 import type { SeasonData, TeamId } from '@/lib/domain/types'
+import { CrestImage } from './CrestImage'
 
 /**
- * A team's Fantrax badge. Decorative: every crest sits beside the team
- * name it belongs to, so alt text would only repeat it to a screen reader.
- *
- * Renders nothing when a team has no logo — Fantrax leaves `logoUrl` null
- * for teams that never set one, and an empty box is worse than no box.
+ * A team's badge, resolved from the season on the server so the client
+ * leaf only ever receives a URL string and a name. Decorative: every crest
+ * sits beside the team name it belongs to, so alt text would only repeat
+ * it to a screen reader.
  */
 export function TeamCrest({
   season,
@@ -16,10 +16,6 @@ export function TeamCrest({
   teamId: TeamId
   size?: string
 }) {
-  const logoUrl = season.teams.find((t) => t.teamId === teamId)?.logoUrl ?? null
-  if (!logoUrl) return null
-  return (
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img src={logoUrl} alt="" className={`${size} shrink-0 rounded-sm object-cover`} />
-  )
+  const team = season.teams.find((t) => t.teamId === teamId)
+  return <CrestImage url={team?.logoUrl ?? null} name={team?.name ?? teamId} size={size} />
 }

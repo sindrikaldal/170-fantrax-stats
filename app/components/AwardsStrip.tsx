@@ -1,20 +1,11 @@
 import type { ReactNode } from 'react'
 import type { SeasonView } from '../lib/season-view'
-import type { SeasonData, TeamId } from '@/lib/domain/types'
 import { weeklyAwards } from '@/lib/stats/records'
 import { formatScore, teamName } from '../lib/format'
 import { EmptyState } from './EmptyState'
+import { TeamCrest } from './TeamCrest'
 
 const NEEDS_SETTLED = 1
-
-function Crest({ season, teamId }: { season: SeasonData; teamId: TeamId }) {
-  const logo = season.teams.find((t) => t.teamId === teamId)?.logoUrl ?? null
-  if (!logo) return null
-  return (
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img src={logo} alt="" className="h-6 w-6 shrink-0 rounded-sm object-cover" />
-  )
-}
 
 function AwardCard({
   eyebrow,
@@ -88,7 +79,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
         >
           {week.topScore.teamIds.map((id) => (
             <span key={id} className="flex items-center gap-1.5">
-              <Crest season={season} teamId={id} />
+              <TeamCrest season={season} teamId={id} size="h-6 w-6" />
               {teamName(season, id)}
             </span>
           ))}
@@ -102,7 +93,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
             score={week.biggestBlowout.margin}
             body={`${teamName(season, week.biggestBlowout.winnerId)} put ${formatScore(week.biggestBlowout.margin)} on ${teamName(season, week.biggestBlowout.loserId)}`}
           >
-            <Crest season={season} teamId={week.biggestBlowout.winnerId} />
+            <TeamCrest season={season} teamId={week.biggestBlowout.winnerId} size="h-6 w-6" />
             {teamName(season, week.biggestBlowout.winnerId)}
           </AwardCard>
         )}
@@ -115,7 +106,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
             score={week.unluckiestLoss.score}
             body={`Scored ${formatScore(week.unluckiestLoss.score)}. Still lost. Brutal.`}
           >
-            <Crest season={season} teamId={week.unluckiestLoss.teamId} />
+            <TeamCrest season={season} teamId={week.unluckiestLoss.teamId} size="h-6 w-6" />
             {teamName(season, week.unluckiestLoss.teamId)}
           </AwardCard>
         )}
@@ -128,7 +119,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
             score={week.luckiestWin.score}
             body={`Won with ${formatScore(week.luckiestWin.score)}. Shameless.`}
           >
-            <Crest season={season} teamId={week.luckiestWin.teamId} />
+            <TeamCrest season={season} teamId={week.luckiestWin.teamId} size="h-6 w-6" />
             {teamName(season, week.luckiestWin.teamId)}
           </AwardCard>
         )}

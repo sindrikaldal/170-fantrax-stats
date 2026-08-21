@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { ManagerId } from '@/lib/domain/types'
 import type { HeadToHead } from '@/lib/stats/rivalries'
 import type { ManagerCard } from '../../lib/manager-view'
+import { CrestImage } from '../CrestImage'
 import { formatScore } from '../../lib/format'
 
 /** Strongest tint applied to the most lopsided pairing on the board. */
@@ -14,13 +15,6 @@ function signed(n: number): string {
   return n > 0 ? `+${s}` : n < 0 ? `−${s}` : '0'
 }
 
-function Crest({ card, size = 'h-5 w-5' }: { card: ManagerCard | undefined; size?: string }) {
-  if (!card?.logoUrl) return null
-  return (
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img src={card.logoUrl} alt="" className={`${size} shrink-0 rounded-sm object-cover`} />
-  )
-}
 
 /**
  * Manager x manager grid of every real meeting, aggregated. Cells carry a
@@ -78,7 +72,16 @@ export function H2HMatrix({
   const open = selected ? byPair.get(`${selected.a}|${selected.b}`) : undefined
 
   return (
-    <div>
+    /*
+      The grid is only as wide as the league is big — ten managers make an
+      ~840px table inside a 1200px column, which left the bordered box
+      stretched with a third of it empty. `w-fit` shrinks the box onto the
+      table and `mx-auto` centres it; `max-w-full` hands the width back on
+      a phone, where the inner container scrolls instead. The caption and
+      the scoreline panel share the wrapper so they stay aligned to the
+      grid rather than to the page.
+    */
+    <div className="mx-auto w-fit max-w-full">
       <div className="overflow-x-auto rounded-lg border border-line bg-surface">
         <table className="border-collapse text-sm">
           <caption className="sr-only">
@@ -100,7 +103,7 @@ export function H2HMatrix({
                   className="w-16 border-b border-line px-1 py-2 align-bottom"
                 >
                   <span className="flex flex-col items-center gap-1">
-                    <Crest card={m} />
+                    <CrestImage url={m?.logoUrl ?? null} name={m?.name ?? ''} />
                     <span className="max-w-[3.5rem] truncate text-[10px] font-medium text-muted">
                       {m.shortName}
                     </span>
@@ -118,7 +121,7 @@ export function H2HMatrix({
                   className="sticky left-0 z-10 border-b border-r border-line bg-surface px-3 py-2 text-left font-medium"
                 >
                   <span className="flex items-center gap-2">
-                    <Crest card={row} />
+                    <CrestImage url={row?.logoUrl ?? null} name={row?.name ?? ''} />
                     <span className="max-w-[9rem] truncate" title={row.name}>
                       {row.name}
                     </span>

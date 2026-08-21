@@ -1,14 +1,8 @@
 import type { RevengeFixture } from '@/lib/stats/rivalries'
 import type { ManagerCard } from '../../lib/manager-view'
+import { CrestImage } from '../CrestImage'
 import { formatScore } from '../../lib/format'
 
-function Crest({ card, size = 'h-5 w-5' }: { card: ManagerCard | undefined; size?: string }) {
-  if (!card?.logoUrl) return null
-  return (
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img src={card.logoUrl} alt="" className={`${size} shrink-0 rounded-sm object-cover`} />
-  )
-}
 
 /**
  * Revenge fixtures in the *next* gameweek only.
@@ -85,14 +79,14 @@ export function RevengeWeek({
 
             <div className="mt-3 space-y-1.5 text-sm">
               <p className="flex min-w-0 items-center gap-2 font-medium text-ink">
-                <Crest card={me} />
+                <CrestImage url={me?.logoUrl ?? null} name={me?.name ?? ''} />
                 <span className="min-w-0 truncate" title={me?.name}>
                   {me?.name ?? f.managerId}
                 </span>
               </p>
               <p className="flex min-w-0 items-center gap-2 text-muted">
                 <span className="w-5 shrink-0 text-center text-xs">vs</span>
-                <Crest card={them} />
+                <CrestImage url={them?.logoUrl ?? null} name={them?.name ?? ''} />
                 <span className="min-w-0 truncate text-ink" title={them?.name}>
                   {them?.name ?? f.opponentId}
                 </span>

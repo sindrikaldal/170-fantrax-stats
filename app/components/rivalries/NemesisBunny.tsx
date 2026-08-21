@@ -1,15 +1,9 @@
 import type { ManagerId } from '@/lib/domain/types'
 import type { HeadToHead, NemesisBunny as RivalVerdicts, RivalVerdict } from '@/lib/stats/rivalries'
 import type { ManagerCard } from '../../lib/manager-view'
+import { CrestImage } from '../CrestImage'
 import { formatScore } from '../../lib/format'
 
-function Crest({ card, size = 'h-5 w-5' }: { card: ManagerCard | undefined; size?: string }) {
-  if (!card?.logoUrl) return null
-  return (
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img src={card.logoUrl} alt="" className={`${size} shrink-0 rounded-sm object-cover`} />
-  )
-}
 
 function VerdictRow({
   kind,
@@ -33,7 +27,7 @@ function VerdictRow({
           {nemesis ? 'Nemesis' : 'Bunny'}
         </p>
         <p className="mt-1 flex min-w-0 items-center gap-2 font-medium text-ink">
-          <Crest card={card} />
+          <CrestImage url={card?.logoUrl ?? null} name={card?.name ?? ''} />
           <span className="min-w-0 truncate" title={card?.name}>
             {card?.name ?? verdict.opponentId}
           </span>
@@ -106,7 +100,7 @@ export function NemesisBunny({
                 className="rounded-lg border border-line bg-surface p-5"
               >
                 <h4 className="flex min-w-0 items-center gap-2.5 border-b border-line pb-3 font-display text-lg font-semibold tracking-tight text-ink">
-                  <Crest card={self} size="h-6 w-6" />
+                  <CrestImage url={self?.logoUrl ?? null} name={self?.name ?? ''} size="h-6 w-6" />
                   <span className="min-w-0 truncate" title={self?.name}>
                     {self?.name ?? v.managerId}
                   </span>
@@ -150,7 +144,7 @@ export function NemesisBunny({
                 key={m.managerId}
                 className="flex items-center gap-2 rounded-full border border-line bg-paper py-1 pl-1 pr-3 text-sm"
               >
-                <Crest card={m} />
+                <CrestImage url={m?.logoUrl ?? null} name={m?.name ?? ''} />
                 <span className="max-w-[12rem] truncate" title={m.name}>
                   {m.name}
                 </span>

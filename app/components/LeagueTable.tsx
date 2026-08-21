@@ -3,6 +3,7 @@ import { combinedRecords, rankTable } from '@/lib/stats/tables'
 import { streaks, type StreakInfo } from '@/lib/stats/records'
 import { formatScore } from '../lib/format'
 import { EmptyState } from './EmptyState'
+import { TeamCrest } from './TeamCrest'
 
 const NEEDS_SETTLED = 1
 
@@ -106,14 +107,7 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
                 </td>
                 <td className="min-w-0 py-2.5 pr-2">
                   <span className="flex min-w-0 items-center gap-2">
-                    {team?.logoUrl && (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
-                        src={team.logoUrl}
-                        alt=""
-                        className="h-5 w-5 shrink-0 rounded-sm object-cover"
-                      />
-                    )}
+                    <TeamCrest season={season} teamId={r.teamId} />
                     <span className="hidden min-w-0 truncate sm:inline">
                       {team?.name ?? r.teamId}
                     </span>

@@ -1,6 +1,7 @@
 import type { Ledger } from '@/lib/stats/ledger'
 import type { SeasonData } from '@/lib/domain/types'
 import { formatScore, isk, teamName } from '../lib/format'
+import { TeamCrest } from './TeamCrest'
 
 export function GameweekHistory({
   season,
@@ -12,9 +13,6 @@ export function GameweekHistory({
   hypothetical: boolean
 }) {
   if (ledger.gameweeks.length === 0) return null
-
-  const teamLogo = (id: string) =>
-    season.teams.find((t) => t.teamId === id)?.logoUrl ?? null
 
   // Most recent gameweek first: the interesting one is the latest.
   const rows = [...ledger.gameweeks].reverse()
@@ -69,14 +67,7 @@ export function GameweekHistory({
                   <span className="flex min-w-0 flex-wrap items-center gap-1.5">
                     {g.winners.map((id) => (
                       <span key={id} className="flex items-center gap-1.5">
-                        {teamLogo(id) && (
-                          /* eslint-disable-next-line @next/next/no-img-element */
-                          <img
-                            src={teamLogo(id)!}
-                            alt=""
-                            className="h-4 w-4 shrink-0 rounded-sm object-cover"
-                          />
-                        )}
+                        <TeamCrest season={season} teamId={id} size="h-4 w-4" />
                         {teamName(season, id)}
                       </span>
                     ))}

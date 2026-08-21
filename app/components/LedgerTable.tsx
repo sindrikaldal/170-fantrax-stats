@@ -1,6 +1,7 @@
 import type { Ledger } from '@/lib/stats/ledger'
 import type { SeasonData } from '@/lib/domain/types'
 import { isk, teamName } from '../lib/format'
+import { TeamCrest } from './TeamCrest'
 
 const RANK_COLOR = ['text-money', 'text-ink', 'text-ink'] as const
 
@@ -13,9 +14,6 @@ export function LedgerTable({
   ledger: Ledger
   hypothetical: boolean
 }) {
-  const teamLogo = (id: string) =>
-    season.teams.find((t) => t.teamId === id)?.logoUrl ?? null
-
   if (ledger.gameweeksCounted === 0) {
     return (
       <div className="relative overflow-hidden rounded-lg border border-line bg-surface p-6">
@@ -110,14 +108,7 @@ export function LedgerTable({
                 </td>
                 <td className="min-w-0 py-2.5 pr-2">
                   <span className="flex min-w-0 items-center gap-2.5">
-                    {teamLogo(e.teamId) && (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
-                        src={teamLogo(e.teamId)!}
-                        alt=""
-                        className="h-5 w-5 shrink-0 rounded-sm object-cover"
-                      />
-                    )}
+                    <TeamCrest season={season} teamId={e.teamId} />
                     <span className="min-w-0 truncate">{teamName(season, e.teamId)}</span>
                   </span>
                 </td>
