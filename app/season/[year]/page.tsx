@@ -1,7 +1,10 @@
 import { notFound } from 'next/navigation'
 import { SEASON_YEARS } from '@/config/leagues'
 import { computeLedger } from '@/lib/stats/ledger'
-import { loadSeasonView } from '@/app/lib/season-view'
+import { loadAllSeasonViews, loadSeasonView } from '@/app/lib/season-view'
+import { managerIndex } from '@/app/lib/manager-view'
+import { resolveManagers } from '@/lib/stats/managers'
+import { headToHeadMatrix, nemesisAndBunny, revengeFixtures } from '@/lib/stats/rivalries'
 import { LedgerTable } from '@/app/components/LedgerTable'
 import { GameweekHistory } from '@/app/components/GameweekHistory'
 import { SectionHeader } from '@/app/components/SectionHeader'
@@ -11,6 +14,9 @@ import { LuckIndex } from '@/app/components/luck/LuckIndex'
 import { ScheduleSwap } from '@/app/components/luck/ScheduleSwap'
 import { CloseGames } from '@/app/components/luck/CloseGames'
 import { ThresholdTrend } from '@/app/components/luck/ThresholdTrend'
+import { H2HMatrix } from '@/app/components/rivalries/H2HMatrix'
+import { NemesisBunny } from '@/app/components/rivalries/NemesisBunny'
+import { RevengeWeek } from '@/app/components/rivalries/RevengeWeek'
 
 export default async function SeasonPage({
   params,
@@ -29,6 +35,19 @@ export default async function SeasonPage({
   const view = await loadSeasonView(year, now)
   const ledger = computeLedger(view.season, now)
   const settledCount = view.settled.length
+
+  // Rivalries are cross-season: a nemesis earned in 2025 is still a nemesis
+  // on the 2026 page, so this section reads every season we can load rather
+  // than the one being viewed. `loadSeason` fetches are deduped within a
+  // render, so re-reading the current year here costs nothing.
+  const allViews = await loadAllSeasonViews(now)
+  const seasons = allViews.map((v) => v.season)
+  const resolution = resolveManagers(seasons)
+  const managers = [...managerIndex(resolution, seasons).values()]
+  const matrix = headToHeadMatrix(seasons, resolution, now)
+  const verdicts = nemesisAndBunny(matrix)
+  const revenge = revengeFixtures(seasons, resolution, now)
+  const rivalryYears = allViews.map((v) => v.year).join(' + ')
 
   return (
     <main className="container-page py-10 sm:py-14">
@@ -70,9 +89,24 @@ export default async function SeasonPage({
         </div>
       </section>
 
-      <section id="rivalries" className="mt-14">
-        <SectionHeader title="Rivalries" subtitle="Nemesis, bunny, revenge fixtures." />
-        <SectionPlaceholder needed={2} have={settledCount} what="Rivalries need history." />
+      <section id="rivalries" className="mt-14 space-y-10">
+        <SectionHeader
+          title="Rivalries"
+          subtitle={`${rivalryYears} combined — some beatings are personal.`}
+        />
+        {matrix.length === 0 ? (
+          <EmptyState
+            needed={1}
+            have={0}
+            what="Rivalries need a meeting that has actually happened"
+          />
+        ) : (
+          <>
+            <H2HMatrix matrix={matrix} managers={managers} />
+            <NemesisBunny verdicts={verdicts} matrix={matrix} managers={managers} />
+          </>
+        )}
+        <RevengeWeek fixtures={revenge} managers={managers} />
       </section>
 
       <section id="records" className="mt-14">
