@@ -3,17 +3,10 @@ import type { SeasonData, TeamId } from '@/lib/domain/types'
 import { averageRecords, rankTable, realRecords, type TeamRecord } from '@/lib/stats/tables'
 import { formatScore, teamName } from '../../lib/format'
 import { EmptyState } from '../EmptyState'
+import { TeamCrest } from '../TeamCrest'
 
 const NEEDS_SETTLED = 6
 
-function Crest({ season, teamId }: { season: SeasonData; teamId: TeamId }) {
-  const logo = season.teams.find((t) => t.teamId === teamId)?.logoUrl ?? null
-  if (!logo) return null
-  return (
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img src={logo} alt="" className="h-5 w-5 shrink-0 rounded-sm object-cover" />
-  )
-}
 
 function MovementBadge({ delta }: { delta: number }) {
   if (delta === 0) return <span className="text-muted">&mdash;</span>
@@ -95,7 +88,7 @@ function MiniTable({
               </td>
               <td className="min-w-0 py-2.5 pr-1">
                 <span className="flex min-w-0 items-center gap-2">
-                  <Crest season={season} teamId={r.teamId} />
+                  <TeamCrest season={season} teamId={r.teamId} />
                   <span className="min-w-0 truncate">
                     {season.teams.find((t) => t.teamId === r.teamId)?.shortName ??
                       teamName(season, r.teamId)}

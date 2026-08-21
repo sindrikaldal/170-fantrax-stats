@@ -1,8 +1,8 @@
 import type { SeasonView } from '../../lib/season-view'
-import type { SeasonData, TeamId } from '@/lib/domain/types'
 import { allPlayRecords, luckIndex } from '@/lib/stats/luck'
 import { teamName } from '../../lib/format'
 import { EmptyState } from '../EmptyState'
+import { TeamCrest } from '../TeamCrest'
 
 const NEEDS_SETTLED = 6
 
@@ -17,14 +17,6 @@ function formatWins(n: number): string {
   return (Math.round(Math.abs(n) * 10) / 10).toFixed(1)
 }
 
-function Crest({ season, teamId }: { season: SeasonData; teamId: TeamId }) {
-  const logo = season.teams.find((t) => t.teamId === teamId)?.logoUrl ?? null
-  if (!logo) return null
-  return (
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img src={logo} alt="" className="h-6 w-6 shrink-0 rounded-sm object-cover" />
-  )
-}
 
 /**
  * One diverging bar per team on a shared scale: banked more win points than
@@ -68,7 +60,7 @@ export function LuckIndex({ view, now = new Date() }: { view: SeasonView; now?: 
             className="grid items-center gap-x-5 gap-y-2.5 border-b border-line p-4 last:border-b-0 md:grid-cols-[minmax(0,17rem)_1fr_minmax(0,15rem)]"
           >
             <div className="flex min-w-0 items-center gap-2.5">
-              <Crest season={season} teamId={entry.teamId} />
+              <TeamCrest season={season} teamId={entry.teamId} size="h-6 w-6" />
               {/* Team names are arbitrary user input, so truncation is the
                   designed fallback rather than a bug — the title keeps the
                   full name reachable for sighted users, and the text node

@@ -1,19 +1,21 @@
 import type { SeasonView } from '../../lib/season-view'
-import { closeGameRecords } from '@/lib/stats/luck'
-import { rankTable } from '@/lib/stats/tables'
+import { formTable } from '@/lib/stats/records'
 import { formatScore, teamName } from '../../lib/format'
 import { EmptyState } from '../EmptyState'
 import { TeamCrest } from '../TeamCrest'
 
-const NEEDS_SETTLED = 10
-
+const WINDOW = 6
+const NEEDS_SETTLED = 1
 
 /**
- * Record in nail-biters only, where the margin comes from the league's own
- * bottom-quartile distribution — never a fixed number, so it moves with
- * how tight the league actually is this season.
+ * A mini-league over the last six settled gameweeks — who is good *now*,
+ * as opposed to who banked a good September.
+ *
+ * Below six gameweeks the window shrinks rather than the table hiding: a
+ * three-week form table is honest as long as it says it covers three
+ * weeks, which the caption does. That is why this gates at 1 and not 6.
  */
-export function CloseGames({ view, now = new Date() }: { view: SeasonView; now?: Date }) {
+export function FormTable({ view, now = new Date() }: { view: SeasonView; now?: Date }) {
   const { season, settled } = view
 
   if (settled.length < NEEDS_SETTLED) {
@@ -21,18 +23,26 @@ export function CloseGames({ view, now = new Date() }: { view: SeasonView; now?:
       <EmptyState
         needed={NEEDS_SETTLED}
         have={settled.length}
-        what="Close games need a longer season"
+        what="Form needs a finished gameweek"
       />
     )
   }
 
-  const { threshold, marginsSampled, records } = closeGameRecords(season, now)
-  const ranked = rankTable(records).filter((r) => r.games > 0)
-  const best = ranked[0]
+  const form = formTable(season, now, WINDOW)
+  const covered = form.periods
+  const partial = covered.length < WINDOW
+  const played = form.rows.filter((r) => r.games > 0)
 
   return (
     <div className="rounded-lg border border-line bg-surface">
       <table className="w-full table-fixed border-collapse text-sm">
+        <caption className="border-b border-line px-3 py-2.5 text-left text-xs text-muted">
+          <span className="font-semibold uppercase tracking-[0.2em]">
+            {partial ? `Last ${covered.length}` : 'Last 6'}
+          </span>{' '}
+          &middot; gameweek{covered.length === 1 ? '' : 's'} {covered.join(', ')}
+          {partial && ' — the full six-week window opens up as the season goes'}
+        </caption>
         <colgroup>
           <col className="w-9" />
           <col />
@@ -56,15 +66,19 @@ export function CloseGames({ view, now = new Date() }: { view: SeasonView; now?:
           </tr>
         </thead>
         <tbody>
-          {ranked.map((r, i) => (
+          {played.map((r, i) => (
             <tr key={r.teamId} className="border-b border-line/60 last:border-b-0">
-              <td className="py-2.5 pl-3 pr-1 font-semibold tabular-nums text-muted">
+              <td
+                className={`py-2.5 pl-3 pr-1 font-semibold tabular-nums ${i === 0 ? 'text-money' : 'text-muted'}`}
+              >
                 {i + 1}
               </td>
               <td className="min-w-0 py-2.5 pr-2">
                 <span className="flex min-w-0 items-center gap-2">
                   <TeamCrest season={season} teamId={r.teamId} />
-                  <span className="min-w-0 truncate">{teamName(season, r.teamId)}</span>
+                  <span className="min-w-0 truncate" title={teamName(season, r.teamId)}>
+                    {teamName(season, r.teamId)}
+                  </span>
                 </span>
               </td>
               <td className="whitespace-nowrap py-2.5 pr-2 text-right tabular-nums text-muted">
@@ -78,16 +92,6 @@ export function CloseGames({ view, now = new Date() }: { view: SeasonView; now?:
           ))}
         </tbody>
       </table>
-      <p className="border-t border-line px-3 py-2 text-xs text-muted">
-        Games decided by &le; {formatScore(threshold)} &mdash; the league&rsquo;s own bottom
-        quartile ({marginsSampled} margins sampled).
-      </p>
-      {best && best.losses === 0 && best.draws === 0 && (
-        <p className="border-t border-line px-3 py-2 text-sm text-ink">
-          <span className="font-semibold text-money">{teamName(season, best.teamId)}</span> is a
-          perfect {best.wins}-0-0 in the tightest games. Ice in their veins.
-        </p>
-      )}
     </div>
   )
 }

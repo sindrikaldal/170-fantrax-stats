@@ -1,19 +1,11 @@
 import type { SeasonView } from '../../lib/season-view'
-import type { SeasonData, TeamId } from '@/lib/domain/types'
 import { pointsAgainstTable, scheduleSwap } from '@/lib/stats/luck'
 import { formatScore, teamName } from '../../lib/format'
 import { EmptyState } from '../EmptyState'
+import { TeamCrest } from '../TeamCrest'
 
 const NEEDS_SETTLED = 10
 
-function Crest({ season, teamId }: { season: SeasonData; teamId: TeamId }) {
-  const logo = season.teams.find((t) => t.teamId === teamId)?.logoUrl ?? null
-  if (!logo) return null
-  return (
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img src={logo} alt="" className="h-6 w-6 shrink-0 rounded-sm object-cover" />
-  )
-}
 
 /**
  * "In another universe…" — replay each team's weekly scores against every
@@ -48,7 +40,7 @@ export function ScheduleSwap({ view, now = new Date() }: { view: SeasonView; now
               In another universe&hellip;
             </p>
             <div className="mt-1 flex items-center gap-2">
-              <Crest season={season} teamId={entry.teamId} />
+              <TeamCrest season={season} teamId={entry.teamId} size="h-6 w-6" />
               <span className="font-display text-lg font-semibold tracking-tight text-ink">
                 {teamName(season, entry.teamId)}
               </span>

@@ -17,6 +17,10 @@ import { ThresholdTrend } from '@/app/components/luck/ThresholdTrend'
 import { H2HMatrix } from '@/app/components/rivalries/H2HMatrix'
 import { NemesisBunny } from '@/app/components/rivalries/NemesisBunny'
 import { RevengeWeek } from '@/app/components/rivalries/RevengeWeek'
+import { RecordsWall } from '@/app/components/records/RecordsWall'
+import { FormTable } from '@/app/components/records/FormTable'
+import { BoomOrBust } from '@/app/components/records/BoomOrBust'
+import { PowerRankings } from '@/app/components/records/PowerRankings'
 
 export default async function SeasonPage({
   params,
@@ -34,7 +38,6 @@ export default async function SeasonPage({
   const now = new Date()
   const view = await loadSeasonView(year, now)
   const ledger = computeLedger(view.season, now)
-  const settledCount = view.settled.length
 
   // Rivalries are cross-season: a nemesis earned in 2025 is still a nemesis
   // on the 2026 page, so this section reads every season we can load rather
@@ -109,35 +112,25 @@ export default async function SeasonPage({
         <RevengeWeek fixtures={revenge} managers={managers} />
       </section>
 
-      <section id="records" className="mt-14">
-        <SectionHeader title="Records" subtitle="Blowouts, collapses, boom-or-bust." />
-        <SectionPlaceholder needed={8} have={settledCount} what="Records need games played." />
+      {/*
+        Form and power answer the same question from two angles — who is
+        good right now — so they share a row on wide screens. The records
+        wall and the boom-or-bust strips both want full width: the wall is
+        already a three-column grid, and the strips only stay comparable on
+        one long shared scale.
+      */}
+      <section id="records" className="mt-14 space-y-10">
+        <SectionHeader
+          title="Records &amp; Power"
+          subtitle="The wall of fame and shame."
+        />
+        <RecordsWall view={view} now={now} />
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-6">
+          <FormTable view={view} now={now} />
+          <PowerRankings view={view} now={now} />
+        </div>
+        <BoomOrBust view={view} now={now} />
       </section>
     </main>
-  )
-}
-
-/**
- * Wraps EmptyState with the have>=needed gating that later tasks 16-18
- * will replace with real stat components. Until then, a season with
- * enough settled gameweeks shows an honest "not built yet" note rather
- * than a wrong "needs 0 more gameweeks" message.
- */
-function SectionPlaceholder({
-  needed,
-  have,
-  what,
-}: {
-  needed: number
-  have: number
-  what: string
-}) {
-  if (have < needed) {
-    return <EmptyState needed={needed} have={have} what={what} />
-  }
-  return (
-    <div className="rounded-lg border border-dashed border-line bg-surface p-6 text-center text-sm text-muted">
-      Coming soon.
-    </div>
   )
 }
