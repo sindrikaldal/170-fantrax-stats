@@ -1,7 +1,11 @@
 # Site password gate
 
 **Date:** 2026-08-21
-**Status:** Approved
+**Status:** Superseded by
+`2026-08-21-login-page-gate-design.md`, which replaced the HTTP Basic prompt
+with a login page and a cookie. The reasoning below about gate modes, the
+missing-secret rule and constant-time comparison still holds and carried over
+unchanged; only the credential transport changed.
 
 ## Problem
 
