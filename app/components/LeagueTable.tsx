@@ -69,11 +69,11 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
           {season.seasonYear} official table, real and league-average fixtures combined.
         </caption>
         <colgroup>
-          <col className="w-7" />
+          <col className="w-9" />
           <col />
-          <col className="w-16" />
-          <col className="w-11" />
-          <col className="w-12" />
+          <col className="w-[4.25rem]" />
+          <col className="w-20" />
+          <col className="w-14" />
         </colgroup>
         <thead>
           <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
@@ -122,14 +122,14 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
                     </span>
                   </span>
                 </td>
-                <td className="py-2 pr-2 text-right tabular-nums text-muted">
+                <td className="whitespace-nowrap py-2.5 pr-2 text-right tabular-nums text-muted">
                   <span className="text-ink">{r.wins}</span>-{r.draws}-
                   <span className="text-down">{r.losses}</span>
                 </td>
-                <td className="py-2 pr-2 text-right font-medium tabular-nums">
+                <td className="whitespace-nowrap py-2.5 pr-2 text-right font-medium tabular-nums">
                   {formatScore(r.pointsFor)}
                 </td>
-                <td className="py-2 pr-3 text-right">
+                <td className="py-2.5 pr-3 text-right">
                   <FormBadge info={streakByTeam.get(r.teamId)} />
                 </td>
               </tr>

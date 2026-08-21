@@ -65,11 +65,18 @@ export function LuckIndex({ view, now = new Date() }: { view: SeasonView; now?: 
         return (
           <div
             key={entry.teamId}
-            className="grid items-center gap-x-5 gap-y-2.5 border-b border-line p-4 last:border-b-0 md:grid-cols-[minmax(0,13rem)_1fr_minmax(0,15rem)]"
+            className="grid items-center gap-x-5 gap-y-2.5 border-b border-line p-4 last:border-b-0 md:grid-cols-[minmax(0,17rem)_1fr_minmax(0,15rem)]"
           >
             <div className="flex min-w-0 items-center gap-2.5">
               <Crest season={season} teamId={entry.teamId} />
-              <span className="min-w-0 truncate font-medium text-ink">
+              {/* Team names are arbitrary user input, so truncation is the
+                  designed fallback rather than a bug — the title keeps the
+                  full name reachable for sighted users, and the text node
+                  itself is intact for screen readers. */}
+              <span
+                className="min-w-0 truncate font-medium text-ink"
+                title={teamName(season, entry.teamId)}
+              >
                 {teamName(season, entry.teamId)}
               </span>
             </div>

@@ -47,22 +47,54 @@ function MiniTable({
       <p className="border-b border-line px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted">
         {title}
       </p>
+      {/*
+        table-fixed needs every numeric column budgeted against its
+        worst-case content, not its phone-era guess: a full-season
+        points-for like 3527.75 measures ~57px at 14px tabular Geist, so a
+        44px column silently spilled its digits over the movement badge.
+        These widths are sized from the widest real value plus padding and
+        hold at both 375px and full width; the team column absorbs the
+        remainder and truncates, which is the only column where losing
+        characters is acceptable.
+      */}
       <table className="w-full table-fixed border-collapse text-sm">
         <colgroup>
-          <col className="w-6" />
+          <col className="w-9" />
           <col />
-          <col className="w-[3.75rem]" />
-          <col className="w-11" />
-          {badges && <col className="w-9" />}
+          <col className="w-[4.25rem]" />
+          <col className="w-20" />
+          {badges && <col className="w-10" />}
         </colgroup>
+        <thead>
+          <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
+            <th scope="col" className="py-2 pl-3 pr-1 font-medium">
+              #
+            </th>
+            <th scope="col" className="py-2 pr-1 font-medium">
+              Team
+            </th>
+            <th scope="col" className="py-2 pr-1 text-right font-medium">
+              W-D-L
+            </th>
+            <th scope="col" className="py-2 pr-3 text-right font-medium">
+              PF
+            </th>
+            {badges && (
+              <th scope="col" className="py-2 pr-3 text-right font-medium">
+                <span aria-hidden>&plusmn;</span>
+                <span className="sr-only">Movement versus the real table</span>
+              </th>
+            )}
+          </tr>
+        </thead>
         <tbody>
           {ranked.map((r, i) => (
             <tr key={r.teamId} className="border-b border-line/60 last:border-b-0">
-              <td className="py-1.5 pl-3 pr-1 font-semibold tabular-nums text-muted">
+              <td className="py-2.5 pl-3 pr-1 font-semibold tabular-nums text-muted">
                 {i + 1}
               </td>
-              <td className="min-w-0 py-1.5 pr-1">
-                <span className="flex min-w-0 items-center gap-1.5">
+              <td className="min-w-0 py-2.5 pr-1">
+                <span className="flex min-w-0 items-center gap-2">
                   <Crest season={season} teamId={r.teamId} />
                   <span className="min-w-0 truncate">
                     {season.teams.find((t) => t.teamId === r.teamId)?.shortName ??
@@ -70,15 +102,15 @@ function MiniTable({
                   </span>
                 </span>
               </td>
-              <td className="py-1.5 pr-1 text-right tabular-nums text-muted">
+              <td className="whitespace-nowrap py-2.5 pr-1 text-right tabular-nums text-muted">
                 <span className="text-ink">{r.wins}</span>-{r.draws}-
                 <span className="text-down">{r.losses}</span>
               </td>
-              <td className="py-1.5 pr-3 text-right font-medium tabular-nums">
+              <td className="whitespace-nowrap py-2.5 pr-3 text-right font-medium tabular-nums">
                 {formatScore(r.pointsFor)}
               </td>
               {badges && (
-                <td className="py-1.5 pr-3 text-right">
+                <td className="py-2.5 pr-3 text-right">
                   <MovementBadge delta={badges.get(r.teamId) ?? 0} />
                 </td>
               )}
@@ -135,7 +167,7 @@ export function AlternateTables({ view, now = new Date() }: { view: SeasonView; 
 
   return (
     <div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <MiniTable season={season} title="Real Record" ranked={realRanked} />
         <MiniTable
           season={season}

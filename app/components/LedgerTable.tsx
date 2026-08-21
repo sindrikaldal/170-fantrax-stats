@@ -79,7 +79,7 @@ export function LedgerTable({
             {season.seasonYear} gameweek prize ledger, ranked by ISK earned.
           </caption>
           <colgroup>
-            <col className="w-8" />
+            <col className="w-9" />
             <col />
             <col className="w-14" />
             <col className="w-20" />
@@ -121,8 +121,8 @@ export function LedgerTable({
                     <span className="min-w-0 truncate">{teamName(season, e.teamId)}</span>
                   </span>
                 </td>
-                <td className="py-2.5 pr-2 text-right tabular-nums">{e.gameweekWins}</td>
-                <td className="py-2.5 pr-3 text-right font-semibold tabular-nums text-money">
+                <td className="whitespace-nowrap py-2.5 pr-2 text-right tabular-nums">{e.gameweekWins}</td>
+                <td className="whitespace-nowrap py-2.5 pr-3 text-right font-semibold tabular-nums text-money">
                   {isk.format(e.isk)}
                 </td>
               </tr>

@@ -38,14 +38,14 @@ export function GameweekHistory({
               : `Gameweek-by-gameweek prize breakdown for ${season.seasonYear}.`}
           </caption>
           <colgroup>
-            <col className="w-10" />
-            <col />
             <col className="w-14" />
+            <col />
             <col className="w-16" />
+            <col className="w-20" />
           </colgroup>
           <thead>
             <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-              <th scope="col" className="py-2 pl-4 pr-2 font-medium">
+              <th scope="col" className="py-2 pl-4 pr-3 font-medium">
                 GW
               </th>
               <th scope="col" className="py-2 pr-2 font-medium">
@@ -62,10 +62,10 @@ export function GameweekHistory({
           <tbody>
             {rows.map((g) => (
               <tr key={g.period} className="border-b border-line/60 last:border-b-0">
-                <td className="py-2 pl-4 pr-2 font-semibold tabular-nums text-muted">
+                <td className="py-2.5 pl-4 pr-3 font-semibold tabular-nums text-muted">
                   {g.period}
                 </td>
-                <td className="min-w-0 py-2 pr-2">
+                <td className="min-w-0 py-2.5 pr-2">
                   <span className="flex min-w-0 flex-wrap items-center gap-1.5">
                     {g.winners.map((id) => (
                       <span key={id} className="flex items-center gap-1.5">
@@ -87,8 +87,10 @@ export function GameweekHistory({
                     )}
                   </span>
                 </td>
-                <td className="py-2 pr-2 text-right tabular-nums">{formatScore(g.topScore)}</td>
-                <td className="py-2 pr-4 text-right font-medium tabular-nums text-money">
+                <td className="whitespace-nowrap py-2.5 pr-3 text-right tabular-nums">
+                  {formatScore(g.topScore)}
+                </td>
+                <td className="whitespace-nowrap py-2.5 pr-4 text-right font-medium tabular-nums text-money">
                   {isk.format(g.iskPerWinner)}
                   {g.winners.length > 1 && ' ea'}
                 </td>

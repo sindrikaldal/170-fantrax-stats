@@ -42,10 +42,10 @@ export function CloseGames({ view, now = new Date() }: { view: SeasonView; now?:
     <div className="rounded-lg border border-line bg-surface">
       <table className="w-full table-fixed border-collapse text-sm">
         <colgroup>
-          <col className="w-7" />
+          <col className="w-9" />
           <col />
-          <col className="w-16" />
-          <col className="w-12" />
+          <col className="w-[4.25rem]" />
+          <col className="w-20" />
         </colgroup>
         <thead>
           <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
@@ -66,20 +66,20 @@ export function CloseGames({ view, now = new Date() }: { view: SeasonView; now?:
         <tbody>
           {ranked.map((r, i) => (
             <tr key={r.teamId} className="border-b border-line/60 last:border-b-0">
-              <td className="py-2 pl-3 pr-1 font-semibold tabular-nums text-muted">
+              <td className="py-2.5 pl-3 pr-1 font-semibold tabular-nums text-muted">
                 {i + 1}
               </td>
-              <td className="min-w-0 py-2 pr-2">
+              <td className="min-w-0 py-2.5 pr-2">
                 <span className="flex min-w-0 items-center gap-2">
                   <Crest season={season} teamId={r.teamId} />
                   <span className="min-w-0 truncate">{teamName(season, r.teamId)}</span>
                 </span>
               </td>
-              <td className="py-2 pr-2 text-right tabular-nums text-muted">
+              <td className="whitespace-nowrap py-2.5 pr-2 text-right tabular-nums text-muted">
                 <span className="text-ink">{r.wins}</span>-{r.draws}-
                 <span className="text-down">{r.losses}</span>
               </td>
-              <td className="py-2 pr-3 text-right font-medium tabular-nums">
+              <td className="whitespace-nowrap py-2.5 pr-3 text-right font-medium tabular-nums">
                 {formatScore(r.pointsFor)}
               </td>
             </tr>
