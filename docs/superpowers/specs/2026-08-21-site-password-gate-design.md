@@ -59,15 +59,21 @@ established for `lib/stats/` (project invariant #3).
 ### `lib/auth/basic.ts`
 
 ```ts
-type GateMode = 'open' | 'closed' | 'guarded'
+type Gate =
+  | { mode: 'open' }
+  | { mode: 'closed' }
+  | { mode: 'guarded'; password: string }
 
-resolveGate(input: { password: string | undefined; isProduction: boolean }): GateMode
+resolveGate(input: { password: string | undefined; isProduction: boolean }): Gate
 
 checkCredentials(input: { authorizationHeader: string | null; password: string }): boolean
 ```
 
 `resolveGate` encodes the missing-secret rule as a total function of two
-booleans, so every branch is enumerable in tests.
+booleans, so every branch is enumerable in tests. It returns a discriminated
+union rather than a bare string so that the `guarded` case carries the
+password: the caller then gets a narrowed `string` from the compiler instead
+of needing a non-null assertion.
 
 `checkCredentials` parses the `Authorization` header, requires the `Basic`
 scheme, base64-decodes the credentials, splits on the **first** colon only
