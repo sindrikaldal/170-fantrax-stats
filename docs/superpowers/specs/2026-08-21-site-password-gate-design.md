@@ -103,6 +103,11 @@ treated as unset, not as a password that everyone knows.
 `open` in development means `npm run dev` needs no setup and is never
 prompted.
 
+Verified during implementation: `next start` pins `NODE_ENV` to `production`
+regardless of what the surrounding environment sets, so `open` mode is
+unreachable in a production server even if `NODE_ENV` is tampered with. The
+only way to reach `open` is an actual `next dev`.
+
 ### Guarded responses
 
 - Valid credentials → `NextResponse.next()`.
