@@ -15,6 +15,7 @@ export interface SyntheticSeasonOptions {
   averageFixtures?: AverageFixture[]
   regularSeasonPeriods?: number
   playoffTeams?: number
+  periodsWithResults?: number[]
 }
 
 /** All synthetic periods are complete by this date. */
@@ -49,5 +50,19 @@ export function syntheticSeason(opts: SyntheticSeasonOptions = {}): SeasonData {
     periods,
     fixtures,
     averageFixtures: opts.averageFixtures ?? [],
+    periodsWithResults: opts.periodsWithResults ?? [],
   }
+}
+
+/**
+ * A copy of `season` whose published-results flags match a simulated date.
+ *
+ * `periodsWithResults` describes the fetch, not a point in time, so a fixture
+ * captured after a season ended claims every gameweek has results. Tests that
+ * replay an earlier date must also replay what Fantrax had published by then,
+ * or the input contradicts itself: a window still open, yet results already
+ * posted for matches that had not been played.
+ */
+export function withPublishedResults(season: SeasonData, periods: number[]): SeasonData {
+  return { ...season, periodsWithResults: periods }
 }

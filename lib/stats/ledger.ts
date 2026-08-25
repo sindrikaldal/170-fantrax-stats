@@ -32,6 +32,12 @@ export interface Ledger {
    * from "not yet happened" for the UI.
    */
   periodsWithheld: number
+  /**
+   * Counted gameweeks whose Fantrax window has not closed yet. Their matches
+   * are played and scored, but stat corrections can still land, so the UI
+   * must not present them as final.
+   */
+  provisionalPeriods: number[]
 }
 
 /**
@@ -49,7 +55,7 @@ export function computeLedger(
   // All completeness guards — full score set, no truncated fixture rows,
   // no all-zero placeholder periods — live in auditRegularPeriods, shared
   // with every stat module. Only settled periods pay.
-  const { settled, withheld } = auditRegularPeriods(season, now)
+  const { settled, withheld, provisional } = auditRegularPeriods(season, now)
 
   const gameweeks: GameweekPrize[] = settled.map((period) => {
     const scores = scoresForPeriod(season, period)
@@ -81,5 +87,6 @@ export function computeLedger(
     totalPaid: gameweeks.reduce((s, g) => s + g.iskPerWinner * g.winners.length, 0),
     gameweeksCounted: gameweeks.length,
     periodsWithheld: withheld.length,
+    provisionalPeriods: provisional,
   }
 }

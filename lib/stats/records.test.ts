@@ -4,7 +4,7 @@ import { LeagueInfoSchema, ScheduleResponseSchema } from '@/lib/fantrax/schemas'
 import { buildSeasonData } from '@/lib/adapt/season'
 import { scoreExtremes, streaks, formTable, scoreDistributions, biggestCollapses, weeklyAwards } from '@/lib/stats/records'
 import type { SeasonData } from '@/lib/domain/types'
-import { syntheticSeason, SYNTHETIC_SEASON_OVER } from '@/test/helpers/synthetic'
+import { syntheticSeason, SYNTHETIC_SEASON_OVER, withPublishedResults } from '@/test/helpers/synthetic'
 
 const load = (y: number, f: string) => JSON.parse(readFileSync(`test/fixtures/${y}/${f}`, 'utf8'))
 
@@ -97,7 +97,7 @@ describe('formTable, 2025 season', () => {
 
   it('shrinks the window honestly early in a season', () => {
     // On 2025-08-30 exactly two gameweeks are settled (verified in ledger tests).
-    const early = formTable(season2025, new Date('2025-08-30'))
+    const early = formTable(withPublishedResults(season2025, [1, 2]), new Date('2025-08-30'))
     expect(early.periods).toEqual([1, 2])
     expect(early.window).toBe(6)
   })

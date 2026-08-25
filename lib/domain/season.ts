@@ -27,6 +27,15 @@ export function isPeriodComplete(
   return end.getTime() < now.getTime()
 }
 
+/** Whether a gameweek's window has opened as of `now`. */
+export function isPeriodStarted(season: SeasonData, period: number, now: Date): boolean {
+  const p = season.periods.find((x) => x.number === period)
+  if (!p) return false
+  const start = new Date(p.startDate)
+  if (Number.isNaN(start.getTime())) return false
+  return start.getTime() <= now.getTime()
+}
+
 /** Completed gameweeks within the regular season, ascending. */
 export function completedRegularPeriods(season: SeasonData, now: Date): number[] {
   const out: number[] = []
@@ -54,11 +63,36 @@ export interface PeriodAudit {
   /** Regular-season periods whose scores can be trusted completely. */
   settled: number[]
   /**
-   * Periods whose end date has passed but whose scores failed a
-   * completeness guard — awaiting final scores, truncated, or posted as
-   * placeholder zeros. Distinct from "not yet played".
+   * Periods believed played but whose scores failed a completeness guard —
+   * awaiting final scores, truncated, or posted as placeholder zeros.
+   * Distinct from "not yet played".
    */
   withheld: number[]
+  /**
+   * Settled periods whose Fantrax window has not closed yet — the matches
+   * are played and scored, but stat corrections can still land. A subset of
+   * `settled`: these count for money, and the UI must label them as not
+   * final.
+   */
+  provisional: number[]
+}
+
+/**
+ * Whether a gameweek is far enough along to judge its scores at all.
+ *
+ * Published results are the primary signal: a gameweek's matches finish
+ * days before Fantrax closes the period window, and waiting for the window
+ * hid finished gameweeks for most of a week. The window remains a fallback,
+ * so that losing the upstream signal degrades to the old behaviour rather
+ * than emptying the whole site.
+ */
+function isPeriodJudgeable(season: SeasonData, period: number, now: Date): boolean {
+  if (isPeriodComplete(season, period, now)) return true
+  // `periodsWithResults` describes the fetch, not `now`, so it must never
+  // vouch for a gameweek that has not started as of `now` — otherwise
+  // fetching a finished season would report every gameweek as played at any
+  // date, including before the season began.
+  return isPeriodStarted(season, period, now) && season.periodsWithResults.includes(period)
 }
 
 /**
@@ -80,9 +114,12 @@ export interface PeriodAudit {
 export function auditRegularPeriods(season: SeasonData, now: Date): PeriodAudit {
   const settled: number[] = []
   const withheld: number[] = []
+  const provisional: number[] = []
   const expectedFixtures = maxFixturesPerPeriod(season)
 
-  for (const period of completedRegularPeriods(season, now)) {
+  for (let period = 1; period <= season.regularSeasonPeriods; period++) {
+    if (!isPeriodJudgeable(season, period, now)) continue
+
     const fixtureCount = season.fixtures.filter((f) => f.period === period).length
     const scores = scoresForPeriod(season, period)
     const trusted =
@@ -90,8 +127,14 @@ export function auditRegularPeriods(season: SeasonData, now: Date): PeriodAudit 
       fixtureCount === expectedFixtures &&
       scores.size === 2 * fixtureCount &&
       Math.max(...scores.values()) > 0
-    if (trusted) settled.push(period)
-    else withheld.push(period)
+
+    if (!trusted) {
+      withheld.push(period)
+      continue
+    }
+
+    settled.push(period)
+    if (!isPeriodComplete(season, period, now)) provisional.push(period)
   }
-  return { settled, withheld }
+  return { settled, withheld, provisional }
 }

@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { withPublishedResults } from '@/test/helpers/synthetic'
 import { readFileSync } from 'node:fs'
 import { LeagueInfoSchema, ScheduleResponseSchema } from '@/lib/fantrax/schemas'
 import { buildSeasonData } from '@/lib/adapt/season'
@@ -54,7 +55,7 @@ describe('powerRankings, 2025 season', () => {
 
   it('has null movement when only one gameweek exists', () => {
     // Period 1 ends 2025-08-22; only it is settled on 2025-08-23.
-    const single = powerRankings(season2025, new Date('2025-08-23'))
+    const single = powerRankings(withPublishedResults(season2025, [1]), new Date('2025-08-23'))
     expect(single).toHaveLength(10)
     for (const p of single) {
       expect(p.previousRank).toBeNull()

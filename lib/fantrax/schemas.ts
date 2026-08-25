@@ -59,6 +59,14 @@ const ScheduleTableSchema = z
   .object({
     caption: z.string(),
     rows: z.array(ScheduleRowSchema),
+    /**
+     * Which renderer Fantrax picked for this gameweek's table. It differs
+     * between a gameweek with published results and one still holding
+     * placeholder zeros, which is the only per-gameweek signal in this
+     * response that a gameweek has actually been scored. Optional so that
+     * a Fantrax change degrades to the date-based rule instead of breaking.
+     */
+    tableType: z.string().optional(),
   })
   .passthrough()
 

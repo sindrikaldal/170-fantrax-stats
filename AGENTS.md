@@ -52,7 +52,9 @@ gameweek 16 a tie splitting 750/750.
 
 Two guards exist because Fantrax reports an unplayed gameweek's score as the
 string `"0"`, not blank, so a date-based completeness check alone is not
-sufficient. Do not remove them as redundant.
+sufficient. Do not remove them as redundant. They matter more now that
+published results, not the period window, decide when a gameweek is judged:
+the guards are what stop a placeholder all-zero week from paying out.
 
 ## Facts that cost real debugging time to learn
 
@@ -61,6 +63,26 @@ sufficient. Do not remove them as redundant.
   league-average fixtures are half of every team's record. Rows for them are
   identified by the **absence of a `teamId`** on the second team cell —
   structural, never name-based, so it survives team renames.
+- A gameweek's **period window closes days after its matches finish**. GW1 2026
+  ran Fri Aug 21 to Fri Aug 28 while its matches ended Mon Aug 24. Treating
+  "window closed" as "gameweek finished" hid every finished gameweek for
+  three to four days. `auditRegularPeriods` therefore keys off published
+  results, with the window kept only as a fallback.
+- The per-gameweek "has been scored" signal is the schedule table's
+  **`tableType`**: `H2hPointsBased3` once results exist, `H2hPointsBased2`
+  while the table still holds placeholder zeros. Verified across all 70
+  tables of both seasons. It is the only such signal in that response —
+  `displayedEndDate` is a season-level `min(now, seasonEnd)` cursor, and
+  `getLiveScoringInfo`/`getMatchupPreview`/`getFantasyMatchup` do not exist.
+  Whether it flips at kickoff or at finalisation is **still unverified**,
+  which is why a gameweek scored inside an open window is labelled
+  provisional rather than presented as final.
+- `periodsWithResults` describes **the fetch, not a point in time**. A fixture
+  captured after a season ended claims every gameweek has results, so any
+  test replaying an earlier date must also replay what was published by then
+  (`withPublishedResults` in `test/helpers/synthetic.ts`). It is additionally
+  gated on the period having started, so a finished season cannot report
+  gameweeks as played before the season began.
 - Fantrax timestamps look like `2025-08-22T14:59:59.0-0400`: single-digit
   fractional second, colon-less offset. Outside ISO 8601; parses only because
   V8 is lenient. There is a test pinning this.

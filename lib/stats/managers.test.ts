@@ -30,6 +30,7 @@ const season2026: SeasonData = {
   periods: info2026.periods,
   fixtures: [],
   averageFixtures: [],
+  periodsWithResults: [],
 }
 
 describe('slugifyManagerId', () => {

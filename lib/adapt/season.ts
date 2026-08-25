@@ -27,5 +27,6 @@ export function buildSeasonData(
     periods: info.periods,
     fixtures: schedule.fixtures,
     averageFixtures: schedule.averageFixtures,
+    periodsWithResults: schedule.periodsWithResults,
   }
 }

@@ -10,7 +10,18 @@ export interface AdaptedSchedule {
   fixtures: Fixture[]
   averageFixtures: AverageFixture[]
   teamMeta: Map<TeamId, TeamMeta>
+  periodsWithResults: number[]
 }
+
+/**
+ * The tableType Fantrax uses for a gameweek that has been scored. Verified
+ * across both known seasons: every one of 2025's 35 completed gameweeks
+ * carries it, and in 2026 only the gameweeks whose matches have been played
+ * do — the rest use `H2hPointsBased2` with placeholder zero scores.
+ *
+ * This magic string must not leak past lib/adapt; callers get a period list.
+ */
+const RESULTS_TABLE_TYPE = 'H2hPointsBased3'
 
 /** Fantrax sends scores as strings. Blank and placeholder values are not zero. */
 export function parseScore(content: string): number | null {
@@ -38,12 +49,14 @@ export function adaptSchedule(raw: RawScheduleResponse): AdaptedSchedule {
   // would silently overwrite the first table's scores for any team involved
   // — changing an already-paid gameweek's winner retroactively.
   const seenPeriods = new Set<number>()
+  const periodsWithResults: number[] = []
 
   for (const table of data.tableList) {
     const period = parsePeriod(table.caption)
     if (period === null) continue
     if (seenPeriods.has(period)) continue
     seenPeriods.add(period)
+    if (table.tableType === RESULTS_TABLE_TYPE) periodsWithResults.push(period)
 
     for (const row of table.rows) {
       const [awayCell, awayScoreCell, homeCell, homeScoreCell] = row.cells
@@ -80,5 +93,10 @@ export function adaptSchedule(raw: RawScheduleResponse): AdaptedSchedule {
     })
   }
 
-  return { fixtures, averageFixtures, teamMeta }
+  return {
+    fixtures,
+    averageFixtures,
+    teamMeta,
+    periodsWithResults: periodsWithResults.sort((a, b) => a - b),
+  }
 }

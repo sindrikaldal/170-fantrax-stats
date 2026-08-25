@@ -49,4 +49,13 @@ export interface SeasonData {
   /** Real matchups only. Never contains *League Average* rows. */
   fixtures: Fixture[]
   averageFixtures: AverageFixture[]
+  /**
+   * Regular-season periods Fantrax has published results for, ascending.
+   *
+   * A gameweek's matches finish days before Fantrax closes its period
+   * window, so this is what makes a scored gameweek visible immediately
+   * rather than waiting for the window. Empty when the upstream signal is
+   * unavailable, in which case completeness falls back to the window.
+   */
+  periodsWithResults: number[]
 }

@@ -16,6 +16,10 @@ export function GameweekHistory({
 
   // Most recent gameweek first: the interesting one is the latest.
   const rows = [...ledger.gameweeks].reverse()
+  // A gameweek whose matches are scored but whose Fantrax window is still
+  // open. Shown, because waiting for the window hid finished gameweeks for
+  // days, but labelled, because stat corrections can still move the score.
+  const provisional = new Set(ledger.provisionalPeriods)
 
   return (
     <details className="mt-6 rounded-lg border border-line bg-surface">
@@ -62,6 +66,11 @@ export function GameweekHistory({
               <tr key={g.period} className="border-b border-line/60 last:border-b-0">
                 <td className="py-2.5 pl-4 pr-3 font-semibold tabular-nums text-muted">
                   {g.period}
+                  {provisional.has(g.period) && (
+                    <span className="ml-1 align-super text-[0.65rem] font-bold text-analysis">
+                      *
+                    </span>
+                  )}
                 </td>
                 <td className="min-w-0 py-2.5 pr-2">
                   <span className="flex min-w-0 flex-wrap items-center gap-1.5">
@@ -89,6 +98,14 @@ export function GameweekHistory({
             ))}
           </tbody>
         </table>
+        {ledger.provisionalPeriods.length > 0 && (
+          <p className="border-t border-line px-4 py-2.5 text-xs text-muted">
+            <span className="font-bold text-analysis">*</span> Not final &mdash;{' '}
+            {ledger.provisionalPeriods.length === 1 ? 'this gameweek is' : 'these gameweeks are'}{' '}
+            fully scored, but Fantrax can still post stat corrections until the
+            gameweek closes.
+          </p>
+        )}
       </div>
     </details>
   )

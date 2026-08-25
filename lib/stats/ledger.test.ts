@@ -4,7 +4,7 @@ import { LeagueInfoSchema, ScheduleResponseSchema } from '@/lib/fantrax/schemas'
 import { buildSeasonData } from '@/lib/adapt/season'
 import { computeLedger, PRIZE_PER_GAMEWEEK } from '@/lib/stats/ledger'
 import type { SeasonData } from '@/lib/domain/types'
-import { syntheticSeason, SYNTHETIC_SEASON_OVER } from '@/test/helpers/synthetic'
+import { syntheticSeason, SYNTHETIC_SEASON_OVER, withPublishedResults } from '@/test/helpers/synthetic'
 
 const load = (y: number, f: string) => JSON.parse(readFileSync(`test/fixtures/${y}/${f}`, 'utf8'))
 
@@ -90,7 +90,10 @@ describe('computeLedger, incomplete and empty seasons', () => {
     // Verified against the fixture: period 1 ends 2025-08-22, period 2 ends
     // 2025-08-29, and period 3 not until 2025-09-12 (international break).
     // So on 2025-08-30 exactly two gameweeks are complete.
-    const ledger = computeLedger(season2025, new Date('2025-08-30'))
+    const ledger = computeLedger(
+      withPublishedResults(season2025, [1, 2]),
+      new Date('2025-08-30'),
+    )
     expect(ledger.gameweeksCounted).toBe(2)
     expect(ledger.gameweeks.map((g) => g.period)).toEqual([1, 2])
     expect(ledger.totalPaid).toBeCloseTo(2 * PRIZE_PER_GAMEWEEK, 6)
