@@ -62,10 +62,48 @@ export function averageRecords(season: SeasonData, now: Date): Map<TeamId, TeamR
   return records
 }
 
-/** The official table: real and league-average fixtures summed. */
+/**
+ * Points each team actually scored, per settled gameweek, counted once.
+ *
+ * A team's weekly total appears on both of its fixtures — the real opponent
+ * and *League Average* — so reading it off either list double-counts. This
+ * takes each (team, gameweek) once, preferring the average fixture because
+ * every team has exactly one per period even in a bye week.
+ */
+function scoredPoints(season: SeasonData, settled: Set<number>): Map<TeamId, number> {
+  const counted = new Map<TeamId, Set<number>>()
+  const total = new Map<TeamId, number>()
+  const add = (teamId: TeamId, period: number, score: number | null) => {
+    if (!settled.has(period) || score === null) return
+    let periods = counted.get(teamId)
+    if (!periods) counted.set(teamId, (periods = new Set()))
+    if (periods.has(period)) return
+    periods.add(period)
+    total.set(teamId, (total.get(teamId) ?? 0) + score)
+  }
+  for (const f of season.averageFixtures) add(f.teamId, f.period, f.teamScore)
+  for (const f of season.fixtures) {
+    add(f.homeTeamId, f.period, f.homeScore)
+    add(f.awayTeamId, f.period, f.awayScore)
+  }
+  return total
+}
+
+/**
+ * The official table: real and league-average fixtures combined.
+ *
+ * Wins, draws, losses and games are genuine sums — two fixtures a gameweek.
+ * `pointsFor` is not: it is the points the team actually scored, each
+ * gameweek counted once. Fantrax's own `totalPointsFor` is exactly twice
+ * this, because it adds the same weekly score to both fixtures; that figure
+ * is a doubling artefact, not extra points. `pointsAgainst` stays a sum —
+ * the real opponent plus the league average are two different opponents.
+ */
 export function combinedRecords(season: SeasonData, now: Date): Map<TeamId, TeamRecord> {
+  const settled = new Set(auditRegularPeriods(season, now).settled)
   const real = realRecords(season, now)
   const avg = averageRecords(season, now)
+  const scored = scoredPoints(season, settled)
   const combined = blankRecords(season)
   for (const [id, c] of combined) {
     for (const part of [real.get(id), avg.get(id)]) {
@@ -73,10 +111,10 @@ export function combinedRecords(season: SeasonData, now: Date): Map<TeamId, Team
       c.wins += part.wins
       c.draws += part.draws
       c.losses += part.losses
-      c.pointsFor += part.pointsFor
       c.pointsAgainst += part.pointsAgainst
       c.games += part.games
     }
+    c.pointsFor = scored.get(id) ?? 0
   }
   return combined
 }

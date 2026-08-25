@@ -63,6 +63,12 @@ the guards are what stop a placeholder all-zero week from paying out.
   league-average fixtures are half of every team's record. Rows for them are
   identified by the **absence of a `teamId`** on the second team cell —
   structural, never name-based, so it survives team renames.
+- Because of those two fixtures, a team's weekly score appears **twice** in the
+  schedule response, and Fantrax's own `totalPointsFor` in `getStandings` adds
+  both: 6944 for a 2025 team that actually scored 3472. That doubling is an
+  artefact, not extra points. `combinedRecords` counts each gameweek once, so
+  its `pointsFor` is deliberately half Fantrax's figure. Ranking is unaffected —
+  halving every row is monotonic.
 - A gameweek's **period window closes days after its matches finish**. GW1 2026
   ran Fri Aug 21 to Fri Aug 28 while its matches ended Mon Aug 24. Treating
   "window closed" as "gameweek finished" hid every finished gameweek for

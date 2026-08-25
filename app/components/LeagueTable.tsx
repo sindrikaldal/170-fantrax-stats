@@ -1,5 +1,5 @@
 import type { SeasonView } from '../lib/season-view'
-import { combinedRecords, rankTable } from '@/lib/stats/tables'
+import { averageRecords, combinedRecords, rankTable, type TeamRecord } from '@/lib/stats/tables'
 import { streaks, type StreakInfo } from '@/lib/stats/records'
 import { formatScore } from '../lib/format'
 import { EmptyState } from './EmptyState'
@@ -42,9 +42,25 @@ function FormBadge({ info }: { info: StreakInfo | undefined }) {
 }
 
 /**
+ * What a team's record against *League Average* says out loud. The visible
+ * `wins/games` text cannot show a draw, so the full record goes here whenever
+ * a team has actually tied the mean.
+ */
+function averageLabel(r: TeamRecord | undefined): string {
+  if (!r || r.games === 0) return 'No gameweeks against the league average yet'
+  const of = `of ${r.games} ${r.games === 1 ? 'gameweek' : 'gameweeks'}`
+  if (r.draws > 0) {
+    return `Against the league average: ${r.wins} won, ${r.draws} drawn, ${r.losses} lost, ${of}`
+  }
+  return `Beat the league average ${r.wins} ${of}`
+}
+
+/**
  * The official Fantrax table: real + league-average fixtures combined,
- * ranked by win points then points-for. Crests, W-D-L, points-for, and a
- * form-arrow column driven by each team's current streak.
+ * ranked by win points then points-for. PF is points actually scored — one
+ * count per gameweek, half of Fantrax's own doubled `totalPointsFor`. Also
+ * carries crests, the combined W-D-L, how often the team has beaten
+ * *League Average*, and a form arrow driven by its current streak.
  */
 export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?: Date }) {
   const { season, settled } = view
@@ -61,6 +77,7 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
 
   const ranked = rankTable(combinedRecords(season, now))
   const streakByTeam = new Map(streaks(season, now).map((s) => [s.teamId, s]))
+  const avgByTeam = averageRecords(season, now)
   const teamById = new Map(season.teams.map((t) => [t.teamId, t]))
 
   return (
@@ -73,8 +90,9 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
           <col className="w-9" />
           <col />
           <col className="w-[4.25rem]" />
-          <col className="w-20" />
-          <col className="w-14" />
+          <col className="w-14 sm:w-16" />
+          <col className="w-12 sm:w-16" />
+          <col className="w-12 sm:w-14" />
         </colgroup>
         <thead>
           <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
@@ -88,7 +106,18 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
               W-D-L
             </th>
             <th scope="col" className="py-2 pr-2 text-right font-medium">
-              PF
+              <abbr title="Points for: points scored, each gameweek counted once" className="no-underline">
+                PF
+              </abbr>
+            </th>
+            <th scope="col" className="py-2 pr-2 text-right font-medium">
+              <abbr
+                title="Gameweeks this team beat League Average, out of gameweeks played"
+                className="no-underline"
+              >
+                <span className="sm:hidden">Avg</span>
+                <span className="hidden sm:inline">vs Avg</span>
+              </abbr>
             </th>
             <th scope="col" className="py-2 pr-3 text-right font-medium">
               Form
@@ -98,6 +127,7 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
         <tbody>
           {ranked.map((r, i) => {
             const team = teamById.get(r.teamId)
+            const avg = avgByTeam.get(r.teamId)
             const rankColor =
               i === 0 ? 'text-money' : i === 1 ? 'text-ink' : 'text-muted'
             return (
@@ -123,6 +153,21 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
                 <td className="whitespace-nowrap py-2.5 pr-2 text-right font-medium tabular-nums">
                   {formatScore(r.pointsFor)}
                 </td>
+                <td
+                  className="whitespace-nowrap py-2.5 pr-2 text-right tabular-nums text-muted"
+                  title={averageLabel(avg)}
+                >
+                  <span className="sr-only">{averageLabel(avg)}</span>
+                  <span aria-hidden>
+                    {avg && avg.games > 0 ? (
+                      <>
+                        <span className="text-ink">{avg.wins}</span>/{avg.games}
+                      </>
+                    ) : (
+                      <>&mdash;</>
+                    )}
+                  </span>
+                </td>
                 <td className="py-2.5 pr-3 text-right">
                   <FormBadge info={streakByTeam.get(r.teamId)} />
                 </td>
@@ -132,8 +177,10 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
         </tbody>
       </table>
       <p className="border-t border-line px-3 py-2 text-xs text-muted">
-        Ranked by win points (1 per win, 0.5 per draw), then points-for. Combined: real
-        opponent plus <em>League Average</em>.
+        Ranked by win points (1 per win, 0.5 per draw), then points-for. Two games a
+        gameweek: real opponent plus <em>League Average</em>. PF counts each gameweek&rsquo;s
+        score once, so it is half the figure Fantrax shows. <span className="whitespace-nowrap">vs
+        Avg</span> is gameweeks the team beat <em>League Average</em>, out of gameweeks played.
       </p>
     </div>
   )

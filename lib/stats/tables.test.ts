@@ -10,6 +10,7 @@ import {
   winPoints,
 } from '@/lib/stats/tables'
 import type { SeasonData } from '@/lib/domain/types'
+import { syntheticSeason, SYNTHETIC_SEASON_OVER } from '@/test/helpers/synthetic'
 
 const load = (y: number, f: string) => JSON.parse(readFileSync(`test/fixtures/${y}/${f}`, 'utf8'))
 
@@ -46,6 +47,38 @@ describe('records, 2025 season', () => {
       const r = combined.get(idOf(season2025, name))!
       expect(`${r.wins}-${r.draws}-${r.losses}`, name).toBe(wdl)
     }
+  })
+
+  it('counts each gameweek score once in the combined table, not twice', () => {
+    // getStandings.json reports 6944 for Leibbi davíðs: Fantrax adds the same
+    // weekly score to both fixtures. 3472 is what the team actually scored.
+    const published: Record<string, number> = {
+      'Leibbi davíðs': 6944,
+      'The Füllkrug Express': 7211,
+      'Proof the Curse lives once more': 6132,
+      'Earth, Wind & Maguire': 5004.5,
+    }
+    for (const [name, fantraxTotal] of Object.entries(published)) {
+      const r = combined.get(idOf(season2025, name))!
+      expect(r.games, name).toBe(70)
+      expect(r.pointsFor, name).toBeCloseTo(fantraxTotal / 2, 6)
+    }
+  })
+
+  it('ranks the combined table identically to Fantrax despite the halved PF', () => {
+    // Halving is monotonic, so the points-for tiebreak is unaffected.
+    expect(rankTable(combined).map((r) => nameOf(season2025, r.teamId))).toEqual([
+      'Leibbi davíðs',
+      'Einn ís Kaldal',
+      'The Füllkrug Express',
+      'Proof the Curse lives once more',
+      'Year of the Diallo',
+      'les Homms',
+      'Palm Air',
+      'Haaland, Sakalegur markaskorari',
+      'FC Slaughterhouse!',
+      'Earth, Wind & Maguire',
+    ])
   })
 
   it('splits Leibbi davíðs into 20-1-14 real and 23-0-12 vs the average', () => {
@@ -107,5 +140,43 @@ describe('records, 2025 season', () => {
     for (const r of real.values()) {
       expect([r.wins, r.draws, r.losses, r.games, r.pointsFor]).toEqual([0, 0, 0, 0, 0])
     }
+  })
+})
+
+describe('combined table, one gameweek played', () => {
+  it('shows a 140-point gameweek as 140 over two games, not 280', () => {
+    const season = syntheticSeason({
+      fixtures: [
+        { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 140, awayScore: 100 },
+        { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 90, awayScore: 70 },
+      ],
+      averageFixtures: [
+        { period: 1, teamId: 'A', teamScore: 140, averageScore: 100 },
+        { period: 1, teamId: 'B', teamScore: 100, averageScore: 100 },
+        { period: 1, teamId: 'C', teamScore: 90, averageScore: 100 },
+        { period: 1, teamId: 'D', teamScore: 70, averageScore: 100 },
+      ],
+      periodsWithResults: [1],
+    })
+    const a = combinedRecords(season, SYNTHETIC_SEASON_OVER).get('A')!
+    expect(a.games).toBe(2)
+    expect(a.wins).toBe(2)
+    expect(a.pointsFor).toBe(140)
+    expect(a.pointsAgainst).toBe(200) // two different opponents: 100 + 100
+  })
+
+  it('still counts the score when a team has no league-average row that week', () => {
+    const season = syntheticSeason({
+      fixtures: [
+        { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 140, awayScore: 100 },
+      ],
+      averageFixtures: [{ period: 1, teamId: 'B', teamScore: 100, averageScore: 120 }],
+      periodsWithResults: [1],
+    })
+    const combined = combinedRecords(season, SYNTHETIC_SEASON_OVER)
+    expect(combined.get('A')!.pointsFor).toBe(140)
+    expect(combined.get('A')!.games).toBe(1)
+    expect(combined.get('B')!.pointsFor).toBe(100)
+    expect(combined.get('B')!.games).toBe(2)
   })
 })
