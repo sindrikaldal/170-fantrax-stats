@@ -3,6 +3,7 @@ import { formTable } from '@/lib/stats/records'
 import { formatScore, teamName } from '../../lib/format'
 import { EmptyState } from '../EmptyState'
 import { TeamCrest } from '../TeamCrest'
+import { TeamName } from '../TeamName'
 
 const WINDOW = 6
 const NEEDS_SETTLED = 1
@@ -77,7 +78,7 @@ export function FormTable({ view, now = new Date() }: { view: SeasonView; now?: 
                 <span className="flex min-w-0 items-center gap-2">
                   <TeamCrest season={season} teamId={r.teamId} />
                   <span className="min-w-0 truncate" title={teamName(season, r.teamId)}>
-                    {teamName(season, r.teamId)}
+                    <TeamName season={season} teamId={r.teamId} />
                   </span>
                 </span>
               </td>

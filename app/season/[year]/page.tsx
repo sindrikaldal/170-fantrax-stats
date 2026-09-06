@@ -1,12 +1,16 @@
 import { notFound } from 'next/navigation'
 import { SEASON_YEARS } from '@/config/leagues'
 import { computeLedger } from '@/lib/stats/ledger'
+import { computeRunnersUp } from '@/lib/stats/runnerUp'
 import { loadAllSeasonViews, loadSeasonView } from '@/app/lib/season-view'
+import { loadBenchReport } from '@/app/lib/bench-view'
 import { managerIndex } from '@/app/lib/manager-view'
 import { resolveManagers } from '@/lib/stats/managers'
-import { headToHeadMatrix, nemesisAndBunny, revengeFixtures } from '@/lib/stats/rivalries'
+import { headToHeadMatrix } from '@/lib/stats/rivalries'
 import { LedgerTable } from '@/app/components/LedgerTable'
 import { GameweekHistory } from '@/app/components/GameweekHistory'
+import { RunnerUpCard } from '@/app/components/RunnerUpCard'
+import { BenchSection } from '@/app/components/bench/BenchSection'
 import { SectionHeader } from '@/app/components/SectionHeader'
 import { EmptyState } from '@/app/components/EmptyState'
 import { AlternateTables } from '@/app/components/luck/AlternateTables'
@@ -15,8 +19,6 @@ import { ScheduleSwap } from '@/app/components/luck/ScheduleSwap'
 import { CloseGames } from '@/app/components/luck/CloseGames'
 import { ThresholdTrend } from '@/app/components/luck/ThresholdTrend'
 import { H2HMatrix } from '@/app/components/rivalries/H2HMatrix'
-import { NemesisBunny } from '@/app/components/rivalries/NemesisBunny'
-import { RevengeWeek } from '@/app/components/rivalries/RevengeWeek'
 import { RecordsWall } from '@/app/components/records/RecordsWall'
 import { FormTable } from '@/app/components/records/FormTable'
 import { BoomOrBust } from '@/app/components/records/BoomOrBust'
@@ -49,7 +51,9 @@ export default async function SeasonPage({
     console.error(`Failed to load season ${year}:`, err)
   }
   const ledger = view ? computeLedger(view.season, now) : null
-  const loaded = view && ledger ? { view, ledger } : null
+  const runnersUp = view ? computeRunnersUp(view.season, now) : null
+  const bench = view ? loadBenchReport(view, now) : null
+  const loaded = view && ledger && runnersUp && bench ? { view, ledger, runnersUp, bench } : null
 
   // Rivalries are cross-season: a nemesis earned in 2025 is still a nemesis
   // on the 2026 page, so this section reads every season we can load rather
@@ -60,8 +64,6 @@ export default async function SeasonPage({
   const resolution = resolveManagers(seasons)
   const managers = [...managerIndex(resolution, seasons).values()]
   const matrix = headToHeadMatrix(seasons, resolution, now)
-  const verdicts = nemesisAndBunny(matrix)
-  const revenge = revengeFixtures(seasons, resolution, now)
   // "2025 + 2026 combined" is only true when more than one season loaded;
   // if one failed, saying "2025 combined" is both wrong and confusing.
   const years = allViews.map((v) => v.year)
@@ -92,9 +94,15 @@ export default async function SeasonPage({
               ledger={loaded.ledger}
               hypothetical={loaded.view.hypothetical}
             />
+            <RunnerUpCard
+              season={loaded.view.season}
+              report={loaded.runnersUp}
+              hypothetical={loaded.view.hypothetical}
+            />
             <GameweekHistory
               season={loaded.view.season}
               ledger={loaded.ledger}
+              runnersUp={loaded.runnersUp}
               hypothetical={loaded.view.hypothetical}
             />
           </section>
@@ -116,13 +124,26 @@ export default async function SeasonPage({
               <ThresholdTrend view={loaded.view} now={now} />
             </div>
           </section>
+
+          {/*
+            Lineups come from committed snapshots, not from Fantrax at request
+            time, so this section can lag the ledger by a day. It carries its
+            own "through GW N" note for exactly that reason.
+          */}
+          <section id="bench" className="mt-14 space-y-10">
+            <SectionHeader
+              title="Left on the bench"
+              subtitle="No auto-subs in this league. What the best legal eleven would have scored, with hindsight."
+            />
+            <BenchSection view={loaded.view} report={loaded.bench} />
+          </section>
         </>
       )}
 
       <section id="rivalries" className="mt-14 space-y-10">
         <SectionHeader
           title="Rivalries"
-          subtitle={`${rivalryScope} — some beatings are personal.`}
+          subtitle={`${rivalryScope} — some beatings are personal. Pick a name for that manager's nemesis, bunny and grudge fixtures.`}
         />
         {matrix.length === 0 ? (
           <EmptyState
@@ -131,12 +152,9 @@ export default async function SeasonPage({
             what="Rivalries need a meeting that has actually happened"
           />
         ) : (
-          <>
-            <H2HMatrix matrix={matrix} managers={managers} />
-            <NemesisBunny verdicts={verdicts} matrix={matrix} managers={managers} />
-          </>
+          <H2HMatrix matrix={matrix} managers={managers} />
         )}
-        <RevengeWeek fixtures={revenge} managers={managers} />
+        {/* Nemesis, bunny and grudge fixtures live on each manager's own page. */}
       </section>
 
       {/*

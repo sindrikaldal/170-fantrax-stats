@@ -224,3 +224,39 @@ describe('computeLedger, truncated fixture rows', () => {
     expect(ledger.totalPaid).toBeCloseTo(PRIZE_PER_GAMEWEEK, 6)
   })
 })
+
+// Fantrax flips its "results published" flag as soon as a gameweek's first
+// match kicks off (verified live 2026-09-06: GW3 flagged with a match still to
+// play). A published gameweek inside an open window is therefore in progress,
+// and must be shown as a live leader rather than paid as a winner.
+describe('computeLedger, gameweek in progress (published, window open)', () => {
+  const MID_WINDOW = new Date('2099-01-05')
+  const season = syntheticSeason({
+    fixtures: [
+      { period: 1, homeTeamId: 'A', awayTeamId: 'B', homeScore: 90, awayScore: 60 },
+      { period: 1, homeTeamId: 'C', awayTeamId: 'D', homeScore: 70, awayScore: 50 },
+    ],
+    periodsWithResults: [1],
+  })
+
+  it('pays nothing and counts nothing for it', () => {
+    const ledger = computeLedger(season, MID_WINDOW)
+    expect(ledger.gameweeks).toEqual([])
+    expect(ledger.gameweeksCounted).toBe(0)
+    expect(ledger.totalPaid).toBe(0)
+    expect(ledger.entries).toEqual([])
+    expect(ledger.periodsWithheld).toBe(0)
+  })
+
+  it('reports it as pending with the current leader', () => {
+    const ledger = computeLedger(season, MID_WINDOW)
+    expect(ledger.pending).toEqual([{ period: 1, topScore: 90, leaders: ['A'] }])
+  })
+
+  it('pays it once the window has closed', () => {
+    const ledger = computeLedger(season, SYNTHETIC_SEASON_OVER)
+    expect(ledger.pending).toEqual([])
+    expect(ledger.gameweeks.map((g) => g.period)).toEqual([1])
+    expect(ledger.entries[0]).toEqual({ teamId: 'A', gameweekWins: 1, isk: PRIZE_PER_GAMEWEEK })
+  })
+})

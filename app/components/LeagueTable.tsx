@@ -4,6 +4,7 @@ import { streaks, type StreakInfo } from '@/lib/stats/records'
 import { formatScore } from '../lib/format'
 import { EmptyState } from './EmptyState'
 import { TeamCrest } from './TeamCrest'
+import { TeamName } from './TeamName'
 
 const NEEDS_SETTLED = 1
 
@@ -139,10 +140,10 @@ export function LeagueTable({ view, now = new Date() }: { view: SeasonView; now?
                   <span className="flex min-w-0 items-center gap-2">
                     <TeamCrest season={season} teamId={r.teamId} />
                     <span className="hidden min-w-0 truncate sm:inline">
-                      {team?.name ?? r.teamId}
+                      <TeamName season={season} teamId={r.teamId} />
                     </span>
                     <span className="min-w-0 truncate sm:hidden">
-                      {team?.shortName ?? team?.name ?? r.teamId}
+                      <TeamName season={season} teamId={r.teamId} label={team?.shortName ?? undefined} />
                     </span>
                   </span>
                 </td>

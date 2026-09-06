@@ -109,3 +109,39 @@ when this branch merges.
 - `next.config.ts` is an empty stub.
 - Port 3000 on this machine is occupied by an unrelated nginx, so `npm run dev`
   lands on 3001.
+
+## Deferred from the runner-up and bench work (2026-09-06)
+
+- **The page scrolls horizontally on phones.** With a 375px viewport the
+  document's scroll width is about 1340px, and the widest box is the
+  head-to-head matrix table, which already sits inside an `overflow-x-auto`
+  wrapper. Predates this work; not investigated further. Likely the wrapper's
+  grid parent lacks `min-w-0`, so the wrapper itself is as wide as the table.
+- **`tableType` flips at kickoff** (verified 2026-09-06), so an open-window
+  gameweek is in progress. Money surfaces now count final gameweeks only.
+  The non-money stats (luck, records, form, power, league table) still read
+  `settled`, which includes the in-progress week, so e.g. a "lowest score"
+  record can briefly name a team that has a match still to play. Decide
+  whether they should switch to final-only too; it is a one-line change in
+  `app/lib/season-view.ts` but brings back a multi-day lag for those blocks.
+- **Late corrections after the window closes are not caught.** Lineups are
+  re-captured daily only while the window is open; a stat correction Fantrax
+  posts after that is missed. Same exposure as the ledger has always had.
+- **No test exercises a multi-position player.** `bestLineup` handles them by
+  trying every assignment, covered by a synthetic test, but none of the 5,487
+  committed player rows across both seasons has more than one position, so
+  the branch has never run on real data.
+- **The snapshot Action has never run in GitHub.** It was exercised locally
+  only (`npm run snapshot`, idempotent on re-run). First real run is the
+  morning after the workflow is pushed; check the Actions tab once.
+
+## Deferred from the manager pages (2026-09-06)
+
+- **Manager URLs are derived from team names.** `/manager/<id>` uses the
+  manager id from `resolveManagers`, which is a slug of the team name unless
+  `config/managers.ts` overrides it. A rename without an override therefore
+  changes the URL and orphans any shared link. The override file is the fix;
+  a redirect from old slugs would need a history of them.
+- **No test covers the manager page composition.** `managerSeasonStats` is
+  a pure selection over reports that are each tested; the page itself is
+  verified only in the browser for both seasons and a 404.

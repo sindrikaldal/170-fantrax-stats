@@ -5,6 +5,7 @@ import { biggestCollapses, scoreExtremes, streaks } from '@/lib/stats/records'
 import { formatScore, teamName } from '../../lib/format'
 import { EmptyState } from '../EmptyState'
 import { TeamCrest } from '../TeamCrest'
+import { TeamName } from '../TeamName'
 
 // Two settled gameweeks is the first point at which every card on the wall
 // can exist: a collapse needs a week to fall from. High and low alone would
@@ -87,7 +88,7 @@ export function RecordsWall({ view, now = new Date() }: { view: SeasonView; now?
     <>
       <TeamCrest season={season} teamId={teamId} />
       <span className="min-w-0 truncate" title={teamName(season, teamId)}>
-        {teamName(season, teamId)}
+        <TeamName season={season} teamId={teamId} />
       </span>
     </>
   )

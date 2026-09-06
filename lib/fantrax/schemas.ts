@@ -115,3 +115,79 @@ export const StandingsSchema = z.array(
 )
 
 export type RawStandings = z.infer<typeof StandingsSchema>
+
+/** ---------- fxpa/req getTeamRosterInfo, timeframe BY_PERIOD ---------- */
+
+/**
+ * A stat cell. Observed as `{ content: "13.5" }`; a bare string is accepted
+ * too so a Fantrax simplification does not break parsing.
+ */
+const RosterCellSchema = z.union([z.object({ content: z.string() }).passthrough(), z.string()])
+
+const RosterHeaderCellSchema = z
+  .object({
+    name: z.string(),
+    shortName: z.string().optional(),
+    key: z.string().optional(),
+  })
+  .passthrough()
+
+/**
+ * A roster row. Rows for empty lineup slots carry no `scorer`, and the
+ * per-table totals row carries a `scorer` without a `scorerId`; only rows
+ * with a `scorerId` describe a player.
+ */
+const RosterRowSchema = z
+  .object({
+    scorer: z
+      .object({
+        scorerId: z.string().optional(),
+        name: z.string().optional(),
+        shortName: z.string().optional(),
+        posShortNames: z.string().optional(),
+      })
+      .passthrough()
+      .optional(),
+    /** "1" active, "2" reserve, "y" a totals row. */
+    statusId: z.string().optional(),
+    posId: z.string().nullable().optional(),
+    eligiblePosIds: z.array(z.string()).optional(),
+    cells: z.array(RosterCellSchema),
+  })
+  .passthrough()
+
+const RosterTableSchema = z
+  .object({
+    header: z.object({ cells: z.array(RosterHeaderCellSchema) }).passthrough(),
+    rows: z.array(RosterRowSchema),
+  })
+  .passthrough()
+
+export const RosterInfoResponseSchema = z
+  .object({
+    responses: z
+      .array(
+        z
+          .object({
+            data: z
+              .object({
+                displayedSelections: z
+                  .object({
+                    displayedPeriod: z.number(),
+                    displayedFantasyTeamId: z.string().optional(),
+                    displayedSeasonOrProjection: z
+                      .object({ timeframeTypeCode: z.string() })
+                      .passthrough(),
+                  })
+                  .passthrough(),
+                tables: z.array(RosterTableSchema),
+              })
+              .passthrough(),
+          })
+          .passthrough(),
+      )
+      .min(1),
+  })
+  .passthrough()
+
+export type RawRosterInfoResponse = z.infer<typeof RosterInfoResponseSchema>

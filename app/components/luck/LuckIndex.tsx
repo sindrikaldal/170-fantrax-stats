@@ -3,6 +3,7 @@ import { allPlayRecords, luckIndex } from '@/lib/stats/luck'
 import { teamName } from '../../lib/format'
 import { EmptyState } from '../EmptyState'
 import { TeamCrest } from '../TeamCrest'
+import { TeamName } from '../TeamName'
 
 const NEEDS_SETTLED = 6
 
@@ -69,7 +70,7 @@ export function LuckIndex({ view, now = new Date() }: { view: SeasonView; now?: 
                 className="min-w-0 truncate font-medium text-ink"
                 title={teamName(season, entry.teamId)}
               >
-                {teamName(season, entry.teamId)}
+                <TeamName season={season} teamId={entry.teamId} />
               </span>
             </div>
 

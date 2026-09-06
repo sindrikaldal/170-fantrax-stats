@@ -1,0 +1,43 @@
+name: Snapshot lineups
+
+# Captures each settled gameweek's lineups from the public Fantrax league and
+# commits them to data/lineups/. No secrets: the league is public and the
+# push uses the workflow's own token.
+on:
+  schedule:
+    # Daily, 06:17 UTC. Gameweeks settle at unpredictable times; a run that
+    # finds nothing new is free.
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: snapshot-lineups
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run snapshot
+      - name: Commit new gameweeks
+        run: |
+          if git diff --quiet -- data/lineups; then
+            echo "No lineup changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/lineups
+          # Name the gameweeks in the commit so the history reads like a log.
+          changed=$(git diff --cached --name-only -- data/lineups | sed -E 's#data/lineups/([0-9]+)/gw0*([0-9]+)\.json#\1 GW\2#' | paste -sd ',' - | sed 's/,/, /g')
+          git commit -m "Snapshot lineups: ${changed}"
+          git push

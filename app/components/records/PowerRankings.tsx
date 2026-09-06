@@ -3,6 +3,7 @@ import { POWER_WEIGHTS, powerRankings } from '@/lib/stats/power'
 import { teamName } from '../../lib/format'
 import { EmptyState } from '../EmptyState'
 import { TeamCrest } from '../TeamCrest'
+import { TeamName } from '../TeamName'
 
 const NEEDS_SETTLED = 3
 
@@ -94,7 +95,7 @@ export function PowerRankings({ view, now = new Date() }: { view: SeasonView; no
                   className="min-w-0 truncate font-medium text-ink"
                   title={teamName(season, r.teamId)}
                 >
-                  {teamName(season, r.teamId)}
+                  <TeamName season={season} teamId={r.teamId} />
                 </span>
               </span>
               <span className="font-display text-base font-semibold tabular-nums text-ink">

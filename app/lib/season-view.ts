@@ -15,7 +15,8 @@ export interface SeasonView {
   /** Regular-season periods whose scores are settled and safe to display. */
   settled: number[]
   /**
-   * Settled periods Fantrax has not closed yet — displayable, but not final.
+   * Settled periods Fantrax has not closed yet: in progress, with matches
+   * possibly still to play. Displayable as live numbers, never as results.
    */
   provisional: number[]
   /** True when the gameweek prize did not exist yet in this season. */

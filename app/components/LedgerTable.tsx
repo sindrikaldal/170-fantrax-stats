@@ -1,7 +1,8 @@
 import type { Ledger } from '@/lib/stats/ledger'
 import type { SeasonData } from '@/lib/domain/types'
-import { isk, teamName } from '../lib/format'
+import { formatScore, isk } from '../lib/format'
 import { TeamCrest } from './TeamCrest'
+import { TeamName } from './TeamName'
 
 const RANK_COLOR = ['text-money', 'text-ink', 'text-ink'] as const
 
@@ -14,12 +15,35 @@ export function LedgerTable({
   ledger: Ledger
   hypothetical: boolean
 }) {
+  const pendingNote =
+    ledger.pending.length > 0 ? (
+      <p className="mt-1 text-sm text-muted">
+        Plus {isk.format(ledger.prizePerGameweek * ledger.pending.length)} ISK pending for{' '}
+        {ledger.pending.map((g, i) => (
+          <span key={g.period}>
+            {i > 0 && ', '}
+            gameweek {g.period}
+            {g.leaders.length > 0 && (
+              <>
+                {' '}
+                (<TeamName season={season} teamId={g.leaders[0]} />
+                {g.leaders.length > 1 && ` and ${g.leaders.length - 1} more`} leading on{' '}
+                {formatScore(g.topScore)})
+              </>
+            )}
+          </span>
+        ))}
+        . Still in progress; not paid until the gameweek closes.
+      </p>
+    ) : null
+
   if (ledger.gameweeksCounted === 0) {
     return (
       <div className="relative overflow-hidden rounded-lg border border-line bg-surface p-6">
         <p className="text-sm text-muted">
           No gameweeks have finished yet. The ledger fills in from gameweek 1.
         </p>
+        {pendingNote}
         {ledger.periodsWithheld > 0 && (
           <p className="mt-3 rounded border border-warn-line/60 bg-warn-bg px-3 py-2 text-sm font-medium text-warn-ink">
             {ledger.periodsWithheld} gameweek{ledger.periodsWithheld === 1 ? '' : 's'}{' '}
@@ -58,6 +82,7 @@ export function LedgerTable({
           <p className="font-display text-4xl font-semibold tabular-nums text-money sm:text-5xl">
             {isk.format(ledger.totalPaid)} ISK
           </p>
+          {pendingNote}
         </div>
         <div className="text-sm text-muted">
           {ledger.gameweeksCounted} of {season.regularSeasonPeriods} gameweeks counted
@@ -109,7 +134,7 @@ export function LedgerTable({
                 <td className="min-w-0 py-2.5 pr-2">
                   <span className="flex min-w-0 items-center gap-2.5">
                     <TeamCrest season={season} teamId={e.teamId} />
-                    <span className="min-w-0 truncate">{teamName(season, e.teamId)}</span>
+                    <span className="min-w-0 truncate"><TeamName season={season} teamId={e.teamId} /></span>
                   </span>
                 </td>
                 <td className="whitespace-nowrap py-2.5 pr-2 text-right tabular-nums">{e.gameweekWins}</td>

@@ -11,8 +11,13 @@ A finished 35-gameweek season with known outcomes. The primary correctness fixtu
 - `getStandings.json` — final table
 - `fxpa-getStandings-schedule.json` — **all 35 gameweeks of matchup scores**, from one
   POST to `fxpa/req` with `getStandings` / `view: "SCHEDULE"`
-- `fxpa-getTeamRosterInfo-p5.json` — per-player sample, Füllkrug Express through period 5.
-  Note the figures are cumulative to date, not per-period.
+- `fxpa-getTeamRosterInfo-p5.json` — per-player sample through period 5, in the default
+  year-to-date timeframe, so the figures are cumulative. The team is **Earth, Wind & Maguire**
+  (`qzs8m54qme8uz58j`, the commissioner's), not Füllkrug Express as previously noted: the
+  request selected no team, and Fantrax falls back to the commissioner's.
+- `fxpa-getTeamRosterInfo-p1-byPeriod.json` — the same team, gameweek 1 only, captured
+  2026-09-06 with `timeframeTypeCode: BY_PERIOD`. Per-gameweek figures, bench included: the
+  starters sum to the team's recorded 82.5, and de Ligt scored 13.5 from the reserves.
 
 Known-good values derived from these, asserted in tests:
 

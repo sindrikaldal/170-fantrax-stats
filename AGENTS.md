@@ -80,9 +80,13 @@ the guards are what stop a placeholder all-zero week from paying out.
   tables of both seasons. It is the only such signal in that response —
   `displayedEndDate` is a season-level `min(now, seasonEnd)` cursor, and
   `getLiveScoringInfo`/`getMatchupPreview`/`getFantasyMatchup` do not exist.
-  Whether it flips at kickoff or at finalisation is **still unverified**,
-  which is why a gameweek scored inside an open window is labelled
-  provisional rather than presented as final.
+  It flips **at kickoff, not at finalisation** (verified live 2026-09-06: GW3
+  flagged with one match still to play). So "published results + open
+  window" means *in progress*, not "awaiting corrections". The ledger,
+  runner-up and bench modules pay and count **final gameweeks only**
+  (window closed); an in-progress gameweek is shown as a live leader with
+  its ISK pending. Other stats still read `settled`, which includes the
+  in-progress week.
 - `periodsWithResults` describes **the fetch, not a point in time**. A fixture
   captured after a season ended claims every gameweek has results, so any
   test replaying an earlier date must also replay what was published by then
@@ -96,8 +100,17 @@ the guards are what stop a placeholder all-zero week from paying out.
   `INVALID_SPORT`.
 - Fantrax issues a **new `leagueId` per season**. `leagueHistoryId`
   (`6yst2cj3l5tiizya`) is stable across seasons — never use it as a season key.
-- `getTeamRosterInfo` per-player figures are **cumulative to date**, not
-  per-period. Weekly values need differencing consecutive periods.
+- `getTeamRosterInfo` per-player figures are **cumulative to date** in its
+  default timeframe. Pass `timeframeTypeCode: 'BY_PERIOD'` for one gameweek's
+  figures, bench included; verified for both seasons, and the starters sum
+  exactly to the team's recorded score. The team is selected by **`teamId`**;
+  `fantasyTeamId` is silently ignored and returns the commissioner's team,
+  which is how every "per-team" capture came back identical once.
+- Lineups are **never fetched at request time**. `scripts/snapshot-lineups.ts`
+  (daily GitHub Action) commits them to `data/lineups/<year>/gwNN.json`, and
+  refuses to write a gameweek unless every team's starters sum to the score
+  in the schedule. `lib/stats/bench.ts` drops any committed gameweek that
+  fails the same check, so a bad file can never show a regret figure.
 - The prize rule is **new for 2026**. The 2025 ledger is hypothetical and every
   view of it must say so, unmissably.
 

@@ -1,0 +1,1318 @@
+{
+ "seasonYear": 2025,
+ "period": 18,
+ "final": true,
+ "capturedAt": "2026-09-06T09:38:16.904Z",
+ "teams": [
+  {
+   "teamId": "qzs8m54qme8uz58j",
+   "players": [
+    {
+     "playerId": "06cmb",
+     "name": "Guglielmo Vicario",
+     "positions": [
+      "G"
+     ],
+     "starter": true,
+     "points": 16
+    },
+    {
+     "playerId": "05o4b",
+     "name": "Matty Cash",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": -0.25
+    },
+    {
+     "playerId": "04qfz",
+     "name": "Diogo Dalot",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 20.75
+    },
+    {
+     "playerId": "05u7f",
+     "name": "Ibrahima Konate",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 7.75
+    },
+    {
+     "playerId": "05r34",
+     "name": "Amad Diallo",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 0
+    },
+    {
+     "playerId": "06r5b",
+     "name": "Diego Gomez",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 16
+    },
+    {
+     "playerId": "06v0p",
+     "name": "Enzo Le Fée",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 9
+    },
+    {
+     "playerId": "06y9z",
+     "name": "Martin Zubimendi",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 11.5
+    },
+    {
+     "playerId": "06zbz",
+     "name": "Hugo Ekitiké",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 14
+    },
+    {
+     "playerId": "04tsb",
+     "name": "Viktor Gyökeres",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 3.5
+    },
+    {
+     "playerId": "04qrc",
+     "name": "Raul Jimenez",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 20.5
+    },
+    {
+     "playerId": "06p4k",
+     "name": "Matthijs de Ligt",
+     "positions": [
+      "D"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
+     "playerId": "061vp",
+     "name": "Brenden Aaronson",
+     "positions": [
+      "M"
+     ],
+     "starter": false,
+     "points": 17.5
+    },
+    {
+     "playerId": "06v0t",
+     "name": "Wilson Isidor",
+     "positions": [
+      "F"
+     ],
+     "starter": false,
+     "points": 2
+    }
+   ]
+  },
+  {
+   "teamId": "50twqxrrme8uz58j",
+   "players": [
+    {
+     "playerId": "06znb",
+     "name": "Robin Roefs",
+     "positions": [
+      "G"
+     ],
+     "starter": true,
+     "points": 6
+    },
+    {
+     "playerId": "05w9i",
+     "name": "Marc Cucurella",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 5
+    },
+    {
+     "playerId": "0635j",
+     "name": "Chris Richards",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 0
+    },
+    {
+     "playerId": "03vlj",
+     "name": "Virgil van Dijk",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 5.75
+    },
+    {
+     "playerId": "068ym",
+     "name": "Enzo Fernandez",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 5
+    },
+    {
+     "playerId": "04spw",
+     "name": "James Garner",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 10
+    },
+    {
+     "playerId": "0522h",
+     "name": "Alexis Mac Allister",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 7
+    },
+    {
+     "playerId": "05r9b",
+     "name": "Martin Odegaard",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 25.5
+    },
+    {
+     "playerId": "05l8q",
+     "name": "Cole Palmer",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 3.5
+    },
+    {
+     "playerId": "06mn0",
+     "name": "Igor Thiago",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 15.5
+    },
+    {
+     "playerId": "068y0",
+     "name": "Antoine Semenyo",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 23
+    },
+    {
+     "playerId": "05s08",
+     "name": "Valentino Livramento",
+     "positions": [
+      "D"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
+     "playerId": "068lx",
+     "name": "Dango Ouattara",
+     "positions": [
+      "M"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
+     "playerId": "05o6h",
+     "name": "Kai Havertz",
+     "positions": [
+      "F"
+     ],
+     "starter": false,
+     "points": 0
+    }
+   ]
+  },
+  {
+   "teamId": "lr283d35me8uz58j",
+   "players": [
+    {
+     "playerId": "05tqx",
+     "name": "David Raya",
+     "positions": [
+      "G"
+     ],
+     "starter": true,
+     "points": 5
+    },
+    {
+     "playerId": "04mup",
+     "name": "Trevoh Chalobah",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": -3
+    },
+    {
+     "playerId": "06v05",
+     "name": "Jeremie Frimpong",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 13.75
+    },
+    {
+     "playerId": "050jq",
+     "name": "Marc Guehi",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 2.75
+    },
+    {
+     "playerId": "06ex4",
+     "name": "Josko Gvardiol",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 17
+    },
+    {
+     "playerId": "063e7",
+     "name": "Marcos Senesi",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": -0.5
+    },
+    {
+     "playerId": "04abb",
+     "name": "Phil Foden",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 7
+    },
+    {
+     "playerId": "06clt",
+     "name": "Justin Kluivert",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 9
+    },
+    {
+     "playerId": "04yo7",
+     "name": "Youri Tielemans",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 13.5
+    },
+    {
+     "playerId": "06cms",
+     "name": "Sandro Tonali",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 4.5
+    },
+    {
+     "playerId": "04io4",
+     "name": "Richarlison",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 20
+    },
+    {
+     "playerId": "070fa",
+     "name": "Xavi Simons",
+     "positions": [
+      "M"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
+     "playerId": "06cmm",
+     "name": "Dominik Szoboszlai",
+     "positions": [
+      "M"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
+     "playerId": "03aqp",
+     "name": "Mohamed Salah",
+     "positions": [
+      "F"
+     ],
+     "starter": false,
+     "points": 0
+    }
+   ]
+  },
+  {
+   "teamId": "w7k5s20pme8uz58i",
+   "players": [
+    {
+     "playerId": "06fuw",
+     "name": "Djordje Petrovic",
+     "positions": [
+      "G"
+     ],
+     "starter": true,
+     "points": -2.5
+    },
+    {
+     "playerId": "051k7",
+     "name": "Reece James",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 16.25
+    },
+    {
+     "playerId": "06do9",
+     "name": "Milos Kerkez",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 5.5
+    },
+    {
+     "playerId": "05akv",
+     "name": "Tyrick Mitchell",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 7.25
+    },
+    {
+     "playerId": "06p5s",
+     "name": "Brajan Gruda",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 1.5
+    },
+    {
+     "playerId": "06fv8",
+     "name": "Mohammed Kudus",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 4.5
+    },
+    {
+     "playerId": "06v06",
+     "name": "Tijjani Reijnders",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 15
+    },
+    {
+     "playerId": "04y92",
+     "name": "Bukayo Saka",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 24
+    },
+    {
+     "playerId": "03rxs",
+     "name": "Harry Wilson",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 15.5
+    },
+    {
+     "playerId": "070hp",
+     "name": "Randal Kolo Muani",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 4.5
+    },
+    {
+     "playerId": "05r8o",
+     "name": "Jean-Philippe Mateta",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 3
+    },
+    {
+     "playerId": "04tm0",
+     "name": "Lucas Digne",
+     "positions": [
+      "D"
+     ],
+     "starter": false,
+     "points": 2
+    },
+    {
+     "playerId": "067yv",
+     "name": "Cody Gakpo",
+     "positions": [
+      "F"
+     ],
+     "starter": false,
+     "points": 0.5
+    },
+    {
+     "playerId": "05uor",
+     "name": "Yoane Wissa",
+     "positions": [
+      "F"
+     ],
+     "starter": false,
+     "points": 3
+    }
+   ]
+  },
+  {
+   "teamId": "rehlaeg0me8uz58i",
+   "players": [
+    {
+     "playerId": "03yww",
+     "name": "Dean Henderson",
+     "positions": [
+      "G"
+     ],
+     "starter": true,
+     "points": 5
+    },
+    {
+     "playerId": "06ymt",
+     "name": "Marco Bizot",
+     "positions": [
+      "G"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
+     "playerId": "05u1m",
+     "name": "Nathan Collins",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 8.5
+    },
+    {
+     "playerId": "062oh",
+     "name": "Jake O'Brien",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 16.25
+    },
+    {
+     "playerId": "05oeh",
+     "name": "Kenny Tete",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 9.75
+    },
+    {
+     "playerId": "0642l",
+     "name": "Casemiro",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 3.5
+    },
+    {
+     "playerId": "067x8",
+     "name": "Nico O'Reilly",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 7
+    },
+    {
+     "playerId": "06zbx",
+     "name": "Anton Stach",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 15
+    },
+    {
+     "playerId": "0639x",
+     "name": "Marcus Tavernier",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 8
+    },
+    {
+     "playerId": "0520r",
+     "name": "Leandro Trossard",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 11
+    },
+    {
+     "playerId": "046c5",
+     "name": "Jarrod Bowen",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 3
+    },
+    {
+     "playerId": "067yz",
+     "name": "Matheus Cunha",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 7.5
+    },
+    {
+     "playerId": "066sd",
+     "name": "Myles Lewis-Skelly",
+     "positions": [
+      "D"
+     ],
+     "starter": false,
+     "points": -2.25
+    },
+    {
+     "playerId": "038ze",
+     "name": "Alex Iwobi",
+     "positions": [
+      "M"
+     ],
+     "starter": false,
+     "points": 0
+    }
+   ]
+  },
+  {
+   "teamId": "aqfzdhpeme8uz58j",
+   "players": [
+    {
+     "playerId": "045ob",
+     "name": "Caoimhin Kelleher",
+     "positions": [
+      "G"
+     ],
+     "starter": true,
+     "points": 17
+    },
+    {
+     "playerId": "06804",
+     "name": "Benoit Badiashile",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 1
+    },
+    {
+     "playerId": "05nns",
+     "name": "Danny Ballard",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 0
+    },
+    {
+     "playerId": "06nu7",
+     "name": "Riccardo Calafiori",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 0
+    },
+    {
+     "playerId": "06pia",
+     "name": "Maxence Lacroix",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 5.25
+    },
+    {
+     "playerId": "063zi",
+     "name": "Matheus Nunes",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 8
+    },
+    {
+     "playerId": "06fxe",
+     "name": "Ryan Gravenberch",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 19
+    },
+    {
+     "playerId": "06pe1",
+     "name": "Mateus Fernandes",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 8.5
+    },
+    {
+     "playerId": "04agz",
+     "name": "Declan Rice",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 13
+    },
+    {
+     "playerId": "05g2o",
+     "name": "Joao Pedro",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 17
+    },
+    {
+     "playerId": "06xza",
+     "name": "Eli Kroupi",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 3
+    },
+    {
+     "playerId": "05opj",
+     "name": "Elliot Anderson",
+     "positions": [
+      "M"
+     ],
+     "starter": false,
+     "points": 12
+    },
+    {
+     "playerId": "02lm7",
+     "name": "Jack Grealish",
+     "positions": [
+      "M"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
+     "playerId": "0646f",
+     "name": "Alexander Isak",
+     "positions": [
+      "F"
+     ],
+     "starter": false,
+     "points": 0
+    }
+   ]
+  },
+  {
+   "teamId": "kzwvrmysme8uz58j",
+   "players": [
+    {
+     "playerId": "070hs",
+     "name": "Gianluigi Donnarumma",
+     "positions": [
+      "G"
+     ],
+     "starter": true,
+     "points": 0.5
+    },
+    {
+     "playerId": "05omu",
+     "name": "Ruben Dias",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 3
+    },
+    {
+     "playerId": "0558w",
+     "name": "William Saliba",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 0.75
+    },
+    {
+     "playerId": "06uyc",
+     "name": "Adrien Truffert",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": -1.25
+    },
+    {
+     "playerId": "060wh",
+     "name": "Alejandro Garnacho",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 6
+    },
+    {
+     "playerId": "04mdn",
+     "name": "Anthony Gordon",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 10
+    },
+    {
+     "playerId": "0647t",
+     "name": "Lucas Paqueta",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 7.5
+    },
+    {
+     "playerId": "04sat",
+     "name": "Emile Smith Rowe",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 6
+    },
+    {
+     "playerId": "06v21",
+     "name": "Florian Wirtz",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 27
+    },
+    {
+     "playerId": "06fvn",
+     "name": "Beto",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 4
+    },
+    {
+     "playerId": "05ocl",
+     "name": "Ollie Watkins",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 28
+    },
+    {
+     "playerId": "05y9n",
+     "name": "Lewis Hall",
+     "positions": [
+      "D"
+     ],
+     "starter": false,
+     "points": 11.75
+    },
+    {
+     "playerId": "06dmj",
+     "name": "Jurrien Timber",
+     "positions": [
+      "D"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
+     "playerId": "03fgo",
+     "name": "Dominic Solanke",
+     "positions": [
+      "F"
+     ],
+     "starter": false,
+     "points": 0
+    }
+   ]
+  },
+  {
+   "teamId": "zgpnhvynme8uz58j",
+   "players": [
+    {
+     "playerId": "04yme",
+     "name": "Robert Sanchez",
+     "positions": [
+      "G"
+     ],
+     "starter": true,
+     "points": 10
+    },
+    {
+     "playerId": "06clz",
+     "name": "Malo Gusto",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 0
+    },
+    {
+     "playerId": "0703c",
+     "name": "Nordi Mukiele",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 12.5
+    },
+    {
+     "playerId": "0427d",
+     "name": "James Tarkowski",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 14.25
+    },
+    {
+     "playerId": "05nt6",
+     "name": "Eberechi Eze",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 0
+    },
+    {
+     "playerId": "03am7",
+     "name": "Jacob Murphy",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 3
+    },
+    {
+     "playerId": "062ci",
+     "name": "Kaoru Mitoma",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 0
+    },
+    {
+     "playerId": "05rb8",
+     "name": "Moises Caicedo",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 4
+    },
+    {
+     "playerId": "052cd",
+     "name": "Mason Mount",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 3
+    },
+    {
+     "playerId": "06phw",
+     "name": "Federico Chiesa",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 1.5
+    },
+    {
+     "playerId": "056iy",
+     "name": "Pedro Neto",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 6
+    },
+    {
+     "playerId": "02lsa",
+     "name": "Dan Burn",
+     "positions": [
+      "D"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
+     "playerId": "06fup",
+     "name": "Jeremy Doku",
+     "positions": [
+      "M"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
+     "playerId": "05trb",
+     "name": "Bryan Mbeumo",
+     "positions": [
+      "F"
+     ],
+     "starter": false,
+     "points": 0
+    }
+   ]
+  },
+  {
+   "teamId": "xc98xpvcme8uz58j",
+   "players": [
+    {
+     "playerId": "04sjt",
+     "name": "Alisson Becker",
+     "positions": [
+      "G"
+     ],
+     "starter": true,
+     "points": 6
+    },
+    {
+     "playerId": "070hq",
+     "name": "Piero Hincapié",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 0.25
+    },
+    {
+     "playerId": "0327r",
+     "name": "Michael Keane",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 25.25
+    },
+    {
+     "playerId": "0700p",
+     "name": "Malick Thiaw",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 6.25
+    },
+    {
+     "playerId": "05ylj",
+     "name": "Bruno Guimaraes",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 6
+    },
+    {
+     "playerId": "06v07",
+     "name": "Rayan Cherki",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 29
+    },
+    {
+     "playerId": "04qr9",
+     "name": "Morgan Gibbs-White",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 4.5
+    },
+    {
+     "playerId": "0435m",
+     "name": "Granit Xhaka",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 14.5
+    },
+    {
+     "playerId": "061vq",
+     "name": "Erling Haaland",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 2.5
+    },
+    {
+     "playerId": "06zxy",
+     "name": "Benjamin Sesko",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 6.5
+    },
+    {
+     "playerId": "070g7",
+     "name": "Nick Woltemade",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 0.5
+    },
+    {
+     "playerId": "05nzu",
+     "name": "Gabriel Magalhaes",
+     "positions": [
+      "D"
+     ],
+     "starter": false,
+     "points": 1.25
+    },
+    {
+     "playerId": "05a6e",
+     "name": "Neco Williams",
+     "positions": [
+      "D"
+     ],
+     "starter": false,
+     "points": 1.5
+    },
+    {
+     "playerId": "05r94",
+     "name": "Iliman Ndiaye",
+     "positions": [
+      "M"
+     ],
+     "starter": false,
+     "points": 0
+    }
+   ]
+  },
+  {
+   "teamId": "tk9fdd2rme8uz58j",
+   "players": [
+    {
+     "playerId": "032f9",
+     "name": "Jordan Pickford",
+     "positions": [
+      "G"
+     ],
+     "starter": true,
+     "points": 9.5
+    },
+    {
+     "playerId": "03rzp",
+     "name": "Antonee Robinson",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 24.5
+    },
+    {
+     "playerId": "06rlj",
+     "name": "Patrick Dorgu",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 32.75
+    },
+    {
+     "playerId": "06rgg",
+     "name": "Michael Kayode",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 6.75
+    },
+    {
+     "playerId": "05n07",
+     "name": "Pedro Porro",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 9.5
+    },
+    {
+     "playerId": "062p3",
+     "name": "Keane Lewis-Potter",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 4.5
+    },
+    {
+     "playerId": "06c6g",
+     "name": "Yankuba Minteh",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 6.5
+    },
+    {
+     "playerId": "05uht",
+     "name": "Morgan Rogers",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 3.5
+    },
+    {
+     "playerId": "049tq",
+     "name": "Dominic Calvert-Lewin",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 14.5
+    },
+    {
+     "playerId": "070hj",
+     "name": "Kevin",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 3
+    },
+    {
+     "playerId": "067zv",
+     "name": "Kevin Schade",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 43
+    },
+    {
+     "playerId": "06jgi",
+     "name": "Daniel Munoz",
+     "positions": [
+      "D"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
+     "playerId": "05gcr",
+     "name": "Bruno Fernandes",
+     "positions": [
+      "M"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
+     "playerId": "05748",
+     "name": "Ismaila Sarr",
+     "positions": [
+      "M"
+     ],
+     "starter": false,
+     "points": 0
+    }
+   ]
+  }
+ ]
+}

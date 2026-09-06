@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react'
 import type { SeasonView } from '../lib/season-view'
 import { weeklyAwards } from '@/lib/stats/records'
-import { formatScore, teamName } from '../lib/format'
+import {formatScore} from '../lib/format'
 import { EmptyState } from './EmptyState'
 import { TeamCrest } from './TeamCrest'
+import { TeamName } from './TeamName'
 
 const NEEDS_SETTLED = 1
 
@@ -80,7 +81,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
           {week.topScore.teamIds.map((id) => (
             <span key={id} className="flex items-center gap-1.5">
               <TeamCrest season={season} teamId={id} size="h-6 w-6" />
-              {teamName(season, id)}
+              <TeamName season={season} teamId={id} />
             </span>
           ))}
         </AwardCard>
@@ -91,10 +92,10 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
             title="The Massacre"
             accent="money"
             score={week.biggestBlowout.margin}
-            body={`${teamName(season, week.biggestBlowout.winnerId)} put ${formatScore(week.biggestBlowout.margin)} on ${teamName(season, week.biggestBlowout.loserId)}`}
+            body={`$<TeamName season={season} teamId={week.biggestBlowout.winnerId} /> put ${formatScore(week.biggestBlowout.margin)} on $<TeamName season={season} teamId={week.biggestBlowout.loserId} />`}
           >
             <TeamCrest season={season} teamId={week.biggestBlowout.winnerId} size="h-6 w-6" />
-            {teamName(season, week.biggestBlowout.winnerId)}
+            <TeamName season={season} teamId={week.biggestBlowout.winnerId} />
           </AwardCard>
         )}
 
@@ -107,7 +108,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
             body={`Scored ${formatScore(week.unluckiestLoss.score)}. Still lost. Brutal.`}
           >
             <TeamCrest season={season} teamId={week.unluckiestLoss.teamId} size="h-6 w-6" />
-            {teamName(season, week.unluckiestLoss.teamId)}
+            <TeamName season={season} teamId={week.unluckiestLoss.teamId} />
           </AwardCard>
         )}
 
@@ -120,7 +121,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
             body={`Won with ${formatScore(week.luckiestWin.score)}. Shameless.`}
           >
             <TeamCrest season={season} teamId={week.luckiestWin.teamId} size="h-6 w-6" />
-            {teamName(season, week.luckiestWin.teamId)}
+            <TeamName season={season} teamId={week.luckiestWin.teamId} />
           </AwardCard>
         )}
       </div>

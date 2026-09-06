@@ -1,8 +1,9 @@
 import type { SeasonView } from '../../lib/season-view'
 import { averageThresholds } from '@/lib/stats/luck'
 import { averageRecords, rankTable, winPoints } from '@/lib/stats/tables'
-import { formatScore, teamName } from '../../lib/format'
+import { formatScore } from '../../lib/format'
 import { EmptyState } from '../EmptyState'
+import { TeamName } from '../TeamName'
 
 const NEEDS_SETTLED = 3
 
@@ -88,7 +89,7 @@ export function ThresholdTrend({ view, now = new Date() }: { view: SeasonView; n
       </p>
       {clearsMost && (
         <p className="prose-measure mt-3 border-t border-line pt-3 text-sm text-ink">
-          <span className="font-semibold text-money">{teamName(season, clearsMost.teamId)}</span>{' '}
+          <span className="font-semibold text-money"><TeamName season={season} teamId={clearsMost.teamId} /></span>{' '}
           clears the bar most &mdash; {clearsMost.wins}-{clearsMost.draws}-{clearsMost.losses}{' '}
           against the league average ({formatScore(winPoints(clearsMost))} pts).
         </p>

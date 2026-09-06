@@ -69,10 +69,11 @@ export interface PeriodAudit {
    */
   withheld: number[]
   /**
-   * Settled periods whose Fantrax window has not closed yet — the matches
-   * are played and scored, but stat corrections can still land. A subset of
-   * `settled`: these count for money, and the UI must label them as not
-   * final.
+   * Settled periods whose Fantrax window has not closed yet. A subset of
+   * `settled`. Fantrax publishes results as soon as scoring starts (verified
+   * 2026-09-06, with a match still to play), so these are gameweeks *in
+   * progress*: their scores are real but incomplete. Nothing that concerns
+   * money may count them; they are shown as "leading", never "won".
    */
   provisional: number[]
 }

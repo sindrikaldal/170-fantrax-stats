@@ -75,3 +75,18 @@ export function resolveManagers(
     singleSeason: managers.filter((m) => m.teams.length === 1),
   }
 }
+
+/**
+ * The manager id a single team resolves to, without needing every season
+ * loaded. Identical to what `resolveManagers` assigns, because the id is a
+ * function of the team alone: an override keyed by teamId, else the name
+ * slug. Used to link a team anywhere on a season page to its manager page.
+ */
+export function managerIdForTeam(
+  season: SeasonData,
+  teamId: TeamId,
+  overrides: Record<TeamId, string> = MANAGER_OVERRIDES,
+): ManagerId {
+  const team = season.teams.find((t) => t.teamId === teamId)
+  return overrides[teamId] ?? slugifyManagerId(team?.name ?? teamId)
+}

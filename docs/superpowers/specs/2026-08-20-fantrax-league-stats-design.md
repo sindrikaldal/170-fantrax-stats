@@ -57,11 +57,13 @@ Confirmed endpoints:
 | `fxea/general/getTeamRosters?leagueId=&period=N` | GET | Roster per team with `ACTIVE`/`RESERVE` status |
 | `fxea/general/getPlayerIds?sport=EPL` | GET | Player names, real club, position. **Sport code is `EPL`** — `SOCCER` and `PL` both return `INVALID_SPORT` |
 | `fxpa/req` | POST | `getStandings` with `view: "SCHEDULE"` returns **all 35 gameweeks of matchup scores in one call** |
-| `fxpa/req` | POST | `getTeamRosterInfo` with `fantasyTeamId` + `period` returns per-player stats. Note: param is `fantasyTeamId`, not `teamId` |
+| `fxpa/req` | POST | `getTeamRosterInfo` with `teamId` + `period` returns per-player stats. Add `timeframeTypeCode: 'BY_PERIOD'` for one gameweek's figures. **Correction (2026-09-06):** the param is `teamId`; `fantasyTeamId` is silently ignored and returns the commissioner's team |
 
-Per-player figures from `getTeamRosterInfo` are **cumulative to date**, not per-period.
-Weekly values require differencing consecutive periods — roughly 500 requests to
-backfill a season. See Out of Scope.
+Per-player figures from `getTeamRosterInfo` are **cumulative to date** in the default
+timeframe; `timeframeTypeCode: 'BY_PERIOD'` returns one gameweek's figures directly, bench
+included, so no differencing is needed. Still one request per team per gameweek, which is
+why lineups are captured by a scheduled script and committed rather than fetched live
+(added 2026-09-06, see `scripts/snapshot-lineups.ts`).
 
 ### 2025 season outcome (drives the product case)
 
@@ -95,8 +97,8 @@ Out of Scope list below is where it was drawn.
 
 ### Out of scope
 
-- **Benched-points regret.** Needs per-player weekly scores: ~500 requests per season
-  backfill plus a storage layer. Deferred; revisit once the core page proves useful.
+- ~~**Benched-points regret.**~~ Added 2026-09-06 as the "Left on the bench" section, with
+  lineups committed to `data/lineups/` by a daily GitHub Action instead of a storage layer.
 - **Draft board / pick-value analysis.** Data is available (`getDraftResults`) but not
   requested. Deferred.
 - **Pre-gameweek predictions.** Considered and deliberately dropped. A team-level Monte

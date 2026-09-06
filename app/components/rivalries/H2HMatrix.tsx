@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import type { ManagerId } from '@/lib/domain/types'
 import type { HeadToHead } from '@/lib/stats/rivalries'
-import type { ManagerCard } from '../../lib/manager-view'
+import { managerHref, type ManagerCard } from '../../lib/manager-view'
 import { CrestImage } from '../CrestImage'
 import { formatScore } from '../../lib/format'
 
@@ -120,12 +121,15 @@ export function H2HMatrix({
                   scope="row"
                   className="sticky left-0 z-10 border-b border-r border-line bg-surface px-3 py-2 text-left font-medium"
                 >
-                  <span className="flex items-center gap-2">
+                  <Link
+                    href={managerHref(row.managerId)}
+                    className="flex items-center gap-2 hover:text-money"
+                  >
                     <CrestImage url={row?.logoUrl ?? null} name={row?.name ?? ''} />
                     <span className="max-w-[9rem] truncate" title={row.name}>
                       {row.name}
                     </span>
-                  </span>
+                  </Link>
                 </th>
                 {axis.map((col) => {
                   if (row.managerId === col.managerId) {
@@ -184,7 +188,7 @@ export function H2HMatrix({
 
       <p className="prose-measure mt-2 text-xs text-muted">
         Aggregate margin across every meeting, from the row manager&rsquo;s point of view.
-        Pick a cell for the scorelines.
+        Pick a cell for the scorelines, or a name for that manager&rsquo;s page.
       </p>
 
       {open && (

@@ -1,9 +1,10 @@
 import type { SeasonView } from '../../lib/season-view'
 import { closeGameRecords } from '@/lib/stats/luck'
 import { rankTable } from '@/lib/stats/tables'
-import { formatScore, teamName } from '../../lib/format'
+import {formatScore} from '../../lib/format'
 import { EmptyState } from '../EmptyState'
 import { TeamCrest } from '../TeamCrest'
+import { TeamName } from '../TeamName'
 
 const NEEDS_SETTLED = 10
 
@@ -64,7 +65,7 @@ export function CloseGames({ view, now = new Date() }: { view: SeasonView; now?:
               <td className="min-w-0 py-2.5 pr-2">
                 <span className="flex min-w-0 items-center gap-2">
                   <TeamCrest season={season} teamId={r.teamId} />
-                  <span className="min-w-0 truncate">{teamName(season, r.teamId)}</span>
+                  <span className="min-w-0 truncate"><TeamName season={season} teamId={r.teamId} /></span>
                 </span>
               </td>
               <td className="whitespace-nowrap py-2.5 pr-2 text-right tabular-nums text-muted">
@@ -84,7 +85,7 @@ export function CloseGames({ view, now = new Date() }: { view: SeasonView; now?:
       </p>
       {best && best.losses === 0 && best.draws === 0 && (
         <p className="border-t border-line px-3 py-2 text-sm text-ink">
-          <span className="font-semibold text-money">{teamName(season, best.teamId)}</span> is a
+          <span className="font-semibold text-money"><TeamName season={season} teamId={best.teamId} /></span> is a
           perfect {best.wins}-0-0 in the tightest games. Ice in their veins.
         </p>
       )}

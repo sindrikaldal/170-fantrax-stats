@@ -1,8 +1,9 @@
 import type { SeasonView } from '../../lib/season-view'
 import { pointsAgainstTable, scheduleSwap } from '@/lib/stats/luck'
-import { formatScore, teamName } from '../../lib/format'
+import {formatScore} from '../../lib/format'
 import { EmptyState } from '../EmptyState'
 import { TeamCrest } from '../TeamCrest'
+import { TeamName } from '../TeamName'
 
 const NEEDS_SETTLED = 10
 
@@ -42,7 +43,7 @@ export function ScheduleSwap({ view, now = new Date() }: { view: SeasonView; now
             <div className="mt-1 flex items-center gap-2">
               <TeamCrest season={season} teamId={entry.teamId} size="h-6 w-6" />
               <span className="font-display text-lg font-semibold tracking-tight text-ink">
-                {teamName(season, entry.teamId)}
+                <TeamName season={season} teamId={entry.teamId} />
               </span>
             </div>
             <p className="mt-3 font-display text-xl font-semibold tracking-tight text-analysis sm:text-2xl">

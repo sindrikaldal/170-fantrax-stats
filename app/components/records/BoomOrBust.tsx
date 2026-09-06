@@ -3,6 +3,7 @@ import { scoreDistributions } from '@/lib/stats/records'
 import { formatScore, teamName } from '../../lib/format'
 import { EmptyState } from '../EmptyState'
 import { TeamCrest } from '../TeamCrest'
+import { TeamName } from '../TeamName'
 
 const NEEDS_SETTLED = 8
 
@@ -68,7 +69,7 @@ export function BoomOrBust({ view, now = new Date() }: { view: SeasonView; now?:
                 className="min-w-0 truncate font-medium text-ink"
                 title={teamName(season, d.teamId)}
               >
-                {teamName(season, d.teamId)}
+                <TeamName season={season} teamId={d.teamId} />
               </span>
             </div>
 
@@ -77,7 +78,7 @@ export function BoomOrBust({ view, now = new Date() }: { view: SeasonView; now?:
               className="h-6 w-full"
               preserveAspectRatio="none"
               role="img"
-              aria-label={`${teamName(season, d.teamId)}: ${d.scores.length} scores averaging ${formatScore(d.mean)}, standard deviation ${formatScore(d.stdDev)}.`}
+              aria-label={`$<TeamName season={season} teamId={d.teamId} />: ${d.scores.length} scores averaging ${formatScore(d.mean)}, standard deviation ${formatScore(d.stdDev)}.`}
             >
               <line
                 x1={0}

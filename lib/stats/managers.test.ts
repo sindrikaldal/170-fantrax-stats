@@ -108,3 +108,25 @@ describe('resolveManagers across 2025 and 2026', () => {
     expect(() => resolveManagers([dupes], {})).toThrow(/same manager/i)
   })
 })
+
+describe('managerIdForTeam', () => {
+  it('agrees with resolveManagers for every 2025 team', async () => {
+    const { readFileSync } = await import('node:fs')
+    const { LeagueInfoSchema, ScheduleResponseSchema } = await import('@/lib/fantrax/schemas')
+    const { buildSeasonData } = await import('@/lib/adapt/season')
+    const { managerIdForTeam, resolveManagers } = await import('@/lib/stats/managers')
+    const load = (f: string) => JSON.parse(readFileSync(`test/fixtures/2025/${f}`, 'utf8'))
+    const season = buildSeasonData(
+      LeagueInfoSchema.parse(load('getLeagueInfo.json')),
+      ScheduleResponseSchema.parse(load('fxpa-getStandings-schedule.json')),
+      '7he4pkgpme8uz58b',
+    )
+    const resolution = resolveManagers([season])
+    for (const team of season.teams) {
+      const viaResolution = resolution.managers.find((m) =>
+        m.teams.some((t) => t.teamId === team.teamId),
+      )!.managerId
+      expect(managerIdForTeam(season, team.teamId)).toBe(viaResolution)
+    }
+  })
+})

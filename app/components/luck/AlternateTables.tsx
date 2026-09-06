@@ -1,9 +1,10 @@
 import type { SeasonView } from '../../lib/season-view'
 import type { SeasonData, TeamId } from '@/lib/domain/types'
 import { averageRecords, rankTable, realRecords, type TeamRecord } from '@/lib/stats/tables'
-import { formatScore, teamName } from '../../lib/format'
+import { formatScore } from '../../lib/format'
 import { EmptyState } from '../EmptyState'
 import { TeamCrest } from '../TeamCrest'
+import { TeamName } from '../TeamName'
 
 const NEEDS_SETTLED = 6
 
@@ -90,8 +91,11 @@ function MiniTable({
                 <span className="flex min-w-0 items-center gap-2">
                   <TeamCrest season={season} teamId={r.teamId} />
                   <span className="min-w-0 truncate">
-                    {season.teams.find((t) => t.teamId === r.teamId)?.shortName ??
-                      teamName(season, r.teamId)}
+                    <TeamName
+                      season={season}
+                      teamId={r.teamId}
+                      label={season.teams.find((t) => t.teamId === r.teamId)?.shortName ?? undefined}
+                    />
                   </span>
                 </span>
               </td>
@@ -172,7 +176,7 @@ export function AlternateTables({ view, now = new Date() }: { view: SeasonView; 
       <p className="prose-measure mt-3 text-sm text-muted">
         {riser && (
           <>
-            <span className="font-semibold text-up">{teamName(season, riser)}</span> jumps{' '}
+            <span className="font-semibold text-up"><TeamName season={season} teamId={riser} /></span> jumps{' '}
             {deltas.get(riser)} spot{deltas.get(riser) === 1 ? '' : 's'} once the schedule stops
             mattering
             {faller && '. '}
@@ -180,7 +184,7 @@ export function AlternateTables({ view, now = new Date() }: { view: SeasonView; 
         )}
         {faller && (
           <>
-            <span className="font-semibold text-down">{teamName(season, faller)}</span> falls{' '}
+            <span className="font-semibold text-down"><TeamName season={season} teamId={faller} /></span> falls{' '}
             {Math.abs(deltas.get(faller) ?? 0)} — the schedule was doing the heavy lifting.
           </>
         )}

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { CURRENT_SEASON } from '@/config/leagues'
 import { computeLedger } from '@/lib/stats/ledger'
+import { computeRunnersUp } from '@/lib/stats/runnerUp'
 import { loadSeasonView } from './lib/season-view'
 import { LedgerTable } from './components/LedgerTable'
 import { GameweekHistory } from './components/GameweekHistory'
@@ -25,9 +26,10 @@ export default async function Page() {
   }
 
   const ledger = view ? computeLedger(view.season, now) : null
+  const runnersUp = view ? computeRunnersUp(view.season, now) : null
   // Bundled so TypeScript narrows both together — a bare boolean flag
   // doesn't carry the non-null through to the JSX below.
-  const loaded = view && ledger && !loadError ? { view, ledger } : null
+  const loaded = view && ledger && runnersUp && !loadError ? { view, ledger, runnersUp } : null
 
   return (
     <main>
@@ -75,6 +77,7 @@ export default async function Page() {
                 <GameweekHistory
                   season={loaded.view.season}
                   ledger={loaded.ledger}
+                  runnersUp={loaded.runnersUp}
                   hypothetical={loaded.view.hypothetical}
                 />
               </>

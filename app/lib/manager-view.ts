@@ -55,3 +55,8 @@ export function crestOf(index: Map<ManagerId, ManagerCard>, id: ManagerId): stri
 export function nameOf(index: Map<ManagerId, ManagerCard>, id: ManagerId): string {
   return index.get(id)?.name ?? id
 }
+
+/** The manager page for an id. Ids are slugs, but encode anyway. */
+export function managerHref(id: ManagerId): string {
+  return `/manager/${encodeURIComponent(id)}`
+}

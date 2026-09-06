@@ -19,8 +19,21 @@ export interface LedgerEntry {
   isk: number
 }
 
+/**
+ * A gameweek whose scores are published but whose Fantrax window is still
+ * open — matches may still be being played. Shown as a live leader, never
+ * as a winner, and never added to any money total.
+ */
+export interface PendingGameweek {
+  period: number
+  topScore: number
+  /** Whoever is on top right now. More than one means a current tie. */
+  leaders: TeamId[]
+}
+
 export interface Ledger {
   prizePerGameweek: number
+  /** Final gameweeks only: the window has closed. */
   gameweeks: GameweekPrize[]
   entries: LedgerEntry[]
   totalPaid: number
@@ -33,17 +46,21 @@ export interface Ledger {
    */
   periodsWithheld: number
   /**
-   * Counted gameweeks whose Fantrax window has not closed yet. Their matches
-   * are played and scored, but stat corrections can still land, so the UI
-   * must not present them as final.
+   * Gameweeks in progress: published scores, open window. Fantrax flips its
+   * results flag as soon as scoring starts, not when the gameweek ends, so
+   * these can still change hands. They are displayed but not paid.
    */
-  provisionalPeriods: number[]
+  pending: PendingGameweek[]
 }
 
 /**
  * The gameweek prize ledger.
  *
- * Only completed regular-season gameweeks count. The *League Average*
+ * Only final regular-season gameweeks pay: scores published *and* the
+ * Fantrax window closed. A gameweek with published scores inside an open
+ * window is still in progress (verified 2026-09-06: the results flag flipped
+ * with a match still to play), so it is reported as pending with its
+ * current leader and contributes nothing to any total. The *League Average*
  * pseudo-team is structurally absent from `scoresForPeriod`, so it can
  * never win. Ties split the prize evenly.
  */
@@ -56,15 +73,25 @@ export function computeLedger(
   // no all-zero placeholder periods — live in auditRegularPeriods, shared
   // with every stat module. Only settled periods pay.
   const { settled, withheld, provisional } = auditRegularPeriods(season, now)
+  const inProgress = new Set(provisional)
 
-  const gameweeks: GameweekPrize[] = settled.map((period) => {
+  const leadersOf = (period: number) => {
     const scores = scoresForPeriod(season, period)
     const topScore = Math.max(...scores.values())
-    const winners = [...scores.entries()]
+    const leaders = [...scores.entries()]
       .filter(([, v]) => v === topScore)
       .map(([id]) => id)
-    return { period, topScore, winners, iskPerWinner: prizePerGameweek / winners.length }
-  })
+    return { topScore, leaders }
+  }
+
+  const gameweeks: GameweekPrize[] = settled
+    .filter((period) => !inProgress.has(period))
+    .map((period) => {
+      const { topScore, leaders: winners } = leadersOf(period)
+      return { period, topScore, winners, iskPerWinner: prizePerGameweek / winners.length }
+    })
+
+  const pending: PendingGameweek[] = provisional.map((period) => ({ period, ...leadersOf(period) }))
 
   const byTeam = new Map<TeamId, LedgerEntry>()
   for (const gw of gameweeks) {
@@ -87,6 +114,6 @@ export function computeLedger(
     totalPaid: gameweeks.reduce((s, g) => s + g.iskPerWinner * g.winners.length, 0),
     gameweeksCounted: gameweeks.length,
     periodsWithheld: withheld.length,
-    provisionalPeriods: provisional,
+    pending,
   }
 }

@@ -59,3 +59,53 @@ export interface SeasonData {
    */
   periodsWithResults: number[]
 }
+
+/** ---------- Lineups (per-player, per-gameweek) ---------- */
+
+export type PlayerId = string
+export type Position = 'G' | 'D' | 'M' | 'F'
+
+/**
+ * How many of each position may be active at once. Every known season
+ * uses 11 starters with at most 1 G, 5 D, 5 M and 3 F; there are no
+ * minimums, and an active slot may be left empty.
+ */
+export interface LineupRules {
+  maxActive: number
+  maxPerPosition: Record<Position, number>
+}
+
+export interface LineupPlayer {
+  playerId: PlayerId
+  name: string
+  /** Positions this player may fill. Almost always exactly one. */
+  positions: Position[]
+  /** True if the manager fielded the player that gameweek. */
+  starter: boolean
+  /** Fantasy points scored in that gameweek alone, bench included. */
+  points: number
+}
+
+/** One team's roster for one gameweek, as it was when the matches were played. */
+export interface TeamLineup {
+  teamId: TeamId
+  players: LineupPlayer[]
+}
+
+/**
+ * Every team's lineup for one gameweek. Captured from Fantrax by the
+ * snapshot script and committed to the repo; never fetched at request time.
+ */
+export interface LineupSnapshot {
+  seasonYear: number
+  period: number
+  /**
+   * False when captured while the Fantrax window was still open, so stat
+   * corrections could still move points. Such a snapshot is re-captured
+   * until the window closes.
+   */
+  final: boolean
+  /** ISO 8601 */
+  capturedAt: string
+  teams: TeamLineup[]
+}
