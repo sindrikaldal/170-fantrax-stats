@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import type { SeasonView } from '../lib/season-view'
 import { weeklyAwards } from '@/lib/stats/records'
-import {formatScore} from '../lib/format'
+import { formatScore, teamName } from '../lib/format'
 import { EmptyState } from './EmptyState'
 import { TeamCrest } from './TeamCrest'
 import { TeamName } from './TeamName'
@@ -92,7 +92,7 @@ export function AwardsStrip({ view, now = new Date() }: { view: SeasonView; now?
             title="The Massacre"
             accent="money"
             score={week.biggestBlowout.margin}
-            body={`$<TeamName season={season} teamId={week.biggestBlowout.winnerId} /> put ${formatScore(week.biggestBlowout.margin)} on $<TeamName season={season} teamId={week.biggestBlowout.loserId} />`}
+            body={`${teamName(season, week.biggestBlowout.winnerId)} put ${formatScore(week.biggestBlowout.margin)} on ${teamName(season, week.biggestBlowout.loserId)}`}
           >
             <TeamCrest season={season} teamId={week.biggestBlowout.winnerId} size="h-6 w-6" />
             <TeamName season={season} teamId={week.biggestBlowout.winnerId} />

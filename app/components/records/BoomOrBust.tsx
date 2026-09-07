@@ -78,7 +78,7 @@ export function BoomOrBust({ view, now = new Date() }: { view: SeasonView; now?:
               className="h-6 w-full"
               preserveAspectRatio="none"
               role="img"
-              aria-label={`$<TeamName season={season} teamId={d.teamId} />: ${d.scores.length} scores averaging ${formatScore(d.mean)}, standard deviation ${formatScore(d.stdDev)}.`}
+              aria-label={`${teamName(season, d.teamId)}: ${d.scores.length} scores averaging ${formatScore(d.mean)}, standard deviation ${formatScore(d.stdDev)}.`}
             >
               <line
                 x1={0}
