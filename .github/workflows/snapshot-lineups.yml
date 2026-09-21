@@ -30,13 +30,16 @@ jobs:
       - run: npm run snapshot
       - name: Commit new gameweeks
         run: |
-          if git diff --quiet -- data/lineups; then
+          # Stage first: a newly captured gameweek is an untracked file, which
+          # `git diff` without --cached does not see. That silently dropped
+          # GW4 and GW5 of 2026 for nine days while every run reported success.
+          git add data/lineups
+          if git diff --cached --quiet -- data/lineups; then
             echo "No lineup changes."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/lineups
           # Name the gameweeks in the commit so the history reads like a log.
           changed=$(git diff --cached --name-only -- data/lineups | sed -E 's#data/lineups/([0-9]+)/gw0*([0-9]+)\.json#\1 GW\2#' | paste -sd ',' - | sed 's/,/, /g')
           git commit -m "Snapshot lineups: ${changed}"
