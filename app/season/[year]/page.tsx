@@ -62,8 +62,20 @@ export default async function SeasonPage({
   const allViews = await loadAllSeasonViews(now)
   const seasons = allViews.map((v) => v.season)
   const resolution = resolveManagers(seasons)
-  const managers = [...managerIndex(resolution, seasons).values()]
-  const matrix = headToHeadMatrix(seasons, resolution, now)
+  const allManagers = [...managerIndex(resolution, seasons).values()]
+  const allMeetings = headToHeadMatrix(seasons, resolution, now)
+  // The *history* spans every season, but the *grid* is this season's
+  // league: a manager who left after 2025 has no place on the 2026 board,
+  // and a 2026 newcomer none on the 2025 one. Pairs between two current
+  // managers keep their earlier meetings. If this season failed to load
+  // nobody is "current", so the board falls back to everyone.
+  const inLeague = new Set(
+    allManagers.filter((m) => m.seasonYears.includes(year)).map((m) => m.managerId),
+  )
+  const managers = loaded ? allManagers.filter((m) => inLeague.has(m.managerId)) : allManagers
+  const matrix = loaded
+    ? allMeetings.filter((h) => inLeague.has(h.managerId) && inLeague.has(h.opponentId))
+    : allMeetings
   // "2025 + 2026 combined" is only true when more than one season loaded;
   // if one failed, saying "2025 combined" is both wrong and confusing.
   const years = allViews.map((v) => v.year)
