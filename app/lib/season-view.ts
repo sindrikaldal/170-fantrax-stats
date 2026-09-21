@@ -15,8 +15,8 @@ export interface SeasonView {
   /** Regular-season periods whose scores are settled and safe to display. */
   settled: number[]
   /**
-   * Settled periods Fantrax has not closed yet: in progress, with matches
-   * possibly still to play. Displayable as live numbers, never as results.
+   * Settled periods still in progress, with matches possibly still to play.
+   * Displayable as live numbers, never as results.
    */
   provisional: number[]
   /** True when the gameweek prize did not exist yet in this season. */
@@ -24,7 +24,7 @@ export interface SeasonView {
 }
 
 export async function loadSeasonView(year: number, now: Date): Promise<SeasonView> {
-  const season = await loadSeason(year)
+  const season = await loadSeason(year, now)
   const { settled, provisional } = auditRegularPeriods(season, now)
   return {
     year,

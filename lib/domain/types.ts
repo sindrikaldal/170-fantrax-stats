@@ -58,6 +58,32 @@ export interface SeasonData {
    * unavailable, in which case completeness falls back to the window.
    */
   periodsWithResults: number[]
+  /**
+   * What is known about a gameweek's real-sport matches, keyed by period.
+   * Populated only for gameweeks whose scores are published but whose
+   * Fantrax window is still open — the case where the window alone would
+   * misreport a finished gameweek as in progress for days, or for three
+   * weeks across an international break. Absent when the extra fetch
+   * failed, in which case the window remains the only completeness signal.
+   */
+  periodMatches: Record<number, PeriodMatches>
+}
+
+/**
+ * The state of one gameweek's real-sport matches as sampled from a single
+ * roster. Coverage is therefore partial — a roster of sixteen players
+ * touches most but not necessarily all ten matches — which is why
+ * `lastMatchDate` carries the decision and `unfinished` is only a veto.
+ */
+export interface PeriodMatches {
+  /**
+   * Calendar date, `YYYY-MM-DD`, of the gameweek's last scheduled match day,
+   * in US Eastern time — the zone Fantrax renders for anonymous requests
+   * and the zone its period boundaries are expressed in.
+   */
+  lastMatchDate: string
+  /** Matches visible on the sampled roster that have not been marked final. */
+  unfinished: number
 }
 
 /** ---------- Lineups (per-player, per-gameweek) ---------- */

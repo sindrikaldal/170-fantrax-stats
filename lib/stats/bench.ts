@@ -120,8 +120,9 @@ export interface BenchReport {
   /** Captured periods whose starters did not sum to the recorded scores. Dropped. */
   inconsistentPeriods: number[]
   /**
-   * Settled gameweeks still in progress (open window). Excluded from
-   * `periods`: a bench verdict on a half-played week would change by Monday.
+   * Settled gameweeks still in progress (matches not all over). Excluded
+   * from `periods`: a bench verdict on a half-played week would change by
+   * Monday.
    */
   inProgressPeriods: number[]
   rows: TeamGameweekBench[]

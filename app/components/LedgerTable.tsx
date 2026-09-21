@@ -33,7 +33,7 @@ export function LedgerTable({
             )}
           </span>
         ))}
-        . Still in progress; not paid until the gameweek closes.
+        . Still in progress; paid the day after its last match.
       </p>
     ) : null
 

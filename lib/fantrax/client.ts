@@ -96,3 +96,42 @@ export async function fetchTeamRosterInfo(
   if (!res.ok) throw new FantraxError('fxpa getTeamRosterInfo', `HTTP ${res.status}`)
   return RosterInfoResponseSchema.parse(await res.json())
 }
+
+/**
+ * The same endpoint in its "Schedule - Period" view, whose header lists the
+ * gameweek's real-sport match days and whose match cells say which have
+ * finished. That is the only place Fantrax reveals when a gameweek's matches
+ * are actually over; `getLeagueInfo`'s period window closes at the *next*
+ * gameweek's kickoff, and the schedule's results flag flips at the first.
+ *
+ * Any one team's roster will do — the header is the same for all of them.
+ * One request per in-progress gameweek, so at most one or two per season
+ * per cache window; this is not a lineup fetch and reads no player points.
+ */
+export async function fetchPeriodMatches(
+  leagueId: string,
+  teamId: string,
+  period: number,
+): Promise<RawRosterInfoResponse> {
+  const res = await fetch(`${FXPA}?leagueId=${leagueId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      msgs: [
+        {
+          method: 'getTeamRosterInfo',
+          data: {
+            leagueId,
+            teamId,
+            period,
+            timeframeTypeCode: 'BY_PERIOD',
+            view: 'SCHEDULE_PERIOD',
+          },
+        },
+      ],
+    }),
+    next: { revalidate: LIVE_TTL },
+  })
+  if (!res.ok) throw new FantraxError('fxpa getTeamRosterInfo/SCHEDULE_PERIOD', `HTTP ${res.status}`)
+  return RosterInfoResponseSchema.parse(await res.json())
+}

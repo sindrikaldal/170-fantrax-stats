@@ -46,9 +46,9 @@ export interface Ledger {
    */
   periodsWithheld: number
   /**
-   * Gameweeks in progress: published scores, open window. Fantrax flips its
-   * results flag as soon as scoring starts, not when the gameweek ends, so
-   * these can still change hands. They are displayed but not paid.
+   * Gameweeks in progress: published scores, matches not all over. Fantrax
+   * flips its results flag as soon as scoring starts, not when the gameweek
+   * ends, so these can still change hands. They are displayed but not paid.
    */
   pending: PendingGameweek[]
 }
@@ -56,9 +56,10 @@ export interface Ledger {
 /**
  * The gameweek prize ledger.
  *
- * Only final regular-season gameweeks pay: scores published *and* the
- * Fantrax window closed. A gameweek with published scores inside an open
- * window is still in progress (verified 2026-09-06: the results flag flipped
+ * Only final regular-season gameweeks pay: scores published *and* every
+ * match over (`isPeriodFinal`: the day after the last match, or the closed
+ * window as a fallback). A gameweek with published scores but matches still
+ * to play is in progress (verified 2026-09-06: the results flag flipped
  * with a match still to play), so it is reported as pending with its
  * current leader and contributes nothing to any total. The *League Average*
  * pseudo-team is structurally absent from `scoresForPeriod`, so it can

@@ -27,6 +27,45 @@ export function isPeriodComplete(
   return end.getTime() < now.getTime()
 }
 
+/**
+ * `now` as a calendar date in US Eastern time, `YYYY-MM-DD`, the zone
+ * Fantrax expresses match days and period boundaries in.
+ */
+export function easternDate(now: Date): string {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(now)
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? ''
+  return `${get('year')}-${get('month')}-${get('day')}`
+}
+
+/**
+ * Whether a gameweek's matches are all over, so its scores can only change
+ * by correction. True once the Fantrax window has closed — the original and
+ * fallback rule — or, while the window is still open, once every match this
+ * gameweek's sampled roster can see is final and the last scheduled match
+ * day is behind us in Eastern time.
+ *
+ * The window alone is a poor proxy: it closes at the *next* gameweek's first
+ * kickoff, four to five days after the matches in a normal week and three
+ * weeks across an international break (2026 GW5: matches Sept 18–20, window
+ * to Oct 9). The match report is what lets a finished gameweek be paid on
+ * the following day instead.
+ *
+ * The day-rollover requirement is what makes the partial roster coverage
+ * safe: a match the roster cannot see still cannot be in play once its
+ * scheduled day has ended.
+ */
+export function isPeriodFinal(season: SeasonData, period: number, now: Date): boolean {
+  if (isPeriodComplete(season, period, now)) return true
+  const matches = season.periodMatches[period]
+  if (!matches || matches.unfinished > 0) return false
+  return easternDate(now) > matches.lastMatchDate
+}
+
 /** Whether a gameweek's window has opened as of `now`. */
 export function isPeriodStarted(season: SeasonData, period: number, now: Date): boolean {
   const p = season.periods.find((x) => x.number === period)
@@ -69,13 +108,22 @@ export interface PeriodAudit {
    */
   withheld: number[]
   /**
-   * Settled periods whose Fantrax window has not closed yet. A subset of
-   * `settled`. Fantrax publishes results as soon as scoring starts (verified
-   * 2026-09-06, with a match still to play), so these are gameweeks *in
-   * progress*: their scores are real but incomplete. Nothing that concerns
-   * money may count them; they are shown as "leading", never "won".
+   * Settled periods whose matches are not all over yet — see
+   * `isPeriodFinal`. A subset of `settled`. Fantrax publishes results as
+   * soon as scoring starts (verified 2026-09-06, with a match still to
+   * play), so these are gameweeks *in progress*: their scores are real but
+   * incomplete. Nothing that concerns money may count them; they are shown
+   * as "leading", never "won".
    */
   provisional: number[]
+  /**
+   * Settled periods whose Fantrax window has not closed yet. A superset of
+   * `provisional`: a gameweek is here from its first kickoff until the next
+   * gameweek's, and in `provisional` only until its own last match ends.
+   * For processes that must keep re-reading Fantrax while corrections can
+   * still land, such as the lineup snapshot; never for display or money.
+   */
+  open: number[]
 }
 
 /**
@@ -116,6 +164,7 @@ export function auditRegularPeriods(season: SeasonData, now: Date): PeriodAudit 
   const settled: number[] = []
   const withheld: number[] = []
   const provisional: number[] = []
+  const open: number[] = []
   const expectedFixtures = maxFixturesPerPeriod(season)
 
   for (let period = 1; period <= season.regularSeasonPeriods; period++) {
@@ -135,7 +184,8 @@ export function auditRegularPeriods(season: SeasonData, now: Date): PeriodAudit 
     }
 
     settled.push(period)
-    if (!isPeriodComplete(season, period, now)) provisional.push(period)
+    if (!isPeriodFinal(season, period, now)) provisional.push(period)
+    if (!isPeriodComplete(season, period, now)) open.push(period)
   }
-  return { settled, withheld, provisional }
+  return { settled, withheld, provisional, open }
 }

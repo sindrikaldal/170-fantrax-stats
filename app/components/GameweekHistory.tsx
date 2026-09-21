@@ -157,7 +157,7 @@ export function GameweekHistory({
           <p className="border-t border-line px-4 py-2.5 text-xs text-muted">
             <span className="font-medium text-analysis">In progress</span> &mdash; Fantrax publishes
             scores as soon as a gameweek&rsquo;s first match kicks off. The leader is live and the
-            prize is not paid until the gameweek closes.
+            prize is paid the day after the gameweek&rsquo;s last match.
           </p>
         )}
       </div>

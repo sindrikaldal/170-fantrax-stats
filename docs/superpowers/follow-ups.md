@@ -117,8 +117,11 @@ when this branch merges.
   head-to-head matrix table, which already sits inside an `overflow-x-auto`
   wrapper. Predates this work; not investigated further. Likely the wrapper's
   grid parent lacks `min-w-0`, so the wrapper itself is as wide as the table.
-- **`tableType` flips at kickoff** (verified 2026-09-06), so an open-window
-  gameweek is in progress. Money surfaces now count final gameweeks only.
+- **`tableType` flips at kickoff** (verified 2026-09-06), so a published
+  gameweek can be in progress. Money surfaces count final gameweeks only,
+  where final is the Eastern day after the last match (from the
+  `SCHEDULE_PERIOD` roster view, added 2026-09-21 after GW5's three-week
+  window across the international break) or the closed window as fallback.
   The non-money stats (luck, records, form, power, league table) still read
   `settled`, which includes the in-progress week, so e.g. a "lowest score"
   record can briefly name a team that has a match still to play. Decide
@@ -127,6 +130,14 @@ when this branch merges.
 - **Late corrections after the window closes are not caught.** Lineups are
   re-captured daily only while the window is open; a stat correction Fantrax
   posts after that is missed. Same exposure as the ledger has always had.
+  Since 2026-09-21 the ledger pays a day after the last match rather than at
+  window close, so a correction posted on the Tuesday or Wednesday now moves
+  a paid winner instead of a pending leader. The page recomputes from the
+  schedule on every load, so it self-corrects; nothing is persisted.
+- **A match in play has never been captured** in the `SCHEDULE_PERIOD`
+  roster view. The adapter treats any match cell without the trailing ` F`
+  as unfinished, which is the safe direction, but a live capture (Saturday
+  15:00 UK) would confirm the format and is worth adding as a fixture.
 - **No test exercises a multi-position player.** `bestLineup` handles them by
   trying every assignment, covered by a synthetic test, but none of the 5,487
   committed player rows across both seasons has more than one position, so

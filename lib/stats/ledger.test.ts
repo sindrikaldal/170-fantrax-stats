@@ -259,4 +259,30 @@ describe('computeLedger, gameweek in progress (published, window open)', () => {
     expect(ledger.gameweeks.map((g) => g.period)).toEqual([1])
     expect(ledger.entries[0]).toEqual({ teamId: 'A', gameweekWins: 1, isk: PRIZE_PER_GAMEWEEK })
   })
+
+  // The window closes at the next gameweek's kickoff, days or even weeks
+  // after the last match. Once every match is over the prize can be paid
+  // without waiting for it.
+  it('pays it inside the window once its last match day is over', () => {
+    // MID_WINDOW is midnight UTC on Jan 5, still the evening of Jan 4 in
+    // New York, so the last match day has to be Jan 3 to count as over.
+    const matchesOver = {
+      ...season,
+      periodMatches: { 1: { lastMatchDate: '2099-01-03', unfinished: 0 } },
+    }
+    const ledger = computeLedger(matchesOver, MID_WINDOW)
+    expect(ledger.pending).toEqual([])
+    expect(ledger.gameweeks.map((g) => g.period)).toEqual([1])
+    expect(ledger.totalPaid).toBe(PRIZE_PER_GAMEWEEK)
+  })
+
+  it('still withholds it inside the window while a match is unfinished', () => {
+    const oneLeft = {
+      ...season,
+      periodMatches: { 1: { lastMatchDate: '2099-01-03', unfinished: 1 } },
+    }
+    const ledger = computeLedger(oneLeft, MID_WINDOW)
+    expect(ledger.pending.map((g) => g.period)).toEqual([1])
+    expect(ledger.totalPaid).toBe(0)
+  })
 })

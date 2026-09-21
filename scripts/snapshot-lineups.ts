@@ -6,6 +6,9 @@
  *
  * Idempotent: a gameweek already captured as final is skipped; one captured
  * while its Fantrax window was still open is re-captured until it closes.
+ * "Final" here is the window, deliberately later than the site's own notion
+ * (last match over): stat corrections can land for days after a match, and
+ * a lineup file marked final is never re-read.
  * A gameweek is written only if every team's starters sum exactly to the
  * score the schedule recorded. A final gameweek failing that check aborts
  * the run, because it means the data cannot be trusted; a provisional one
@@ -51,16 +54,16 @@ function sameLineups(a: LineupSnapshot, b: LineupSnapshot): boolean {
 
 async function snapshotSeason(year: number, now: Date): Promise<{ written: number; skipped: number }> {
   const leagueId = LEAGUES[year]
-  const season = await loadSeason(year)
-  const { settled, provisional, withheld } = auditRegularPeriods(season, now)
+  const season = await loadSeason(year, now)
+  const { settled, open, withheld } = auditRegularPeriods(season, now)
   console.log(
-    `${year}: ${settled.length} settled gameweek(s), ${provisional.length} provisional, ${withheld.length} withheld`,
+    `${year}: ${settled.length} settled gameweek(s), ${open.length} with an open window, ${withheld.length} withheld`,
   )
 
   let written = 0
   let skipped = 0
   for (const period of settled) {
-    const isFinal = !provisional.includes(period)
+    const isFinal = !open.includes(period)
     const existing = readLineupSnapshot(year, period)
     if (existing?.final) {
       skipped++

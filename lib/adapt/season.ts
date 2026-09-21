@@ -1,5 +1,5 @@
 import type { RawLeagueInfo, RawScheduleResponse } from '@/lib/fantrax/schemas'
-import type { SeasonData } from '@/lib/domain/types'
+import type { PeriodMatches, SeasonData } from '@/lib/domain/types'
 import { adaptLeagueInfo } from './leagueInfo'
 import { adaptSchedule } from './schedule'
 
@@ -7,6 +7,7 @@ export function buildSeasonData(
   rawInfo: RawLeagueInfo,
   rawSchedule: RawScheduleResponse,
   leagueId: string,
+  periodMatches: Record<number, PeriodMatches> = {},
 ): SeasonData {
   const info = adaptLeagueInfo(rawInfo)
   const schedule = adaptSchedule(rawSchedule)
@@ -28,5 +29,6 @@ export function buildSeasonData(
     fixtures: schedule.fixtures,
     averageFixtures: schedule.averageFixtures,
     periodsWithResults: schedule.periodsWithResults,
+    periodMatches,
   }
 }

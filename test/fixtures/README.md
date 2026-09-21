@@ -39,3 +39,9 @@ reproducible** — it is the empty-state fixture.
 - `getStandings.json` — all teams 0-0-0
 - `getDraftResults.json` — snake draft completed 2026-08-19
 - `getTeamRosters-p1.json` — opening rosters with ACTIVE / RESERVE status
+- `fxpa-getTeamRosterInfo-p5-schedulePeriod.json` / `-p6-schedulePeriod.json` — the
+  commissioner's team (`3r1uv8ygmt06vncl`) in the `SCHEDULE_PERIOD` view, captured
+  2026-09-21 (a Monday). GW5 had finished the day before, though its Fantrax window ran
+  to Oct 9 across the international break: the header lists match days Fri 9/18 – Sun 9/20
+  only, and every match cell ends in ` F`. GW6 had not kicked off: match days Sat 10/10 –
+  Mon 10/12, every cell a kickoff time. These are the fixtures for `isPeriodFinal`.

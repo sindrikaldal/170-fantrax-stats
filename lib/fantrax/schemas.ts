@@ -121,14 +121,28 @@ export type RawStandings = z.infer<typeof StandingsSchema>
 /**
  * A stat cell. Observed as `{ content: "13.5" }`; a bare string is accepted
  * too so a Fantrax simplification does not break parsing.
+ *
+ * A cell describing a real-sport match additionally carries `eventId`. Its
+ * content is the kickoff before the match (`"@ARS<br/>Sat 7:30AM"`) and the
+ * result suffixed ` F` once final (`"CRY 0<br/>@LEE 0 F"`).
  */
-const RosterCellSchema = z.union([z.object({ content: z.string() }).passthrough(), z.string()])
+const RosterCellSchema = z.union([
+  z.object({ content: z.string(), eventId: z.string().optional() }).passthrough(),
+  z.string(),
+])
 
+/**
+ * A header cell. In the `SCHEDULE_PERIOD` view the header carries one
+ * `eventStr` column per real-sport match day of the gameweek, named like
+ * `"Sun 9/20"` and with no `name`; they are the only per-gameweek record
+ * of when its matches are actually played.
+ */
 const RosterHeaderCellSchema = z
   .object({
-    name: z.string(),
+    name: z.string().optional(),
     shortName: z.string().optional(),
     key: z.string().optional(),
+    eventStr: z.boolean().optional(),
   })
   .passthrough()
 
@@ -175,6 +189,7 @@ export const RosterInfoResponseSchema = z
                   .object({
                     displayedPeriod: z.number(),
                     displayedFantasyTeamId: z.string().optional(),
+                    displayedView: z.string().optional(),
                     displayedSeasonOrProjection: z
                       .object({ timeframeTypeCode: z.string() })
                       .passthrough(),

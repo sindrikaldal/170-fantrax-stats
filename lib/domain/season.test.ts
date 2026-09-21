@@ -5,6 +5,8 @@ import { buildSeasonData } from '@/lib/adapt/season'
 import {
   scoresForPeriod,
   isPeriodComplete,
+  isPeriodFinal,
+  easternDate,
   completedRegularPeriods,
 } from '@/lib/domain/season'
 
@@ -16,6 +18,10 @@ const season = buildSeasonData(
     JSON.parse(readFileSync('test/fixtures/2025/fxpa-getStandings-schedule.json', 'utf8')),
   ),
   '7he4pkgpme8uz58b',
+)
+
+const info2026 = LeagueInfoSchema.parse(
+  JSON.parse(readFileSync('test/fixtures/2026/getLeagueInfo.json', 'utf8')),
 )
 
 describe('scoresForPeriod', () => {
@@ -152,5 +158,78 @@ describe('maxFixturesPerPeriod', () => {
 
   it('is 0 for a season with no fixtures', () => {
     expect(maxFixturesPerPeriod(syntheticSeason())).toBe(0)
+  })
+})
+
+describe('easternDate', () => {
+  it('rolls the date over at midnight in New York, not UTC', () => {
+    // EDT is UTC−4 in September.
+    expect(easternDate(new Date('2026-09-21T03:59:00Z'))).toBe('2026-09-20')
+    expect(easternDate(new Date('2026-09-21T04:00:00Z'))).toBe('2026-09-21')
+  })
+})
+
+// 2026 GW5 as it really was: matches Fri Sept 18 – Sun Sept 20, but a
+// three-week Fantrax window to Fri Oct 9 because of the international break.
+// The window rule alone kept this gameweek "in progress" for 19 days.
+describe('isPeriodFinal and auditRegularPeriods across the international break', () => {
+  const periods = info2026.scoringPeriods.map((p) => ({
+    number: p.number,
+    startDate: p.startDate,
+    endDate: p.endDate,
+  }))
+  const fixtures = Array.from({ length: 5 }, (_, i) => ({
+    period: i + 1,
+    homeTeamId: 'A',
+    awayTeamId: 'B',
+    homeScore: 80 + i,
+    awayScore: 60,
+  }))
+  const base = syntheticSeason({
+    periods,
+    fixtures,
+    regularSeasonPeriods: 35,
+    periodsWithResults: [1, 2, 3, 4, 5],
+  })
+  const allOver = { ...base, periodMatches: { 5: { lastMatchDate: '2026-09-20', unfinished: 0 } } }
+  const SUNDAY_NIGHT = new Date('2026-09-21T01:00:00Z') // Sun Sept 20, 21:00 New York
+  const MONDAY = new Date('2026-09-21T09:00:00Z') // Mon Sept 21, 05:00 New York
+  const NEXT_WEEK = new Date('2026-09-28T12:00:00Z')
+
+  it('is not final while the last match day is still today in New York', () => {
+    expect(isPeriodFinal(allOver, 5, SUNDAY_NIGHT)).toBe(false)
+    expect(auditRegularPeriods(allOver, SUNDAY_NIGHT).provisional).toEqual([5])
+  })
+
+  it('is final the next morning, with the window still open for 18 days', () => {
+    expect(isPeriodComplete(allOver, 5, MONDAY)).toBe(false)
+    expect(isPeriodFinal(allOver, 5, MONDAY)).toBe(true)
+    const audit = auditRegularPeriods(allOver, MONDAY)
+    expect(audit.settled).toEqual([1, 2, 3, 4, 5])
+    expect(audit.provisional).toEqual([])
+    expect(audit.open).toEqual([5])
+  })
+
+  it('stays in progress while any visible match is unfinished, whatever the date', () => {
+    const oneLeft = {
+      ...base,
+      periodMatches: { 5: { lastMatchDate: '2026-09-20', unfinished: 1 } },
+    }
+    expect(isPeriodFinal(oneLeft, 5, NEXT_WEEK)).toBe(false)
+    expect(auditRegularPeriods(oneLeft, NEXT_WEEK).provisional).toEqual([5])
+  })
+
+  it('falls back to the window when no match report is available', () => {
+    expect(isPeriodFinal(base, 5, NEXT_WEEK)).toBe(false)
+    expect(auditRegularPeriods(base, NEXT_WEEK).provisional).toEqual([5])
+    expect(isPeriodFinal(base, 5, new Date('2026-10-09T12:00:00Z'))).toBe(true)
+  })
+
+  it('never reopens a gameweek whose window has closed', () => {
+    const contradictory = {
+      ...base,
+      periodMatches: { 4: { lastMatchDate: '2026-09-14', unfinished: 3 } },
+    }
+    expect(isPeriodFinal(contradictory, 4, MONDAY)).toBe(true)
   })
 })

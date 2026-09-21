@@ -82,11 +82,32 @@ the guards are what stop a placeholder all-zero week from paying out.
   `getLiveScoringInfo`/`getMatchupPreview`/`getFantasyMatchup` do not exist.
   It flips **at kickoff, not at finalisation** (verified live 2026-09-06: GW3
   flagged with one match still to play). So "published results + open
-  window" means *in progress*, not "awaiting corrections". The ledger,
-  runner-up and bench modules pay and count **final gameweeks only**
-  (window closed); an in-progress gameweek is shown as a live leader with
-  its ISK pending. Other stats still read `settled`, which includes the
-  in-progress week.
+  window" means *in progress*, not "awaiting corrections".
+- The period window is a bad proxy for "gameweek finished": it closes at the
+  **next** gameweek's first kickoff, so four to five days after the matches
+  in a normal week and **three weeks across an international break** (2026
+  GW5: matches Sept 18–20, window to Oct 9). The only place Fantrax says
+  when a gameweek's matches are actually over is `getTeamRosterInfo` with
+  `view: 'SCHEDULE_PERIOD'`: its header has one `eventStr` column per real
+  match day (`"Sun 9/20"`, no year), and each player's match cell reads
+  `"CRY 0<br/>@LEE 0 F"` once final versus `"@ARS<br/>Sat 7:30AM"` before
+  kickoff. Times and dates are US Eastern for anonymous requests, like the
+  period boundaries. `isPeriodFinal` in `lib/domain/season.ts` calls a
+  gameweek final the Eastern day after its last match day, provided every
+  visible match is `F`, or when the window has closed. Coverage from one
+  roster is partial (9 of 10 matches in the GW5 capture), which is why the
+  day rollover decides and the `F` check only vetoes. `lib/season/load.ts`
+  makes this one extra request per in-progress gameweek, cached like the
+  schedule; if it fails the gameweek falls back to the window rule. There
+  is no capture of a match *in play*, so its cell format is unverified;
+  anything without the `F` suffix counts as unfinished.
+- The ledger, runner-up and bench modules pay and count **final gameweeks
+  only** (`provisional` empty for that period); an in-progress gameweek is
+  shown as a live leader with its ISK pending. Other stats still read
+  `settled`, which includes the in-progress week. `auditRegularPeriods` also
+  returns `open` (window not closed, a superset of `provisional`), which
+  only the lineup snapshot uses: it keeps re-capturing until the window
+  closes so that late stat corrections land before a file is marked final.
 - `periodsWithResults` describes **the fetch, not a point in time**. A fixture
   captured after a season ended claims every gameweek has results, so any
   test replaying an earlier date must also replay what was published by then
@@ -106,7 +127,9 @@ the guards are what stop a placeholder all-zero week from paying out.
   exactly to the team's recorded score. The team is selected by **`teamId`**;
   `fantasyTeamId` is silently ignored and returns the commissioner's team,
   which is how every "per-team" capture came back identical once.
-- Lineups are **never fetched at request time**. `scripts/snapshot-lineups.ts`
+- Lineups are **never fetched at request time** (the `SCHEDULE_PERIOD` match
+  report above is the same endpoint but reads no player points and is one
+  request per in-progress gameweek). `scripts/snapshot-lineups.ts`
   (daily GitHub Action) commits them to `data/lineups/<year>/gwNN.json`, and
   refuses to write a gameweek unless every team's starters sum to the score
   in the schedule. `lib/stats/bench.ts` drops any committed gameweek that
@@ -119,6 +142,6 @@ the guards are what stop a placeholder all-zero week from paying out.
 - Node 20.11+ (`vitest.config.mts` uses `import.meta.dirname`).
 - Port 3000 on this machine is occupied by an unrelated nginx; `npm run dev`
   lands on 3001.
-- `npm test` — 57 tests. No network calls in tests; they read committed
+- `npm test` — about 250 tests. No network calls in tests; they read committed
   fixtures from `test/fixtures/`, which are irreplaceable captured API
   responses. Never modify them.

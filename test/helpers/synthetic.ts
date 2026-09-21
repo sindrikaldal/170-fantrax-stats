@@ -1,4 +1,11 @@
-import type { AverageFixture, Fixture, Period, SeasonData, Team } from '@/lib/domain/types'
+import type {
+  AverageFixture,
+  Fixture,
+  Period,
+  PeriodMatches,
+  SeasonData,
+  Team,
+} from '@/lib/domain/types'
 
 const DEFAULT_TEAMS: Team[] = [
   { teamId: 'A', name: 'Team A', shortName: null, logoUrl: null },
@@ -16,6 +23,7 @@ export interface SyntheticSeasonOptions {
   regularSeasonPeriods?: number
   playoffTeams?: number
   periodsWithResults?: number[]
+  periodMatches?: Record<number, PeriodMatches>
 }
 
 /** All synthetic periods are complete by this date. */
@@ -51,6 +59,7 @@ export function syntheticSeason(opts: SyntheticSeasonOptions = {}): SeasonData {
     fixtures,
     averageFixtures: opts.averageFixtures ?? [],
     periodsWithResults: opts.periodsWithResults ?? [],
+    periodMatches: opts.periodMatches ?? {},
   }
 }
 
