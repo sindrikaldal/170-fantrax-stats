@@ -4,6 +4,7 @@ import { LeagueInfoSchema, ScheduleResponseSchema } from '@/lib/fantrax/schemas'
 import { buildSeasonData } from '@/lib/adapt/season'
 import { adaptLeagueInfo } from '@/lib/adapt/leagueInfo'
 import { resolveManagers, slugifyManagerId } from '@/lib/stats/managers'
+import { MANAGER_OVERRIDES } from '@/config/managers'
 import { syntheticSeason } from '@/test/helpers/synthetic'
 import type { SeasonData } from '@/lib/domain/types'
 
@@ -96,6 +97,37 @@ describe('resolveManagers across 2025 and 2026', () => {
     const fk = r.returning.find((m) => m.managerId === 'the-fullkrug-express')!
     expect(fk.teams.map((t) => t.seasonYear)).toEqual([2025, 2027])
     expect(fk.displayName).toBe('Totally New Name FC') // most recent season's name
+  })
+
+  // The 2026 fixture predates two mid-season renames, so it still carries
+  // the 2025 names. This is what Fantrax serves now; the owner usernames
+  // behind config/managers.ts say these are the same two people.
+  it('the committed overrides reunite the two 2026 renames with their 2025 history', () => {
+    const renamedNow: SeasonData = {
+      ...season2026,
+      teams: season2026.teams.map((t) =>
+        t.teamId === '5epxm3edmsyix1uy'
+          ? { ...t, name: 'Ballon d’orGU' }
+          : t.teamId === 'wv6m2nnjmsyix1uy'
+            ? { ...t, name: 'Curse lifted finally?' }
+            : t,
+      ),
+    }
+    const without = resolveManagers([season2025, renamedNow], {})
+    expect(without.returning).toHaveLength(6)
+    expect(without.managers).toHaveLength(18)
+
+    const withOverrides = resolveManagers([season2025, renamedNow], MANAGER_OVERRIDES)
+    expect(withOverrides.returning).toHaveLength(8)
+    expect(withOverrides.managers).toHaveLength(16)
+    const diallo = withOverrides.returning.find((m) => m.managerId === 'year-of-the-diallo')!
+    expect(diallo.displayName).toBe('Ballon d’orGU')
+    expect(diallo.teams.map((t) => t.teamId)).toEqual(['tk9fdd2rme8uz58j', '5epxm3edmsyix1uy'])
+    const curse = withOverrides.returning.find(
+      (m) => m.managerId === 'proof-the-curse-lives-once-more',
+    )!
+    expect(curse.displayName).toBe('Curse lifted finally?')
+    expect(curse.teams.map((t) => t.teamId)).toEqual(['zgpnhvynme8uz58j', 'wv6m2nnjmsyix1uy'])
   })
 
   it('throws when two teams in one season resolve to the same manager', () => {
