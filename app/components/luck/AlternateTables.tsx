@@ -6,7 +6,9 @@ import { EmptyState } from '../EmptyState'
 import { TeamCrest } from '../TeamCrest'
 import { TeamName } from '../TeamName'
 
-const NEEDS_SETTLED = 6
+// Five, not six: with the September 2026 international break the sixth
+// gameweek is three weeks after the fifth, and the tables read fine on five.
+const NEEDS_SETTLED = 5
 
 
 function MovementBadge({ delta }: { delta: number }) {
