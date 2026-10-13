@@ -2,7 +2,7 @@
  "seasonYear": 2026,
  "period": 6,
  "final": false,
- "capturedAt": "2026-10-12T15:18:52.125Z",
+ "capturedAt": "2026-10-13T14:08:07.410Z",
  "teams": [
   {
    "teamId": "3r1uv8ygmt06vncl",
@@ -41,7 +41,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": -0.75
     },
     {
      "playerId": "06v0g",
@@ -217,7 +217,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 5.5
     },
     {
      "playerId": "07898",
@@ -583,7 +583,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": -3.25
     },
     {
      "playerId": "04lav",
@@ -818,7 +818,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 1.5
     },
     {
      "playerId": "067x8",
@@ -890,7 +890,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 3.5
     },
     {
      "playerId": "03gu5",
@@ -940,7 +940,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 19
     },
     {
      "playerId": "063e7",
@@ -1387,7 +1387,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 11.5
     },
     {
      "playerId": "05oig",
@@ -1491,7 +1491,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 10
     },
     {
      "playerId": "04abn",
@@ -1500,7 +1500,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 12
     },
     {
      "playerId": "076dq",
@@ -1586,7 +1586,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": -3.75
     },
     {
      "playerId": "03ksl",
@@ -1694,7 +1694,7 @@
       "M"
      ],
      "starter": false,
-     "points": 0
+     "points": 4.5
     },
     {
      "playerId": "06xza",
