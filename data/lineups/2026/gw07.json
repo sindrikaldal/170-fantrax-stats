@@ -2,7 +2,7 @@
  "seasonYear": 2026,
  "period": 7,
  "final": false,
- "capturedAt": "2026-10-18T11:01:08.650Z",
+ "capturedAt": "2026-10-19T13:08:38.289Z",
  "teams": [
   {
    "teamId": "3r1uv8ygmt06vncl",
@@ -14,7 +14,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": 3.25
     },
     {
      "playerId": "06y26",
@@ -23,7 +23,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 21.25
     },
     {
      "playerId": "050jq",
@@ -50,7 +50,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 7
     },
     {
      "playerId": "051kl",
@@ -77,7 +77,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 11.5
     },
     {
      "playerId": "06p6j",
@@ -86,7 +86,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 26
     },
     {
      "playerId": "0646f",
@@ -113,7 +113,7 @@
       "D"
      ],
      "starter": false,
-     "points": 0
+     "points": -3
     },
     {
      "playerId": "04spw",
@@ -131,7 +131,7 @@
       "M"
      ],
      "starter": false,
-     "points": 0
+     "points": 4.5
     }
    ]
   },
@@ -145,7 +145,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": -0.75
     },
     {
      "playerId": "05o4c",
@@ -163,7 +163,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 16.5
     },
     {
      "playerId": "078qg",
@@ -172,7 +172,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": -3.5
     },
     {
      "playerId": "06uyc",
@@ -181,7 +181,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 11.75
     },
     {
      "playerId": "061xs",
@@ -208,7 +208,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 9.5
     },
     {
      "playerId": "07942",
@@ -262,7 +262,7 @@
       "F"
      ],
      "starter": false,
-     "points": 0
+     "points": 2
     }
    ]
   },
@@ -276,7 +276,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": 5.25
     },
     {
      "playerId": "06dmj",
@@ -285,7 +285,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 3.25
     },
     {
      "playerId": "0703c",
@@ -294,7 +294,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 4
     },
     {
      "playerId": "04e1e",
@@ -303,7 +303,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 6.25
     },
     {
      "playerId": "06fwi",
@@ -312,7 +312,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 3.5
     },
     {
      "playerId": "05gcc",
@@ -330,7 +330,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 3
     },
     {
      "playerId": "05uht",
@@ -348,7 +348,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 15.5
     },
     {
      "playerId": "06ybp",
@@ -416,7 +416,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 5.25
     },
     {
      "playerId": "04qfz",
@@ -425,7 +425,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 20.25
     },
     {
      "playerId": "06rgg",
@@ -452,7 +452,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 2.75
     },
     {
      "playerId": "06fup",
@@ -470,7 +470,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 8.5
     },
     {
      "playerId": "038ze",
@@ -556,7 +556,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 17.5
     },
     {
      "playerId": "063zi",
@@ -574,7 +574,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 0.75
     },
     {
      "playerId": "0700p",
@@ -610,7 +610,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 16.5
     },
     {
      "playerId": "04qr9",
@@ -628,7 +628,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 2.5
     },
     {
      "playerId": "05u1m",
@@ -646,7 +646,7 @@
       "M"
      ],
      "starter": false,
-     "points": 0
+     "points": 11
     },
     {
      "playerId": "06f8y",
@@ -696,6 +696,15 @@
       "D"
      ],
      "starter": true,
+     "points": -3.25
+    },
+    {
+     "playerId": "06ezb",
+     "name": "Micky van de Ven",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
      "points": 0
     },
     {
@@ -705,7 +714,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 3.5
     },
     {
      "playerId": "02lm7",
@@ -715,15 +724,6 @@
      ],
      "starter": true,
      "points": 6
-    },
-    {
-     "playerId": "06mvz",
-     "name": "Savio",
-     "positions": [
-      "M"
-     ],
-     "starter": true,
-     "points": 0
     },
     {
      "playerId": "06v21",
@@ -750,7 +750,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 24
     },
     {
      "playerId": "056iy",
@@ -762,17 +762,17 @@
      "points": 34
     },
     {
-     "playerId": "06ezb",
-     "name": "Micky van de Ven",
-     "positions": [
-      "D"
-     ],
-     "starter": false,
-     "points": 0
-    },
-    {
      "playerId": "05uhs",
      "name": "James Mcatee",
+     "positions": [
+      "M"
+     ],
+     "starter": false,
+     "points": 6
+    },
+    {
+     "playerId": "06mvz",
+     "name": "Savio",
      "positions": [
       "M"
      ],
@@ -800,7 +800,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": 10.25
     },
     {
      "playerId": "06nu7",
@@ -809,7 +809,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 8.5
     },
     {
      "playerId": "05o4b",
@@ -828,6 +828,15 @@
      ],
      "starter": true,
      "points": 1
+    },
+    {
+     "playerId": "0794d",
+     "name": "Chema Andres",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 1.5
     },
     {
      "playerId": "06v07",
@@ -857,22 +866,13 @@
      "points": 12.5
     },
     {
-     "playerId": "0666p",
-     "name": "Kobbie Mainoo",
-     "positions": [
-      "M"
-     ],
-     "starter": true,
-     "points": 0
-    },
-    {
      "playerId": "05trb",
      "name": "Bryan Mbeumo",
      "positions": [
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 12.5
     },
     {
      "playerId": "076qg",
@@ -931,7 +931,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": 5.25
     },
     {
      "playerId": "062a9",
@@ -943,26 +943,26 @@
      "points": 10.5
     },
     {
-     "playerId": "05n07",
-     "name": "Pedro Porro",
+     "playerId": "03fgl",
+     "name": "Jay da Silva",
      "positions": [
       "D"
      ],
      "starter": true,
      "points": 0
+    },
+    {
+     "playerId": "06yb9",
+     "name": "Reinildo",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 1
     },
     {
      "playerId": "063e7",
      "name": "Marcos Senesi",
-     "positions": [
-      "D"
-     ],
-     "starter": true,
-     "points": 0
-    },
-    {
-     "playerId": "02oq6",
-     "name": "Luke Shaw",
      "positions": [
       "D"
      ],
@@ -1003,7 +1003,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 10
     },
     {
      "playerId": "06cmm",
@@ -1021,6 +1021,15 @@
       "F"
      ],
      "starter": true,
+     "points": 0.5
+    },
+    {
+     "playerId": "05n07",
+     "name": "Pedro Porro",
+     "positions": [
+      "D"
+     ],
+     "starter": false,
      "points": 0
     },
     {
@@ -1080,7 +1089,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 11.25
     },
     {
      "playerId": "05omu",
@@ -1134,7 +1143,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 15
     },
     {
      "playerId": "06l4i",
@@ -1211,7 +1220,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 7.5
     },
     {
      "playerId": "03vlj",
@@ -1256,7 +1265,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 6.5
     },
     {
      "playerId": "049tq",
@@ -1265,7 +1274,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 17.5
     },
     {
      "playerId": "0784w",
@@ -1301,7 +1310,7 @@
       "F"
      ],
      "starter": false,
-     "points": 0
+     "points": 2
     }
    ]
   },
@@ -1342,7 +1351,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 14.25
     },
     {
      "playerId": "05a6e",
@@ -1351,7 +1360,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 6.25
     },
     {
      "playerId": "06mnc",
@@ -1369,7 +1378,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 4
     },
     {
      "playerId": "0414o",
@@ -1405,7 +1414,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 10
     },
     {
      "playerId": "05nil",
@@ -1432,7 +1441,7 @@
       "F"
      ],
      "starter": false,
-     "points": 0
+     "points": 6.5
     }
    ]
   },
@@ -1464,7 +1473,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 16.25
     },
     {
      "playerId": "0427d",
@@ -1527,7 +1536,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 19
     },
     {
      "playerId": "070hc",
@@ -1586,7 +1595,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 17.75
     },
     {
      "playerId": "05ybq",
@@ -1613,7 +1622,16 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 33.25
+    },
+    {
+     "playerId": "068yc",
+     "name": "Yasin Ayari",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 20.5
     },
     {
      "playerId": "05tre",
@@ -1632,15 +1650,6 @@
      ],
      "starter": true,
      "points": 7.5
-    },
-    {
-     "playerId": "06y59",
-     "name": "Noah Sadiki",
-     "positions": [
-      "M"
-     ],
-     "starter": true,
-     "points": 0
     },
     {
      "playerId": "04ge6",
@@ -1679,8 +1688,8 @@
      "points": 7.5
     },
     {
-     "playerId": "068yc",
-     "name": "Yasin Ayari",
+     "playerId": "06y59",
+     "name": "Noah Sadiki",
      "positions": [
       "M"
      ],
@@ -1708,7 +1717,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": 15
     },
     {
      "playerId": "0554g",
@@ -1726,7 +1735,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 11
     },
     {
      "playerId": "03gu4",
@@ -1735,16 +1744,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
-    },
-    {
-     "playerId": "06fwz",
-     "name": "Murillo",
-     "positions": [
-      "D"
-     ],
-     "starter": true,
-     "points": 0
+     "points": 6.5
     },
     {
      "playerId": "061vk",
@@ -1762,7 +1762,16 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 4
+    },
+    {
+     "playerId": "05nt6",
+     "name": "Eberechi Eze",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 0.5
     },
     {
      "playerId": "05r94",
@@ -1783,17 +1792,17 @@
      "points": 0
     },
     {
-     "playerId": "06msb",
-     "name": "Malick Yalcouye",
-     "positions": [
-      "M"
-     ],
-     "starter": true,
-     "points": 0
-    },
-    {
      "playerId": "06zna",
      "name": "Dan Ndoye",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": -0.5
+    },
+    {
+     "playerId": "06rf9",
+     "name": "Omar Marmoush",
      "positions": [
       "F"
      ],
@@ -1810,13 +1819,13 @@
      "points": 0.25
     },
     {
-     "playerId": "06rf9",
-     "name": "Omar Marmoush",
+     "playerId": "06msb",
+     "name": "Malick Yalcouye",
      "positions": [
-      "F"
+      "M"
      ],
      "starter": false,
-     "points": 0
+     "points": 1
     },
     {
      "playerId": "06zxy",
