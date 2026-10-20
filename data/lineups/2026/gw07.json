@@ -2,7 +2,7 @@
  "seasonYear": 2026,
  "period": 7,
  "final": false,
- "capturedAt": "2026-10-19T13:08:38.289Z",
+ "capturedAt": "2026-10-20T11:32:29.071Z",
  "teams": [
   {
    "teamId": "3r1uv8ygmt06vncl",
@@ -366,7 +366,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 9
     },
     {
      "playerId": "04sjv",
@@ -705,7 +705,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 4.25
     },
     {
      "playerId": "05r34",
@@ -908,7 +908,7 @@
       "M"
      ],
      "starter": false,
-     "points": 0
+     "points": 2
     },
     {
      "playerId": "05uox",
@@ -949,7 +949,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": -1.25
     },
     {
      "playerId": "06yb9",
@@ -959,15 +959,6 @@
      ],
      "starter": true,
      "points": 1
-    },
-    {
-     "playerId": "063e7",
-     "name": "Marcos Senesi",
-     "positions": [
-      "D"
-     ],
-     "starter": true,
-     "points": 0
     },
     {
      "playerId": "03m3q",
@@ -1015,6 +1006,15 @@
      "points": 0.5
     },
     {
+     "playerId": "078wn",
+     "name": "Sidiki Cherif",
+     "positions": [
+      "F"
+     ],
+     "starter": true,
+     "points": 4
+    },
+    {
      "playerId": "070cj",
      "name": "Noah Okafor",
      "positions": [
@@ -1033,22 +1033,22 @@
      "points": 0
     },
     {
+     "playerId": "063e7",
+     "name": "Marcos Senesi",
+     "positions": [
+      "D"
+     ],
+     "starter": false,
+     "points": 0
+    },
+    {
      "playerId": "06cms",
      "name": "Sandro Tonali",
      "positions": [
       "M"
      ],
      "starter": false,
-     "points": 0
-    },
-    {
-     "playerId": "06rm8",
-     "name": "Mathys Tel",
-     "positions": [
-      "F"
-     ],
-     "starter": false,
-     "points": 0
+     "points": 7
     }
    ]
   },
@@ -1116,7 +1116,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 15.5
     },
     {
      "playerId": "05unu",
@@ -1387,7 +1387,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 15
     },
     {
      "playerId": "076d3",
@@ -1396,7 +1396,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 11
     },
     {
      "playerId": "067yz",
@@ -1491,7 +1491,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 3.75
     },
     {
      "playerId": "04abn",
@@ -1613,7 +1613,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 12.25
     },
     {
      "playerId": "06v0y",
@@ -1807,7 +1807,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 17
     },
     {
      "playerId": "0784b",
