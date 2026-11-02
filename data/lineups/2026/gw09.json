@@ -2,7 +2,7 @@
  "seasonYear": 2026,
  "period": 9,
  "final": false,
- "capturedAt": "2026-11-01T13:17:58.605Z",
+ "capturedAt": "2026-11-02T15:45:23.017Z",
  "teams": [
   {
    "teamId": "3r1uv8ygmt06vncl",
@@ -95,7 +95,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 4
     },
     {
      "playerId": "06xzd",
@@ -208,7 +208,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 10.5
     },
     {
      "playerId": "06pe1",
@@ -285,7 +285,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 13.75
     },
     {
      "playerId": "03gu5",
@@ -330,7 +330,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 8
     },
     {
      "playerId": "05uht",
@@ -443,7 +443,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 11.75
     },
     {
      "playerId": "06fup",
@@ -479,7 +479,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 4.5
     },
     {
      "playerId": "06mgd",
@@ -565,7 +565,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 14.5
     },
     {
      "playerId": "063zi",
@@ -628,7 +628,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 14
     },
     {
      "playerId": "0700p",
@@ -678,7 +678,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 9.5
     },
     {
      "playerId": "078mm",
@@ -705,7 +705,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 3
     },
     {
      "playerId": "05r34",
@@ -732,7 +732,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 2
     },
     {
      "playerId": "0793q",
@@ -741,7 +741,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 2.5
     },
     {
      "playerId": "06mn0",
@@ -809,7 +809,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 12.5
     },
     {
      "playerId": "05o4b",
@@ -890,7 +890,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 2
     },
     {
      "playerId": "04gpx",
@@ -917,7 +917,7 @@
       "F"
      ],
      "starter": false,
-     "points": 0
+     "points": 7
     }
    ]
   },
@@ -994,7 +994,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 2.5
     },
     {
      "playerId": "06cms",
@@ -1080,7 +1080,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 15
     },
     {
      "playerId": "05omu",
@@ -1099,15 +1099,6 @@
      ],
      "starter": true,
      "points": 12
-    },
-    {
-     "playerId": "06rm7",
-     "name": "Nico González",
-     "positions": [
-      "M"
-     ],
-     "starter": true,
-     "points": 0
     },
     {
      "playerId": "061va",
@@ -1137,6 +1128,15 @@
      "points": 5
     },
     {
+     "playerId": "04agz",
+     "name": "Declan Rice",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 18.5
+    },
+    {
      "playerId": "076db",
      "name": "Brandon Thomas-Asante",
      "positions": [
@@ -1146,8 +1146,8 @@
      "points": 2.5
     },
     {
-     "playerId": "04agz",
-     "name": "Declan Rice",
+     "playerId": "06rm7",
+     "name": "Nico González",
      "positions": [
       "M"
      ],
@@ -1211,7 +1211,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 11.25
     },
     {
      "playerId": "05ye7",
@@ -1315,7 +1315,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": 2
     },
     {
      "playerId": "078i7",
@@ -1324,7 +1324,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 9.25
     },
     {
      "playerId": "05l27",
@@ -1536,7 +1536,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 3
     },
     {
      "playerId": "076kc",
@@ -1708,7 +1708,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": 8
     },
     {
      "playerId": "0787y",
