@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { connection } from 'next/server'
 import { CURRENT_SEASON } from '@/config/leagues'
 import { computeLedger } from '@/lib/stats/ledger'
 import { computeRunnersUp } from '@/lib/stats/runnerUp'
@@ -10,6 +11,10 @@ import { LeagueTable } from './components/LeagueTable'
 import { SectionHeader } from './components/SectionHeader'
 
 export default async function Page() {
+  // Without this the page is prerendered and `now` is frozen at the last
+  // regeneration, so a finished gameweek stays "pending" until a visitor
+  // happens to trigger a rebuild. Fantrax fetches stay cached either way.
+  await connection()
   const now = new Date()
   const asOf = now.toLocaleString('is-IS', { dateStyle: 'medium', timeStyle: 'short' })
 
