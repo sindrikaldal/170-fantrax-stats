@@ -63,6 +63,24 @@ export function averageRecords(season: SeasonData, now: Date): Map<TeamId, TeamR
 }
 
 /**
+ * The official table with the schedule taken out: the real opponent swapped
+ * for a second *League Average* fixture, so both weekly games are against
+ * the mean. Same game count as `combinedRecords`, so the two compare row for
+ * row. `pointsFor` is already counted once and stays as it is.
+ */
+export function averageTwiceRecords(season: SeasonData, now: Date): Map<TeamId, TeamRecord> {
+  const records = averageRecords(season, now)
+  for (const r of records.values()) {
+    r.wins *= 2
+    r.draws *= 2
+    r.losses *= 2
+    r.games *= 2
+    r.pointsAgainst *= 2
+  }
+  return records
+}
+
+/**
  * Points each team actually scored, per settled gameweek, counted once.
  *
  * A team's weekly total appears on both of its fixtures — the real opponent

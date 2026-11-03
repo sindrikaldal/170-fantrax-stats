@@ -4,6 +4,7 @@ import { LeagueInfoSchema, ScheduleResponseSchema } from '@/lib/fantrax/schemas'
 import { buildSeasonData } from '@/lib/adapt/season'
 import {
   averageRecords,
+  averageTwiceRecords,
   combinedRecords,
   rankTable,
   realRecords,
@@ -124,6 +125,15 @@ describe('records, 2025 season', () => {
       'Haaland, Sakalegur markaskorari',
       'Earth, Wind & Maguire',
     ])
+  })
+
+  it('average-twice plays the same 70 games as the official table', () => {
+    const twice = averageTwiceRecords(season2025, AFTER_SEASON)
+    const id = idOf(season2025, 'Leibbi davíðs')
+    const t = twice.get(id)!
+    expect([t.wins, t.draws, t.losses, t.games]).toEqual([46, 0, 24, 70])
+    expect(t.pointsFor).toBeCloseTo(combined.get(id)!.pointsFor, 6)
+    expect(rankTable(twice).map((r) => r.teamId)).toEqual(rankTable(avg).map((r) => r.teamId))
   })
 
   it('breaks the 19-win tie between Füllkrug and les Homms on points-for', () => {

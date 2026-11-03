@@ -1,6 +1,6 @@
 import type { SeasonView } from '../../lib/season-view'
 import type { SeasonData, TeamId } from '@/lib/domain/types'
-import { averageRecords, rankTable, realRecords, type TeamRecord } from '@/lib/stats/tables'
+import { averageTwiceRecords, combinedRecords, rankTable, type TeamRecord } from '@/lib/stats/tables'
 import { formatScore } from '../../lib/format'
 import { EmptyState } from '../EmptyState'
 import { TeamCrest } from '../TeamCrest'
@@ -78,7 +78,7 @@ function MiniTable({
             {badges && (
               <th scope="col" className="py-2 pr-3 text-right font-medium">
                 <span aria-hidden>&plusmn;</span>
-                <span className="sr-only">Movement versus the real table</span>
+                <span className="sr-only">Movement versus the official table</span>
               </th>
             )}
           </tr>
@@ -122,10 +122,11 @@ function MiniTable({
 }
 
 /**
- * Real-only vs. average-only tables side by side. Same games, different
- * question: real carries the whole schedule, average strips it out.
- * Where a team lands differently between the two says more about the
- * fixture list than the roster.
+ * The official table beside one with the schedule stripped out. Every team
+ * plays the real opponent and *League Average* each week, so the skill-only
+ * version plays the average twice: same game count, so the records compare
+ * directly. Where a team lands differently between the two says more about
+ * the fixture list than the roster.
  */
 export function AlternateTables({ view, now = new Date() }: { view: SeasonView; now?: Date }) {
   const { season, settled } = view
@@ -140,8 +141,8 @@ export function AlternateTables({ view, now = new Date() }: { view: SeasonView; 
     )
   }
 
-  const realRanked = rankTable(realRecords(season, now))
-  const avgRanked = rankTable(averageRecords(season, now))
+  const realRanked = rankTable(combinedRecords(season, now))
+  const avgRanked = rankTable(averageTwiceRecords(season, now))
   const realRank = new Map(realRanked.map((r, i) => [r.teamId, i + 1]))
   const avgRank = new Map(avgRanked.map((r, i) => [r.teamId, i + 1]))
 
@@ -167,10 +168,10 @@ export function AlternateTables({ view, now = new Date() }: { view: SeasonView; 
   return (
     <div>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <MiniTable season={season} title="Real Record" ranked={realRanked} />
+        <MiniTable season={season} title="Official Table" ranked={realRanked} />
         <MiniTable
           season={season}
-          title="Vs. League Average"
+          title="Vs. League Average, Twice"
           ranked={avgRanked}
           badges={deltas}
         />
