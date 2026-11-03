@@ -2,7 +2,7 @@
  "seasonYear": 2026,
  "period": 9,
  "final": false,
- "capturedAt": "2026-11-02T15:45:23.017Z",
+ "capturedAt": "2026-11-03T14:09:08.830Z",
  "teams": [
   {
    "teamId": "3r1uv8ygmt06vncl",
@@ -41,7 +41,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 3.25
     },
     {
      "playerId": "051kl",
@@ -122,7 +122,7 @@
       "M"
      ],
      "starter": false,
-     "points": 0
+     "points": 8
     },
     {
      "playerId": "03ybi",
@@ -321,7 +321,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 14
     },
     {
      "playerId": "05r9b",
@@ -348,7 +348,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 16.5
     },
     {
      "playerId": "06yxe",
@@ -393,7 +393,7 @@
       "F"
      ],
      "starter": false,
-     "points": 0
+     "points": 1.5
     }
    ]
   },
@@ -827,7 +827,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 4
     },
     {
      "playerId": "067x8",
@@ -934,13 +934,13 @@
      "points": 13.25
     },
     {
-     "playerId": "062a9",
-     "name": "Sven Botman",
+     "playerId": "02lsa",
+     "name": "Dan Burn",
      "positions": [
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 3.5
     },
     {
      "playerId": "06fwz",
@@ -1015,8 +1015,8 @@
      "points": 14
     },
     {
-     "playerId": "02lsa",
-     "name": "Dan Burn",
+     "playerId": "062a9",
+     "name": "Sven Botman",
      "positions": [
       "D"
      ],
@@ -1152,7 +1152,7 @@
       "M"
      ],
      "starter": false,
-     "points": 0
+     "points": 1.5
     },
     {
      "playerId": "05ogb",
@@ -1161,7 +1161,7 @@
       "F"
      ],
      "starter": false,
-     "points": 0
+     "points": 5.5
     },
     {
      "playerId": "0784x",
@@ -1333,7 +1333,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 25.25
     },
     {
      "playerId": "05nil",
@@ -1446,7 +1446,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": 13.75
     },
     {
      "playerId": "03rzp",
@@ -1473,7 +1473,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 13.75
     },
     {
      "playerId": "04abn",
@@ -1482,7 +1482,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 0.5
     },
     {
      "playerId": "076dq",
@@ -1577,7 +1577,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": 8.25
     },
     {
      "playerId": "05uel",
@@ -1604,7 +1604,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 11.5
     },
     {
      "playerId": "05oh0",
@@ -1658,7 +1658,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 6
     },
     {
      "playerId": "061vq",
@@ -1747,6 +1747,15 @@
      "points": 10.25
     },
     {
+     "playerId": "04tig",
+     "name": "Fabian Schar",
+     "positions": [
+      "D"
+     ],
+     "starter": true,
+     "points": 1.25
+    },
+    {
      "playerId": "05gcr",
      "name": "Bruno Fernandes",
      "positions": [
@@ -1765,15 +1774,6 @@
      "points": 8
     },
     {
-     "playerId": "03am7",
-     "name": "Jacob Murphy",
-     "positions": [
-      "M"
-     ],
-     "starter": true,
-     "points": 0
-    },
-    {
      "playerId": "05o2p",
      "name": "Regan Slater",
      "positions": [
@@ -1789,7 +1789,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 13
     },
     {
      "playerId": "06rf9",
@@ -1810,13 +1810,13 @@
      "points": 0
     },
     {
-     "playerId": "04tig",
-     "name": "Fabian Schar",
+     "playerId": "03am7",
+     "name": "Jacob Murphy",
      "positions": [
-      "D"
+      "M"
      ],
      "starter": false,
-     "points": 0
+     "points": 5.5
     },
     {
      "playerId": "06zxy",
