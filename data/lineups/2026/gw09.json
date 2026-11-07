@@ -1,8 +1,8 @@
 {
  "seasonYear": 2026,
  "period": 9,
- "final": false,
- "capturedAt": "2026-11-03T14:09:08.830Z",
+ "final": true,
+ "capturedAt": "2026-11-07T12:57:38.366Z",
  "teams": [
   {
    "teamId": "3r1uv8ygmt06vncl",
