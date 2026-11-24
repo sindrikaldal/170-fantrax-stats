@@ -2,7 +2,7 @@
  "seasonYear": 2026,
  "period": 11,
  "final": false,
- "capturedAt": "2026-11-23T18:01:49.618Z",
+ "capturedAt": "2026-11-24T17:39:19.681Z",
  "teams": [
   {
    "teamId": "3r1uv8ygmt06vncl",
@@ -113,7 +113,7 @@
       "M"
      ],
      "starter": false,
-     "points": 0
+     "points": 11
     },
     {
      "playerId": "0435m",
@@ -312,7 +312,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 2
     },
     {
      "playerId": "05nt6",
@@ -348,7 +348,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 6.5
     },
     {
      "playerId": "06yxe",
@@ -425,7 +425,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 7.75
     },
     {
      "playerId": "06do9",
@@ -538,7 +538,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": 12
     },
     {
      "playerId": "0794f",
@@ -723,7 +723,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 3.5
     },
     {
      "playerId": "06mvz",
@@ -994,7 +994,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 2.5
     },
     {
      "playerId": "06cmm",
@@ -1134,7 +1134,7 @@
       "M"
      ],
      "starter": true,
-     "points": 0
+     "points": 27.5
     },
     {
      "playerId": "04agz",
@@ -1342,7 +1342,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 2
     },
     {
      "playerId": "04e1c",
@@ -1455,7 +1455,7 @@
       "G"
      ],
      "starter": true,
-     "points": 0
+     "points": -1.5
     },
     {
      "playerId": "03rzp",
@@ -1482,7 +1482,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": -4.5
     },
     {
      "playerId": "05l2z",
@@ -1545,7 +1545,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 1
     },
     {
      "playerId": "076kc",
@@ -1595,7 +1595,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": 8.25
     },
     {
      "playerId": "061vb",
@@ -1613,7 +1613,7 @@
       "D"
      ],
      "starter": true,
-     "points": 0
+     "points": -5.5
     },
     {
      "playerId": "05oh0",
@@ -1634,6 +1634,15 @@
      "points": -0.75
     },
     {
+     "playerId": "061vk",
+     "name": "Jaidon Anthony",
+     "positions": [
+      "M"
+     ],
+     "starter": true,
+     "points": 20.5
+    },
+    {
      "playerId": "068yc",
      "name": "Yasin Ayari",
      "positions": [
@@ -1641,15 +1650,6 @@
      ],
      "starter": true,
      "points": 11
-    },
-    {
-     "playerId": "05tre",
-     "name": "Vitaly Janelt",
-     "positions": [
-      "M"
-     ],
-     "starter": true,
-     "points": 0
     },
     {
      "playerId": "06y59",
@@ -1688,13 +1688,13 @@
      "points": 0
     },
     {
-     "playerId": "061vk",
-     "name": "Jaidon Anthony",
+     "playerId": "05tre",
+     "name": "Vitaly Janelt",
      "positions": [
       "M"
      ],
      "starter": false,
-     "points": 0
+     "points": 22
     },
     {
      "playerId": "06xza",
@@ -1798,7 +1798,7 @@
       "F"
      ],
      "starter": true,
-     "points": 0
+     "points": 3
     },
     {
      "playerId": "06rf9",
@@ -1825,7 +1825,7 @@
       "M"
      ],
      "starter": false,
-     "points": 0
+     "points": 11.5
     },
     {
      "playerId": "06zxy",
